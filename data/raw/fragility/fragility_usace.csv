@@ -1,0 +1,58 @@
+stories,depth_feet,structure_damage_mean,structure_damage_stdev,content_damage_mean,content_damage_stdev
+One Story,-2,0.001,0.001,0.001,0.001
+One Story,-1,0.025,0.027,0.024,0.021
+One Story,0,0.134,0.02,0.081,0.015
+One Story,1,0.233,0.016,0.133,0.012
+One Story,2,0.321,0.016,0.179,0.012
+One Story,3,0.401,0.018,0.22,0.014
+One Story,4,0.471,0.019,0.257,0.015
+One Story,5,0.532,0.02,0.288,0.016
+One Story,6,0.586,0.021,0.315,0.016
+One Story,7,0.632,0.022,0.338,0.017
+One Story,8,0.672,0.023,0.357,0.018
+One Story,9,0.705,0.024,0.372,0.019
+One Story,10,0.732,0.027,0.384,0.021
+One Story,11,0.754,0.03,0.392,0.023
+One Story,12,0.772,0.033,0.397,0.026
+One Story,13,0.785,0.037,0.4,0.029
+One Story,14,0.795,0.041,0.4,0.032
+One Story,15,0.802,0.045,0.4,0.035
+One Story,16,0.807,0.049,0.4,0.038
+Two or More Stories,-2,0.001,0.001,0.001,0.001
+Two or More Stories,-1,0.03,0.041,0.01,0.035
+Two or More Stories,0,0.093,0.034,0.05,0.029
+Two or More Stories,1,0.152,0.03,0.087,0.026
+Two or More Stories,2,0.209,0.028,0.122,0.025
+Two or More Stories,3,0.263,0.029,0.155,0.025
+Two or More Stories,4,0.314,0.032,0.185,0.027
+Two or More Stories,5,0.362,0.034,0.213,0.03
+Two or More Stories,6,0.407,0.037,0.239,0.032
+Two or More Stories,7,0.449,0.039,0.263,0.033
+Two or More Stories,8,0.488,0.04,0.284,0.034
+Two or More Stories,9,0.524,0.041,0.303,0.035
+Two or More Stories,10,0.557,0.042,0.32,0.035
+Two or More Stories,11,0.587,0.042,0.334,0.035
+Two or More Stories,12,0.614,0.042,0.347,0.035
+Two or More Stories,13,0.638,0.042,0.356,0.035
+Two or More Stories,14,0.659,0.043,0.364,0.036
+Two or More Stories,15,0.677,0.046,0.369,0.038
+Two or More Stories,16,0.692,0.05,0.372,0.042
+Split Level,-2,0.001,0.001,0.001,0.001
+Split Level,-1,0.064,0.029,0.022,0.022
+Split Level,0,0.072,0.021,0.029,0.015
+Split Level,1,0.094,0.019,0.047,0.012
+Split Level,2,0.129,0.019,0.075,0.013
+Split Level,3,0.174,0.02,0.111,0.014
+Split Level,4,0.228,0.022,0.153,0.015
+Split Level,5,0.289,0.024,0.201,0.016
+Split Level,6,0.355,0.027,0.252,0.018
+Split Level,7,0.423,0.032,0.305,0.021
+Split Level,8,0.492,0.038,0.357,0.025
+Split Level,9,0.561,0.045,0.409,0.03
+Split Level,10,0.626,0.053,0.458,0.035
+Split Level,11,0.686,0.06,0.502,0.041
+Split Level,12,0.739,0.067,0.541,0.046
+Split Level,13,0.784,0.074,0.572,0.05
+Split Level,14,0.817,0.079,0.594,0.054
+Split Level,15,0.838,0.083,0.605,0.057
+Split Level,16,0.844,0.087,0.605,0.06

@@ -1,0 +1,73 @@
+\documentclass[tikz, border=1pt]{standalone}
+
+\usepackage{tikz}
+
+\usepackage{physics}
+
+\usepackage{xcolor}
+\definecolor{TurquoiseGreen}{HTML}{B8D5B8}
+\definecolor{TealBlue}{HTML}{598392}
+\definecolor{YellowOrange}{HTML}{FFB140}
+\definecolor{RichBlack}{HTML}{011627}
+
+\usetikzlibrary{shapes,arrows,positioning,calc,decorations.text}
+\begin{document}
+\pagestyle{empty}
+
+
+\tikzstyle{function} = [circle, draw, fill=TurquoiseGreen, text=RichBlack, text width=4.5em, text centered]
+\tikzstyle{block} = [rectangle, draw, fill=TurquoiseGreen, text=RichBlack, minimum width=6em, text centered,  minimum height=4em, align=center]
+\tikzstyle{derived} = [rectangle, draw, rounded corners, fill=YellowOrange!33, text=RichBlack, minimum width=6em, text centered,  minimum height=4em, align=center]
+\tikzstyle{check} = [rectangle, draw, fill=TealBlue!20, text=RichBlack, minimum width=4em, text centered,  minimum height=3em, align=center]
+
+\tikzstyle{line} = [draw, very thick, color=RichBlack, ->]
+\tikzset{>=latex}
+
+\def\myshift#1{\raisebox{-2.5ex}}
+
+\begin{tikzpicture}[auto]
+
+    \node [block] (decision) at (0, 2.5) {decision\\{\color{TealBlue}$x_i$}};
+    \node [block] at (0, -2.5) (scenarios) {many scenarios\\{\color{TealBlue}$\qty{s_1, \ldots, s_n} \in \Omega$}};
+    \node [function] (model) at (1, 0) {system model\\{\color{TealBlue}$f(x, s)$}};
+    \node [derived] at (5, 1.25) (smetrics) {scenario metrics\\{\color{TealBlue}$u_{ij} = f(x_i, s_j)$}};
+    \path [line] (decision) -- (model);
+    \path [line] (scenarios) -- (model);
+    \path [line] (model) to[out=22.5, in=180] (smetrics.west);
+
+    \draw [color=TealBlue] (-2, -3.5) -- (6.75, -3.5) -- (6.75, 3.5) -- (-2, 3.5) -- (-2, -3.5);
+    \node [rectangle, text=TealBlue, rotate=90] at (-1.75, 1) {Exploratory Modeling};
+
+    \node [block] (priortop) at (10.3, -2.2) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
+    \node [block] at (10.2, -2.3) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
+    \node [block] at (10.1, -2.4) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
+    \node [block] (prior) at (10, -2.5) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
+
+    \node [derived] (weights) at (9, 0) {weights\\{\color{TealBlue}eq.~2}};
+    \path [line] (scenarios) to [out=0, in=180] (weights);
+    \path [line] (prior) -- (weights);
+
+    \node [derived] (combined) at (10, 2.5) {distribution of outcomes\\{\color{TealBlue}$\hat{p}(u | x_i)$}};
+    \path[line] (smetrics.east) to [out=0, in=180] (combined);
+    \path[line] (weights) -- (combined);
+
+    \node [derived] (dmetrics) at (15, 2.5) {decision metrics\\{\color{TealBlue}$\hat{m}(x_i)$}};
+    \path[line] (combined) -- (dmetrics);
+
+    \draw [color=TealBlue] (7.2, -3.5) -- (16.5, -3.5) -- (16.5, 3.5) -- (7.25, 3.5) -- (7.25, -3.5);
+    \node [rectangle, text=TealBlue, rotate=270] at (16.25, -1) {Probabilistic Modeling};
+
+    \draw [color=TealBlue] (-2, -4) -- (16.5, -4) -- (16.5, -6.5) -- (-2, -6.5) -- (-2, -4);
+    \node [rectangle, text=TealBlue, rotate=0, align=left] at (-1, -5.25) {Critique};
+    \node [check] (discovery) at (3, -5.25) {scenario discovery};
+    \node [check] (ppc) at (7, -5.25) {prior checks};
+    \node [check] (posterior) at (11, -5.25) {posterior checks};
+    \node [check] (compare) at (15, -5.25) {compare\\{\color{TealBlue}$\hat{m}(x_{\neq i})$}};
+    \path [line, dashed, color=TealBlue] (prior) to[out=-157.5, in=67.5] (ppc);
+    \path [line, dashed, color=TealBlue] (smetrics) to[out=-120, in=90] (discovery);
+    \path [line, dashed, color=TealBlue] (combined.-22.5) to [out=-60, in=60] (posterior.60);
+    \path [line, dashed, color=TealBlue] (dmetrics) -- (compare);
+
+\end{tikzpicture}
+
+\end{document}

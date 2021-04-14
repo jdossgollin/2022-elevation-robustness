@@ -5,7 +5,7 @@ data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 """
 Helper function to convert all lengths to feet
 """
-function to_feet(length::T) where T <: Unitful.Length
+function to_feet(length::T) where {T<:Unitful.Length}
     return Unitful.ustrip(Unitful.uconvert(u"ft", length))
 end
 
@@ -44,9 +44,9 @@ function get_depth_damage(key)
     interp_fn = Interpolations.LinearInterpolation(
         to_feet.(depth),
         damage_frac,
-        extrapolation_bc=Interpolations.Flat(),
+        extrapolation_bc = Interpolations.Flat(),
     )
-    damage_fn = function (depth::T) where T <: Unitful.Length
+    damage_fn = function (depth::T) where {T<:Unitful.Length}
         return interp_fn(to_feet(depth))
     end
     return damage_fn

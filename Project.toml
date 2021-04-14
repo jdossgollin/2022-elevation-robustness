@@ -3,6 +3,8 @@ authors = ["James Doss-Gollin"]
 
 [deps]
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
+FragilityCurves = "6ebc50ea-1248-429d-8624-a51ba0d4a88c"
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 
 [compat]
 julia = "1.6.0"

@@ -12,7 +12,7 @@ To (locally) reproduce this project, do the following:
    git-history and may need to be downloaded independently.
 1. Open a Julia console and do:
 
-   ```
+   ```bash
    julia> using Pkg
    julia> Pkg.activate("path/to/this/project")
    julia> Pkg.instantiate()

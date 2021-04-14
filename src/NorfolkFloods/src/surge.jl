@@ -45,7 +45,7 @@ Read in the Norfolk surge data at Sewell's Point
 """
 function produce_norfolk_hourly()
     hourly_surge = _parse_noaa_file(norfolk_hourly_fnames)
-    return HourlyGageRecord(hourly_surge, "Sewell's Point", "8638610")
+    return HourlyGageRecord(hourly_surge, "Sewell's Point, VA", "8638610")
 end
 
 """

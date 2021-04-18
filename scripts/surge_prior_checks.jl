@@ -37,7 +37,9 @@ The Jacobian for the prior
 
 See the unnumbered equation following equation 13.7 of
 
-Stephenson, A. (2015). Bayesian inference for extreme value modeling. In D. K. Dey & J. Yan, Extreme value modeling and risk analysis: methods and applications. Philadelphia, PA: CRC Press LLC.
+Stephenson, A. (2015). Bayesian inference for extreme value modeling.
+In D. K. Dey & J. Yan, Extreme value modeling and risk analysis:
+methods and applications. Philadelphia, PA: CRC Press LLC.
 """
 function jacobian_coles(θ, x)
     μ, σ, ξ = θ

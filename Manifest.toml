@@ -357,9 +357,9 @@ version = "3.1.0"
 
 [[DynamicPPL]]
 deps = ["AbstractMCMC", "AbstractPPL", "Bijectors", "ChainRulesCore", "Distributions", "MacroTools", "NaturalSort", "Random"]
-git-tree-sha1 = "60fd6e58fa6a054b29aaf8d70bdb699a7afb9641"
+git-tree-sha1 = "547230d4fbee96572b1794d7dbe532544968a8fc"
 uuid = "366bfd00-2699-11ea-058f-f148b4cae6d8"
-version = "0.10.14"
+version = "0.10.15"
 
 [[EarCut_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]

@@ -15,11 +15,11 @@ using Turing, Distributions, DynamicHMC
 using DynamicPPL: @addlogprob!
 
 
-@model function Demo(y)
+@model function Demo()
 
     # define the parameters as vaguely as possible
-    μ ~ Flat()
-    σ ~ FlatPos(0.0)
+    μ ~ Turing.Flat()
+    σ ~ Turing.FlatPos(0.0)
 
     # we're going to use this distribution repeatedly
     dist = Normal(μ, σ)
@@ -31,12 +31,10 @@ using DynamicPPL: @addlogprob!
     # prior distribution on quantiles - pretend this is "from experts"
     DynamicPPL.@addlogprob! logpdf(Normal(3, 0.1), q50) # our prior on the median is about 5
     DynamicPPL.@addlogprob! logpdf(Normal(10, 0.1), q90) # our prior on the 90th percentile is about 10
-
-    y .~ dist
 end
 
-y = [0]
-prior = sample(Demo(y), DynamicNUTS(), 100_000)
+y = zeros(1000)
+prior = sample(Demo(), DynamicNUTS(), 100_000)
 yhat_prior = rand.(Normal.(prior[:μ], prior[:σ]))[:]
-@show quantile(yhat_prior, 0.50)
-@show quantile(yhat_prior, 0.90)
+@show quantile(yhat_prior, 0.50) # should be about 3
+@show quantile(yhat_prior, 0.90) # should be about 10

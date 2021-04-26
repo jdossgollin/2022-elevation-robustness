@@ -12,15 +12,15 @@ struct StateOfWorld{N,T<:Real}
 end
 
 function StateOfWorld(;
-    years::AbstractVector{Int},
+    years::AbstractVector{Int};
     msl::AbstractVector{T},
     surge::AbstractVector{T},
 ) where {T<:AbstractFloat}
     length(years) == length(msl) == length(surge) || throw(DimensionMismatch())
     return StateOfWorld{length(years),T}(years, msl, surge)
 end
-sow1 = StateOfWorld(years = [10, 11, 12], msl = [3.3, 3.4, 3.4], surge = [0.1, -3.1, 5.3])
-sow2 = StateOfWorld(years = [5, 11, 3], msl = [3.3, 2.1, 3.4], surge = [0.1, -3.1, 5.3])
+sow1 = StateOfWorld(; years = [10 11 12], msl = [3.3 3.4 3.4], surge = [0.1 -3.1 5.3])
+sow2 = StateOfWorld(; years = [5, 11, 3], msl = [3.3, 2.1, 3.4], surge = [0.1, -3.1, 5.3])
 
 """
 A SOWCollection stores a set of SOWs and probabilities corresponding to each

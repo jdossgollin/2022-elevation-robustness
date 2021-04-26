@@ -4,20 +4,8 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 42f6d411-aa95-4dd2-9b7c-b8c94fdd60c5
-using DrWatson
-
-# ╔═╡ 8cf4ffa3-91c8-4925-8486-7e63561230a2
-using PlutoUI; PlutoUI.TableOfContents(title="Outline") # TOC
-
-# ╔═╡ 7eb464e9-4e88-4980-8cd1-646fe5403a65
-begin
-	using Turing, DynamicHMC, Distributions, DataFrames
-	using Plots, StatsPlots, ColorSchemes, Unitful
-	using StatsBase: pacf, corkendall
-	using Printf: @sprintf
-	using NorfolkFloods
-end
+# ╔═╡ 0dd73ca2-0afe-4af8-9329-7d88dd1d84e3
+using CSV
 
 # ╔═╡ 89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
 md"
@@ -32,14 +20,20 @@ md"## Front Matter
 Let's do our package imports and create a table of contents
 "
 
-# ╔═╡ 62565e3e-4a2a-4f13-8cf8-907fa36aa715
-@quickactivate "2021-elevation-robustness" # see DrWatson docs
-
 # ╔═╡ 3bbdc4be-4ea9-427d-ab03-f41b7060f3ab
 md"Set a consistent color scheme"
 
 # ╔═╡ 87661bf8-efd7-432b-a89f-00d0564194aa
 colors = ColorSchemes.tab10; # define color scheme
+
+# ╔═╡ 90879815-a293-477d-b52b-bc326ad8a941
+md"choose how many samples to create and how many chains to run"
+
+# ╔═╡ 71950ea2-aae3-40a6-b46c-b3f61ca73aaf
+n_chains, n_samples = 4, 100_000;
+
+# ╔═╡ 51ce2dc5-8a94-4e9a-bca0-7c4e9ee5adc3
+samples_per_chain = Int(n_samples / n_chains)
 
 # ╔═╡ 42f2eae8-85eb-44a1-8e97-8cddc0722561
 md"## Prior Model
@@ -130,11 +124,12 @@ md"### Sample Model
 
 Let's draw some samples from the prior"
 
-# ╔═╡ 6303137c-0c59-43a9-aca8-41ec86fcd206
-prior_model = GEVModel([missing]);
-
 # ╔═╡ 65130fcb-4285-4dbe-b1b1-c3edfc6ca33c
-prior = sample(prior_model, DynamicNUTS(), 10_000; drop_warmup = true)
+prior = sample(
+	GEVModel([missing]),
+	NUTS(), MCMCThreads(),
+	samples_per_chain, n_chains; drop_warmup = true
+);
 
 # ╔═╡ 6cf4c506-c934-4fd2-8735-7567548abdf7
 md"We can visualize our samples and compute some summary stats as a crude way to check convergence"
@@ -220,18 +215,17 @@ yhat_prior, yhat_prior_flat = sample_fit(prior);
 
 # ╔═╡ 28d9b25f-1681-472e-9e2f-d49fc2170d8e
 predictive_plot = histogram(
-    yhat_prior_flat,
-    xlabel = "",
-    ylabel = "",
+	yhat_prior_flat[findall(-2.5 .< yhat_prior_flat .< 20)],
+    xlabel = "Storm Surge (ft)",
+    ylabel = "density",
     label = "Prior",
-    title = "Distribution",
     normalize = :pdf,
-    orientation = :horizontal,
     linecolor = false,
+	fill=true,
     fillalpha = 0.5,
-    color = colors[1],
-    legend = :bottomright,
-	ylims = (-2.5, 15)
+    fillcolor = colors[1],
+    legend = :topright,
+	xlims = (-2.5, 15),
 )
 
 # ╔═╡ 249793f3-137b-4406-9c9b-9fbf24bea2bb
@@ -243,7 +237,6 @@ data_plot = plot(
     y,
     label = "",
     ylabel = "Storm Surge (ft)",
-    title = "Observations",
     marker = ".",
 )
 
@@ -253,7 +246,11 @@ md"### Fit Model
 Let's draw some samples from our posterior"
 
 # ╔═╡ 37977dde-5181-4f95-97fb-f6b80f2da858
-posterior = sample(GEVModel(y), DynamicNUTS(), 10_000, drop_warmup = true);
+posterior = sample(
+	GEVModel(y), NUTS(), MCMCThreads(),
+	samples_per_chain, n_chains;
+	drop_warmup = true
+);
 
 # ╔═╡ 04d8d18b-7e00-436d-82b4-8082539c2aac
 md"### Sampling Statistics
@@ -279,16 +276,16 @@ yhat, yhat_flat = sample_fit(posterior);
 begin
 	histogram!(
 		predictive_plot,
-		yhat_flat,
+		yhat_flat[findall(-2.5 .< yhat_flat .< 20)],
 		label = "Posterior",
-		linecolor = false,
-		fillalpha = 0.5,
-		orientation = :horizontal,
 		normalize = :pdf,
-		color = colors[2],
+		linecolor = false,
+		fill=true,
+		fillalpha = 0.5,
+		fillcolor = colors[2],
 	)
-	hline!(predictive_plot, [quantile(yhat_flat, 0.99)], color = colors[1], label = "")
-	hline!(predictive_plot, [quantile(yhat_prior_flat, 0.99)], color = colors[2], label = "")
+	vline!(predictive_plot, [quantile(yhat_prior_flat, 0.99)], color = colors[1], label = "Prior Q99")
+	vline!(predictive_plot, [quantile(yhat_flat, 0.99)], color = colors[2], label = "Posterior Q99")
 end
 
 # ╔═╡ a7e84094-bb04-4f68-9c09-52ae3c66c1af
@@ -297,7 +294,7 @@ md"### Visualization
 let's put these plots together and save them nicely"
 
 # ╔═╡ 49bef039-9439-418f-82b4-7a591580eb82
-prior_predictive = plot(data_plot, predictive_plot, link = :y, yrange = (-1.25, 10), layout = (1, 2))
+prior_predictive = plot(data_plot, predictive_plot, layout = (2, 1), size=(600, 400))
 
 # ╔═╡ 812dcc5e-22f4-439a-b199-11015c4f142e
 md"We can see a notable sharpening from a relatively wide prior to a more narrow posterior."
@@ -427,15 +424,56 @@ rt_plot = plot_return_period(obs, posterior; q = [0.1, 0.9])
 # ╔═╡ 4480d8c1-ee98-4148-a506-bd04c45b17c4
 savefig(plotsdir("return_level.pdf"));
 
+# ╔═╡ 5a1e2a87-8747-4118-97fc-5ed2d7512f86
+md"## Save SOWs
+
+Now that we are relatively happy with our model, we can save our set of synthetic future storm surges to use in our decision model.
+"
+
+# ╔═╡ 98a5b84d-4757-4720-90cc-8569df4169a4
+hcat(yhat...)
+
+# ╔═╡ a45d3648-383d-4a2b-8402-277f6566a1e1
+
+
+# ╔═╡ 42f6d411-aa95-4dd2-9b7c-b8c94fdd60c5
+using DrWatson
+
+# ╔═╡ 7eb464e9-4e88-4980-8cd1-646fe5403a65
+begin
+	@quickactivate "2021-elevation-robustness"
+	
+	using PlutoUI
+	PlutoUI.TableOfContents(title="Outline")
+	
+	using ColorSchemes
+	using DataFrames
+	using Distributions
+	using DrWatson
+	using DynamicHMC
+	using NetCDF
+	using Plots
+	using StatsPlots
+	using Turing
+	using Unitful
+	
+	using StatsBase: pacf, corkendall
+	using Printf: @sprintf
+	
+	using NorfolkFloods
+	using NorfolkBRICK
+end
+
 # ╔═╡ Cell order:
 # ╟─89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
 # ╟─0f50e342-3d55-49af-b611-a43a03ac9fcf
 # ╠═42f6d411-aa95-4dd2-9b7c-b8c94fdd60c5
-# ╠═62565e3e-4a2a-4f13-8cf8-907fa36aa715
-# ╠═8cf4ffa3-91c8-4925-8486-7e63561230a2
 # ╠═7eb464e9-4e88-4980-8cd1-646fe5403a65
 # ╟─3bbdc4be-4ea9-427d-ab03-f41b7060f3ab
 # ╠═87661bf8-efd7-432b-a89f-00d0564194aa
+# ╟─90879815-a293-477d-b52b-bc326ad8a941
+# ╠═71950ea2-aae3-40a6-b46c-b3f61ca73aaf
+# ╠═51ce2dc5-8a94-4e9a-bca0-7c4e9ee5adc3
 # ╟─42f2eae8-85eb-44a1-8e97-8cddc0722561
 # ╠═d821aa4f-fe48-481f-b089-6b424ca76065
 # ╟─7423d0c2-cde6-4c6a-820e-26cbb78201ea
@@ -445,7 +483,6 @@ savefig(plotsdir("return_level.pdf"));
 # ╟─aba4a98b-5065-4735-9b41-e3f15ed80a89
 # ╠═41c8ab50-4c8b-46f0-a3e6-ef6b9ed12ae2
 # ╟─c024becc-77bb-4537-9814-49a3907bc6cb
-# ╠═6303137c-0c59-43a9-aca8-41ec86fcd206
 # ╠═65130fcb-4285-4dbe-b1b1-c3edfc6ca33c
 # ╟─6cf4c506-c934-4fd2-8735-7567548abdf7
 # ╠═27b42c59-530f-42a8-a043-eb99c8b8309e
@@ -469,7 +506,7 @@ savefig(plotsdir("return_level.pdf"));
 # ╠═04d8d18b-7e00-436d-82b4-8082539c2aac
 # ╠═305ef8c9-519a-4902-b2b8-0b994d115f6d
 # ╠═8ce3d09d-df1a-4a29-9d22-67f568b7802b
-# ╠═939b5fa3-ef2b-48a2-8ea2-b7ab978b7a14
+# ╟─939b5fa3-ef2b-48a2-8ea2-b7ab978b7a14
 # ╠═0f8d90aa-19b4-47c9-9975-fdb0a63b0cd8
 # ╠═49acc5db-fd4f-4104-806d-8e2dc4b54c36
 # ╟─a7e84094-bb04-4f68-9c09-52ae3c66c1af
@@ -488,3 +525,7 @@ savefig(plotsdir("return_level.pdf"));
 # ╠═504ebfe6-b3b6-46a8-a9f2-2b9563370735
 # ╠═464d6b50-f0cc-41fb-af02-7010344d6ea4
 # ╠═4480d8c1-ee98-4148-a506-bd04c45b17c4
+# ╟─5a1e2a87-8747-4118-97fc-5ed2d7512f86
+# ╠═98a5b84d-4757-4720-90cc-8569df4169a4
+# ╠═0dd73ca2-0afe-4af8-9329-7d88dd1d84e3
+# ╠═a45d3648-383d-4a2b-8402-277f6566a1e1

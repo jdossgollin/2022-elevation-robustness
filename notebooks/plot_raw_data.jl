@@ -7,9 +7,6 @@ using InteractiveUtils
 # ╔═╡ cfaa1f89-3fa7-4ca3-b32b-88c68d2e2081
 using DrWatson
 
-# ╔═╡ 04263916-8f87-4614-bb5d-a0ef1a1d7fe9
-using PlutoUI; PlutoUI.TableOfContents(title="Outline")
-
 # ╔═╡ b1709ffe-44c7-4f5c-a254-4a921717163e
 using Plots, Unitful, ColorSchemes, UnitfulRecipes
 
@@ -28,6 +25,10 @@ Start with package imports and definitions of constants
 
 # ╔═╡ 386000ba-3b50-4f55-b674-065149a2eddf
 @quickactivate "2021-elevation-robustness"
+
+# ╔═╡ 04263916-8f87-4614-bb5d-a0ef1a1d7fe9
+using PlutoUI;
+PlutoUI.TableOfContents(title = "Outline");
 
 # ╔═╡ 68e96bb1-f5ef-47e3-b293-d3c915a2e558
 colors = ColorSchemes.tab10;

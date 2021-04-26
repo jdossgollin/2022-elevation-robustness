@@ -1,11 +1,33 @@
 ### A Pluto.jl notebook ###
-# v0.14.2
+# v0.14.3
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 0dd73ca2-0afe-4af8-9329-7d88dd1d84e3
-using CSV
+# ╔═╡ 42f6d411-aa95-4dd2-9b7c-b8c94fdd60c5
+using DrWatson
+
+# ╔═╡ 7eb464e9-4e88-4980-8cd1-646fe5403a65
+begin
+	using PlutoUI
+	PlutoUI.TableOfContents(title="Outline")
+	
+	using ColorSchemes
+	using DataFrames
+	using Distributions
+	using DynamicHMC
+	using NetCDF
+	using Plots
+	using StatsPlots
+	using Turing
+	using Unitful
+	
+	using StatsBase: pacf, corkendall
+	using Printf: @sprintf
+	
+	using NorfolkFloods
+	using NorfolkBRICK
+end
 
 # ╔═╡ 89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
 md"
@@ -19,6 +41,9 @@ md"## Front Matter
 
 Let's do our package imports and create a table of contents
 "
+
+# ╔═╡ cb71e853-b247-4212-804f-0973f03ae2ab
+@quickactivate "2021-elevation-robustness"
 
 # ╔═╡ 3bbdc4be-4ea9-427d-ab03-f41b7060f3ab
 md"Set a consistent color scheme"
@@ -163,7 +188,7 @@ end
 # ╔═╡ 87a8ac97-e394-414b-ab86-d0db3e7c84ac
 begin
 	scatter(sampled, desired, xlabel="Estimated", ylabel="Truth", aspect_ratio=:equal, label="Fake Data Experiment", legend=:topleft)
-	Plots.abline!(1, 0, label="1 to 1 Line")
+	Plots.abline!(1, 0, label="1:1 Line")
 end
 
 # ╔═╡ 4ef33cff-004b-4b94-bb6e-0b049525f1b6
@@ -175,6 +200,16 @@ md"### Prior Predictive
 
 Now we will sample from the prior predictive distribution
 "
+
+# ╔═╡ ce1c31ed-87ac-496d-a061-087ff7031070
+function sample_fit(fit::Chains, N::Int)
+    yhat = [
+        rand(GeneralizedExtremeValue(μ, σ, ξ), N) for
+        (μ, σ, ξ) in zip(fit[:μ], fit[:σ], fit[:ξ])
+    ]
+    yhat_flat = vcat(yhat...)[:]
+    return yhat, yhat_flat
+end;
 
 # ╔═╡ babba5ae-ea3d-4912-a363-e4ecbc45c1a7
 md"
@@ -200,32 +235,22 @@ obs = get_norfolk_annual(); # from custom built NorfolkFloods package
 # ╔═╡ 17edbd47-1af7-49a7-a0d9-2ba4144f3f8d
 y = ustrip.(u"ft", obs.surge);
 
-# ╔═╡ ce1c31ed-87ac-496d-a061-087ff7031070
-function sample_fit(fit::Chains)
-    yhat = [
-        rand(GeneralizedExtremeValue(μ, σ, ξ), length(y)) for
-        (μ, σ, ξ) in zip(fit[:μ], fit[:σ], fit[:ξ])
-    ]
-    yhat_flat = vcat(yhat...)[:]
-    return yhat, yhat_flat
-end;
-
 # ╔═╡ f462f258-d730-484c-873f-0de883d8edbf
-yhat_prior, yhat_prior_flat = sample_fit(prior);
+yhat_prior, yhat_prior_flat = sample_fit(prior, length(y));
 
 # ╔═╡ 28d9b25f-1681-472e-9e2f-d49fc2170d8e
 predictive_plot = histogram(
-	yhat_prior_flat[findall(-2.5 .< yhat_prior_flat .< 20)],
-    xlabel = "Storm Surge (ft)",
-    ylabel = "density",
+	yhat_prior_flat[findall(-2.5 .< yhat_prior_flat .< 15)],
     label = "Prior",
     normalize = :pdf,
     linecolor = false,
 	fill=true,
     fillalpha = 0.5,
     fillcolor = colors[1],
-    legend = :topright,
-	xlims = (-2.5, 15),
+    legend = :bottomright,
+	orientation=:horizontal,
+	ylims = (-2.5, 15),
+	xlims = (0, 0.8),
 )
 
 # ╔═╡ 249793f3-137b-4406-9c9b-9fbf24bea2bb
@@ -270,7 +295,7 @@ Now let's look at our posterior predictive distribution
 "
 
 # ╔═╡ 0f8d90aa-19b4-47c9-9975-fdb0a63b0cd8
-yhat, yhat_flat = sample_fit(posterior);
+yhat, yhat_flat = sample_fit(posterior, length(y));
 
 # ╔═╡ 49acc5db-fd4f-4104-806d-8e2dc4b54c36
 begin
@@ -283,10 +308,14 @@ begin
 		fill=true,
 		fillalpha = 0.5,
 		fillcolor = colors[2],
+		orientation=:horizontal,
 	)
-	vline!(predictive_plot, [quantile(yhat_prior_flat, 0.99)], color = colors[1], label = "Prior Q99")
-	vline!(predictive_plot, [quantile(yhat_flat, 0.99)], color = colors[2], label = "Posterior Q99")
+	hline!(predictive_plot, [quantile(yhat_prior_flat, 0.99)], color = colors[1], label = "Prior Q99")
+	hline!(predictive_plot, [quantile(yhat_flat, 0.99)], color = colors[2], label = "Posterior Q99")
 end
+
+# ╔═╡ d4fc5193-1f9c-4e98-937b-b3561a59b932
+
 
 # ╔═╡ a7e84094-bb04-4f68-9c09-52ae3c66c1af
 md"### Visualization
@@ -294,7 +323,14 @@ md"### Visualization
 let's put these plots together and save them nicely"
 
 # ╔═╡ 49bef039-9439-418f-82b4-7a591580eb82
-prior_predictive = plot(data_plot, predictive_plot, layout = (2, 1), size=(600, 400))
+prior_predictive = plot(
+	data_plot,
+	predictive_plot,
+	link = :y,
+	layout = (1, 2),
+	size=(600, 400),
+	ylims = (-1.25, 10),
+)
 
 # ╔═╡ 812dcc5e-22f4-439a-b199-11015c4f142e
 md"We can see a notable sharpening from a relatively wide prior to a more narrow posterior."
@@ -353,6 +389,9 @@ test_plots = plot(
     size = (1200, 900),
 )
 
+# ╔═╡ 3c1ff117-6751-4ff7-bb42-b92519ae94ba
+savefig(test_plots,plotsdir("surge_test_statistics.pdf"))
+
 # ╔═╡ 2c9d29f5-d155-4a2d-9d0a-3d92f1775323
 md"We can see that our estimates (histogram and density) are broadly quite consistent with the observed data (vertical green line). The main discrepancies are:
 
@@ -360,22 +399,33 @@ md"We can see that our estimates (histogram and density) are broadly quite consi
 - We have a non-zero (albeit very low!) probability of a storm surge in excess of 30 feet. This is not very realistic. However, since we will be taking the convolution of hazard with a damage function that is S-shaped (even if the house is fully submerged, damage cannot be more than the house value), it doesn't matter *for our purposes here*  whether a flood is 30 or 60 feet, so this is not a fatal flaw
 "
 
-# ╔═╡ 3c1ff117-6751-4ff7-bb42-b92519ae94ba
-savefig(test_plots,plotsdir("surge_test_statistics.pdf"))
-
 # ╔═╡ 03ab7d5e-96eb-4be3-8794-51f200eb3e63
 md"## Return Periods
 
 Many hydrologists are used to seeing our PDFs plotted as return periods.
-That's easy enough to do!"
+That's easy enough to do!
+
+We will plot the observations using the simple empirical estimator
+
+$$P = \frac{m}{N+1}$$
+
+and we will plot the posterior estimate from our model
+"
+
+# ╔═╡ dc46d7cb-3f21-4bdf-bdc8-e22c13a4fed8
+function empirical_return_period(y::Vector{<:Real})
+	N = length(y)
+	m = [sum(y .> yi) for yi in y]
+	rt = 1 ./ ( m ./ (N+1))
+	return rt
+end;
 
 # ╔═╡ 504ebfe6-b3b6-46a8-a9f2-2b9563370735
 function plot_return_period(obs::AnnualGageRecord, posterior::Chains; q = [0.1, 0.9])
 
-    yhat, yhat_flat = sample_fit(posterior)
-    exceed_prob = [mean(yhat_flat .< yi) for yi in ustrip.(u"ft", obs.surge)]
-    return_periods = @. 1 / (1 - exceed_prob)
-
+    yhat, yhat_flat = sample_fit(posterior, length(obs.surge))
+    return_periods = empirical_return_period(yhat_flat)
+	
     rt_plot = 10 .^ (range(0, log10(500); length = 101)[2:end])
     quantile_plot = 1 .- 1 ./ rt_plot
     rl_plot = [quantile(yhat_flat, pr) for pr in quantile_plot]
@@ -414,7 +464,7 @@ function plot_return_period(obs::AnnualGageRecord, posterior::Chains; q = [0.1, 
         color = "gray",
         linewidth = 0,
     )
-    scatter!(p, return_periods, y, label = "Historical Floods")
+    scatter!(p, return_periods, y, label = "Observed")
     return p
 end;
 
@@ -422,7 +472,7 @@ end;
 rt_plot = plot_return_period(obs, posterior; q = [0.1, 0.9])
 
 # ╔═╡ 4480d8c1-ee98-4148-a506-bd04c45b17c4
-savefig(plotsdir("return_level.pdf"));
+savefig(rt_plot, plotsdir("return_level.pdf"));
 
 # ╔═╡ 5a1e2a87-8747-4118-97fc-5ed2d7512f86
 md"## Save SOWs
@@ -430,44 +480,20 @@ md"## Save SOWs
 Now that we are relatively happy with our model, we can save our set of synthetic future storm surges to use in our decision model.
 "
 
-# ╔═╡ 98a5b84d-4757-4720-90cc-8569df4169a4
-hcat(yhat...)
+# ╔═╡ a63fae68-e070-4df0-9ae7-fef90fe426b1
+typeof(prior) <: Turing.Chains
 
-# ╔═╡ a45d3648-383d-4a2b-8402-277f6566a1e1
+# ╔═╡ 832326af-d9ae-406c-86c5-2b2e04ccf5b5
+typeof(model) <: DynamicPPL.Model
 
+# ╔═╡ 34645ff8-7e7d-4530-b94c-01c4964d192f
 
-# ╔═╡ 42f6d411-aa95-4dd2-9b7c-b8c94fdd60c5
-using DrWatson
-
-# ╔═╡ 7eb464e9-4e88-4980-8cd1-646fe5403a65
-begin
-	@quickactivate "2021-elevation-robustness"
-	
-	using PlutoUI
-	PlutoUI.TableOfContents(title="Outline")
-	
-	using ColorSchemes
-	using DataFrames
-	using Distributions
-	using DrWatson
-	using DynamicHMC
-	using NetCDF
-	using Plots
-	using StatsPlots
-	using Turing
-	using Unitful
-	
-	using StatsBase: pacf, corkendall
-	using Printf: @sprintf
-	
-	using NorfolkFloods
-	using NorfolkBRICK
-end
 
 # ╔═╡ Cell order:
 # ╟─89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
 # ╟─0f50e342-3d55-49af-b611-a43a03ac9fcf
 # ╠═42f6d411-aa95-4dd2-9b7c-b8c94fdd60c5
+# ╠═cb71e853-b247-4212-804f-0973f03ae2ab
 # ╠═7eb464e9-4e88-4980-8cd1-646fe5403a65
 # ╟─3bbdc4be-4ea9-427d-ab03-f41b7060f3ab
 # ╠═87661bf8-efd7-432b-a89f-00d0564194aa
@@ -503,13 +529,14 @@ end
 # ╠═f9f10ec3-3ccf-4954-9f55-ed40649b88f5
 # ╟─7353d204-622c-4bf9-8319-9fc0ee2ba470
 # ╠═37977dde-5181-4f95-97fb-f6b80f2da858
-# ╠═04d8d18b-7e00-436d-82b4-8082539c2aac
+# ╟─04d8d18b-7e00-436d-82b4-8082539c2aac
 # ╠═305ef8c9-519a-4902-b2b8-0b994d115f6d
 # ╠═8ce3d09d-df1a-4a29-9d22-67f568b7802b
 # ╟─939b5fa3-ef2b-48a2-8ea2-b7ab978b7a14
 # ╠═0f8d90aa-19b4-47c9-9975-fdb0a63b0cd8
 # ╠═49acc5db-fd4f-4104-806d-8e2dc4b54c36
-# ╟─a7e84094-bb04-4f68-9c09-52ae3c66c1af
+# ╠═d4fc5193-1f9c-4e98-937b-b3561a59b932
+# ╠═a7e84094-bb04-4f68-9c09-52ae3c66c1af
 # ╠═49bef039-9439-418f-82b4-7a591580eb82
 # ╟─812dcc5e-22f4-439a-b199-11015c4f142e
 # ╠═ffab9982-6516-4ca0-8139-2c82c08d398b
@@ -519,13 +546,14 @@ end
 # ╠═4ea2d457-1220-4ffc-9288-7902a1d57105
 # ╠═8308dc15-b564-4635-bbda-525804d69815
 # ╠═690e0fe3-e29b-44f2-83dc-1230b4e3ae81
-# ╟─2c9d29f5-d155-4a2d-9d0a-3d92f1775323
 # ╠═3c1ff117-6751-4ff7-bb42-b92519ae94ba
+# ╟─2c9d29f5-d155-4a2d-9d0a-3d92f1775323
 # ╟─03ab7d5e-96eb-4be3-8794-51f200eb3e63
+# ╠═dc46d7cb-3f21-4bdf-bdc8-e22c13a4fed8
 # ╠═504ebfe6-b3b6-46a8-a9f2-2b9563370735
 # ╠═464d6b50-f0cc-41fb-af02-7010344d6ea4
 # ╠═4480d8c1-ee98-4148-a506-bd04c45b17c4
 # ╟─5a1e2a87-8747-4118-97fc-5ed2d7512f86
-# ╠═98a5b84d-4757-4720-90cc-8569df4169a4
-# ╠═0dd73ca2-0afe-4af8-9329-7d88dd1d84e3
-# ╠═a45d3648-383d-4a2b-8402-277f6566a1e1
+# ╠═a63fae68-e070-4df0-9ae7-fef90fe426b1
+# ╠═832326af-d9ae-406c-86c5-2b2e04ccf5b5
+# ╠═34645ff8-7e7d-4530-b94c-01c4964d192f

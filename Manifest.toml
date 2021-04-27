@@ -957,7 +957,7 @@ uuid = "84515ef5-3549-4c19-93f4-4191edf2fe18"
 version = "0.1.0"
 
 [[NorfolkFloods]]
-deps = ["CSV", "DataFrames", "Dates", "DrWatson", "JLD2", "Statistics", "TimeSeries", "Unitful"]
+deps = ["CSV", "DataFrames", "Dates", "Distributions", "DrWatson", "DynamicPPL", "JLD2", "Statistics", "TimeSeries", "Turing", "Unitful"]
 path = "src/NorfolkFloods"
 uuid = "7574a969-f80b-4bcf-97e5-3786e4106ea9"
 version = "0.1.0"

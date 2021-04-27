@@ -13,10 +13,6 @@ begin
 	PlutoUI.TableOfContents(title="Outline")
 	
 	using ColorSchemes
-	using DataFrames
-	using Distributions
-	using DynamicHMC
-	using NetCDF
 	using Plots
 	using StatsPlots
 	using Turing
@@ -29,11 +25,14 @@ begin
 	using NorfolkBRICK
 end
 
+# ╔═╡ 055a06b1-d2b0-4774-85dd-2bddc2c25bbf
+using CSV
+
 # ╔═╡ 89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
 md"
 # Storm Surge Modeling
 
-In this notebook, we will check our model of storm surge for Norfolk, VA
+In this notebook, we will develop and check our model of storm surge for Norfolk, VA.
 "
 
 # ╔═╡ 0f50e342-3d55-49af-b611-a43a03ac9fcf
@@ -57,17 +56,15 @@ md"choose how many samples to create and how many chains to run"
 # ╔═╡ 71950ea2-aae3-40a6-b46c-b3f61ca73aaf
 n_chains, n_samples = 4, 100_000;
 
-# ╔═╡ 51ce2dc5-8a94-4e9a-bca0-7c4e9ee5adc3
-samples_per_chain = Int(n_samples / n_chains)
-
 # ╔═╡ 42f2eae8-85eb-44a1-8e97-8cddc0722561
 md"## Prior Model
 
-We start by building our prior
+We start by exampining our prior.
+This prior is provided in the `NorfolkFloods` module included as part of this repository.
+However, the full model is specified below here.
 
-### Model Specification
-
-Our model of storm surge will be based on those of Coles & Tawn (1996) and Stephenson (2015), albeit with a few differences. Specifically:
+Our model of storm surge will be loosely based on those of Coles & Tawn (1996) and Stephenson (2015), albeit with a few differences.
+Specifically:
 
 1. We assume a stationary GEV model for the storm surges $y_i$: $y_i \sim \text{GEV}(\mu, \sigma, \xi)$
 1. We assume flat priors on $\mu,\sigma,\xi$, but impose $\sigma>0$ by definition, $\xi>0$ to ensure that the distribution has a lower bound, and $\mu > 0$ to restrict the lower bound. This is reasonable only for our specific circumstances: hourly storm surge plus tide is defined as the residual after subtracting the mean sea level. When we take the maximum of that, it is guaranteed to be $\geq 0$.
@@ -78,11 +75,7 @@ Our model of storm surge will be based on those of Coles & Tawn (1996) and Steph
 "
 
 # ╔═╡ d821aa4f-fe48-481f-b089-6b424ca76065
-priors_on_rl = [
-    (0.9, LogNormal(1.8, 0.4)), # 10 year flood
-    (0.99, LogNormal(2, 0.4)), # 100 year flood
-    (0.999, LogNormal(2.2, 0.4)), # 1000 year flood
-];
+GEV_priors = get_GEV_priors();
 
 # ╔═╡ 7423d0c2-cde6-4c6a-820e-26cbb78201ea
 md"### Visualize Priors
@@ -90,14 +83,14 @@ md"### Visualize Priors
 let's visualize these priors"
 
 # ╔═╡ 79eb6578-2c26-4245-8d19-f3e2b742120e
-function plot_rl_priors(priors_on_rl)
+function plot_rl_priors(priors)
     p = plot(
         xlims = (0, 30),
         xlabel = "Storm Surge (ft)",
         ylabel = "Probability Density",
         title = "Assumed Prior Knowledge",
     )
-    for (pr, d) in priors_on_rl
+    for (pr, d) in priors
 		rl = Int(round(1 / (1 - pr)))
         plot!(p, d, label = "$(rl) Year Flood", linewidth=2)
     end
@@ -105,7 +98,7 @@ function plot_rl_priors(priors_on_rl)
 end;
 
 # ╔═╡ 1a666d17-5d3c-4393-bb4c-f8fd92c02461
-rl_plot = plot_rl_priors(priors_on_rl)
+rl_plot = plot_rl_priors(GEV_priors)
 
 # ╔═╡ 840c1399-c74d-44af-93ce-c5d9286b3155
 savefig(rl_plot, plotsdir("priors_on_surge_quantiles.pdf"));
@@ -121,28 +114,8 @@ The above quantiles were reached after some iteration and are by no means *corre
 Now let's build our prior model and draw some samples from it
 "
 
-# ╔═╡ 41c8ab50-4c8b-46f0-a3e6-ef6b9ed12ae2
-@model function GEVModel(y)
-
-    # completely flat priors (albeit positive -- see docstring)
-    μ ~ FlatPos(0.0)
-    σ ~ FlatPos(0.0)
-    ξ ~ FlatPos(0.0)
-
-    # we're going to use this distribution repeatedly
-    dist = GeneralizedExtremeValue(μ, σ, ξ)
-
-    # implement the prior on quantile levels
-    for (prob, prior_dist) in priors_on_rl
-        rl = quantile(dist, prob)
-        Turing.@addlogprob! logpdf(prior_dist, rl)
-    end
-
-    # data model
-    if !any(ismissing.(y))
-        y .~ dist
-    end
-end;
+# ╔═╡ 718a638e-b1a4-4f99-affe-11523181e204
+prior_model = GEVModel([missing])
 
 # ╔═╡ c024becc-77bb-4537-9814-49a3907bc6cb
 md"### Sample Model
@@ -150,11 +123,7 @@ md"### Sample Model
 Let's draw some samples from the prior"
 
 # ╔═╡ 65130fcb-4285-4dbe-b1b1-c3edfc6ca33c
-prior = sample(
-	GEVModel([missing]),
-	NUTS(), MCMCThreads(),
-	samples_per_chain, n_chains; drop_warmup = true
-);
+prior = get_fits(prior_model, "prior_model", n_samples; n_chains=n_chains);
 
 # ╔═╡ 6cf4c506-c934-4fd2-8735-7567548abdf7
 md"We can visualize our samples and compute some summary stats as a crude way to check convergence"
@@ -168,22 +137,12 @@ plot(prior)
 # ╔═╡ fe5f4b4b-d317-452c-b3d0-fc8592258183
 md"### Fake Data Experiment
 
-A desirable attribute of a model of storm surges, is being able to accurately fit data that comes from the 'true' distribution. We can check that with fake data!
+A desirable attribute of a model of storm surges, is being able to accurately fit data that comes from a known 'true' distribution.
+We can check that with fake data!
 "
 
-# ╔═╡ 37508701-6009-4975-b538-08f7a497fc9c
-begin
-	fake_dist = GeneralizedExtremeValue(4, 0.5, 0.15);
-	fake_data = rand(fake_dist, 88);
-	fake_posterior = sample(GEVModel(fake_data), DynamicNUTS(), 25_000, drop_warmup = true);
-	fake_yhat = vcat(rand.(GeneralizedExtremeValue.(fake_posterior[:μ], fake_posterior[:σ], fake_posterior[:ξ]), 10)...);
-	desired = []
-	sampled = []
-	for q in 1 .- 1 ./ [2, 5, 10, 25, 50, 100, 250, 500, 1000]
-		append!(desired, quantile(fake_dist, q))
-		append!(sampled, quantile(fake_yhat, q))
-	end
-end
+# ╔═╡ 45e5f9bb-6051-4eed-8cbb-6e578b3b7190
+
 
 # ╔═╡ 87a8ac97-e394-414b-ab86-d0db3e7c84ac
 begin
@@ -489,6 +448,23 @@ typeof(model) <: DynamicPPL.Model
 # ╔═╡ 34645ff8-7e7d-4530-b94c-01c4964d192f
 
 
+# ╔═╡ b8c909c2-e73e-4110-826c-8bd25b6a0f79
+fake_data = [4.43435768746394, 3.8334454506122513, 4.12210297809982, 3.65332873945143, 4.661002000378053, 3.3358915634102013, 4.255893865839665, 3.7115058067700866, 4.890960616426221, 4.84776451739973, 3.730221123450618, 3.731106390741323, 3.7147269548660584, 4.187758384210941, 3.864337754334344, 3.455404397498816, 3.656819695412396, 3.7619278996914036, 4.0446097119281585, 5.033350144871372, 4.365045186716466, 4.198103349098112, 3.960933172291017, 5.974425167345157, 4.0508314871354365, 4.320288458629776, 4.562079790295174, 4.55051992793628, 4.408353309949116, 5.136324744023722, 4.207567037620518, 3.4573594305563122, 4.325327882473579, 4.799928770924252, 5.128776581655985, 4.648583228114229, 4.48580297978011, 4.372843073671519, 4.216071789266268, 3.6922386113800654, 3.9527566745503164, 6.102209918225432, 4.223379433264358, 4.772986069111374, 3.6939482227774096, 3.887440120203203, 3.9579908820572967, 5.460151212155381, 4.781150719225517, 5.406361676993717, 4.626888061260966, 3.738683679784292, 4.845047794694001, 4.301332680049105, 4.0254511290847725, 3.948616408710317, 5.934198971901559, 4.2814026440932, 4.370032677403946, 4.300283964030525, 3.8920062132766344, 3.91588615105011, 3.3977453505804, 3.6804104865354064, 4.084574234921651, 3.820733807858943, 5.286604033397312, 3.7304545267985154, 3.9305315861920582, 4.930670769377999, 4.274604365880339, 4.095050443018732, 3.609655131511273, 4.018833288207049, 3.0076050056593946, 4.36377298176344, 4.265484546114235, 4.336016869166124, 4.395238056083271, 4.10154401685188, 3.9693618483918782, 4.301772108146553, 7.693560538475685, 4.824215189287001, 4.623694536082042, 3.720614959250153, 5.355562570393488, 3.6667267094100473]
+
+# ╔═╡ 37508701-6009-4975-b538-08f7a497fc9c
+begin
+	fake_dist = GeneralizedExtremeValue(4, 0.5, 0.15);
+	fake_data = rand(fake_dist, 88);
+	fake_posterior = sample(GEVModel(fake_data), DynamicNUTS(), 25_000, drop_warmup = true);
+	fake_yhat = vcat(rand.(GeneralizedExtremeValue.(fake_posterior[:μ], fake_posterior[:σ], fake_posterior[:ξ]), 10)...);
+	desired = []
+	sampled = []
+	for q in 1 .- 1 ./ [2, 5, 10, 25, 50, 100, 250, 500, 1000]
+		append!(desired, quantile(fake_dist, q))
+		append!(sampled, quantile(fake_yhat, q))
+	end
+end
+
 # ╔═╡ Cell order:
 # ╟─89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
 # ╟─0f50e342-3d55-49af-b611-a43a03ac9fcf
@@ -499,7 +475,6 @@ typeof(model) <: DynamicPPL.Model
 # ╠═87661bf8-efd7-432b-a89f-00d0564194aa
 # ╟─90879815-a293-477d-b52b-bc326ad8a941
 # ╠═71950ea2-aae3-40a6-b46c-b3f61ca73aaf
-# ╠═51ce2dc5-8a94-4e9a-bca0-7c4e9ee5adc3
 # ╟─42f2eae8-85eb-44a1-8e97-8cddc0722561
 # ╠═d821aa4f-fe48-481f-b089-6b424ca76065
 # ╟─7423d0c2-cde6-4c6a-820e-26cbb78201ea
@@ -507,13 +482,16 @@ typeof(model) <: DynamicPPL.Model
 # ╠═1a666d17-5d3c-4393-bb4c-f8fd92c02461
 # ╠═840c1399-c74d-44af-93ce-c5d9286b3155
 # ╟─aba4a98b-5065-4735-9b41-e3f15ed80a89
-# ╠═41c8ab50-4c8b-46f0-a3e6-ef6b9ed12ae2
+# ╠═718a638e-b1a4-4f99-affe-11523181e204
 # ╟─c024becc-77bb-4537-9814-49a3907bc6cb
 # ╠═65130fcb-4285-4dbe-b1b1-c3edfc6ca33c
 # ╟─6cf4c506-c934-4fd2-8735-7567548abdf7
 # ╠═27b42c59-530f-42a8-a043-eb99c8b8309e
 # ╠═03ff3279-892a-48f0-8a16-ea0ba34bea69
 # ╟─fe5f4b4b-d317-452c-b3d0-fc8592258183
+# ╠═b8c909c2-e73e-4110-826c-8bd25b6a0f79
+# ╠═055a06b1-d2b0-4774-85dd-2bddc2c25bbf
+# ╠═45e5f9bb-6051-4eed-8cbb-6e578b3b7190
 # ╠═37508701-6009-4975-b538-08f7a497fc9c
 # ╠═87a8ac97-e394-414b-ab86-d0db3e7c84ac
 # ╟─4ef33cff-004b-4b94-bb6e-0b049525f1b6

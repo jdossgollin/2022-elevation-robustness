@@ -1,11 +1,13 @@
-import CSV
-import DataFrames
-import DrWatson
-import Dates
-import JLD2
-import TimeSeries
-import Unitful
+using CSV
+using DataFrames
+using Dates
+using DrWatson
+using JLD2
+using TimeSeries
+using Unitful
+
 using Statistics: mean
+using DataFrames: DataFrame
 
 data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 cache_dir = abspath(joinpath(@__DIR__, "..", "..", "..", "data", "processed"))

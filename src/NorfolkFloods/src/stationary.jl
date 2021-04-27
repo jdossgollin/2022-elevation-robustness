@@ -6,8 +6,7 @@ using JLD2
 data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 cache_dir = abspath(joinpath(@__DIR__, "..", "..", "..", "data", "processed"))
 
-"""
-Get the priors on various return levels
+"""Get the priors on various return levels
 """
 function get_GEV_priors()
     return [
@@ -19,8 +18,7 @@ end
 
 gev_priors = get_GEV_priors()
 
-"""
-A stationary GEV model. See `get_GEV_priors` for info on the priors.
+"""A stationary GEV model. See `get_GEV_priors` for info on the priors.
 """
 @model function GEVModel(y)
 
@@ -44,9 +42,8 @@ A stationary GEV model. See `get_GEV_priors` for info on the priors.
     end
 end
 
-"""
-Draw samples from the posterior distribution of `fit`.
-This will simulate a vector of `N` samples for each  posterior draw in `fit`.
+"""Draw samples from the posterior distribution of fit.
+This will simulate a vector of N samples for each  posterior draw in fit.
 """
 function sample_predictive(fit::Chains, N::Int)
     yhat = [
@@ -57,16 +54,15 @@ function sample_predictive(fit::Chains, N::Int)
     return yhat, yhat_flat
 end
 
-"""
-No need to re-run computations; this will cache outputs effectively
+"""No need to re-run computations; this will cache outputs effectively
 """
 function get_fits(
     model::DynamicPPL.Model,
     model_name::String,
     n_samples::Int;
     n_chains::Int = 1,
-    drop_warmup::Bool = True;
-    overwrite::Bool = False,
+    drop_warmup::Bool = true,
+    overwrite::Bool = false,
 )
     cachename =
         joinpath(cache_dir, "surge_models", "stationary_$(model_name)_$(n_samples).jld2")
@@ -74,9 +70,10 @@ function get_fits(
 
     try
         @assert !overwrite
-        chains = DrWatson.load(cachename, "chains")
+        mcmc_chains = DrWatson.load(cachename, "mcmc_chains")
+        return mcmc_chains
     catch err
-        chains = sample(
+        mcmc_chains = sample(
             model,
             NUTS(),
             MCMCThreads(),
@@ -84,7 +81,7 @@ function get_fits(
             n_chains;
             drop_warmup = drop_warmup,
         )
-        DrWatson.wsave(cachename, Dict("chains" => chains))
+        DrWatson.wsave(cachename, Dict("mcmc_chains" => mcmc_chains))
+        return mcmc_chains
     end
-    return chains
 end

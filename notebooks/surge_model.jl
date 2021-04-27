@@ -13,6 +13,8 @@ begin
 	PlutoUI.TableOfContents(title="Outline")
 	
 	using ColorSchemes
+	using CSV
+	using DataFrames
 	using Plots
 	using StatsPlots
 	using Turing
@@ -24,9 +26,6 @@ begin
 	using NorfolkFloods
 	using NorfolkBRICK
 end
-
-# ╔═╡ 055a06b1-d2b0-4774-85dd-2bddc2c25bbf
-using CSV
 
 # ╔═╡ 89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
 md"
@@ -115,7 +114,7 @@ Now let's build our prior model and draw some samples from it
 "
 
 # ╔═╡ 718a638e-b1a4-4f99-affe-11523181e204
-prior_model = GEVModel([missing])
+prior_model = GEVModel([missing]);
 
 # ╔═╡ c024becc-77bb-4537-9814-49a3907bc6cb
 md"### Sample Model
@@ -124,6 +123,9 @@ Let's draw some samples from the prior"
 
 # ╔═╡ 65130fcb-4285-4dbe-b1b1-c3edfc6ca33c
 prior = get_fits(prior_model, "prior_model", n_samples; n_chains=n_chains);
+
+# ╔═╡ 665d984c-88fd-4f02-9af7-68492832cfc2
+prior
 
 # ╔═╡ 6cf4c506-c934-4fd2-8735-7567548abdf7
 md"We can visualize our samples and compute some summary stats as a crude way to check convergence"
@@ -141,8 +143,22 @@ A desirable attribute of a model of storm surges, is being able to accurately fi
 We can check that with fake data!
 "
 
-# ╔═╡ 45e5f9bb-6051-4eed-8cbb-6e578b3b7190
-
+# ╔═╡ 37508701-6009-4975-b538-08f7a497fc9c
+begin
+	fake_dist = GeneralizedExtremeValue(4, 0.5, 0.15);
+	fake_data = DataFrame(CSV.File("../data/processed/fake_data.csv"))[!, :fake_data];
+	fake_posterior = get_fits(GEVModel(fake_data), "fake_data", n_samples);
+	fake_yhat = vcat(rand.(GeneralizedExtremeValue.(
+				fake_posterior[:μ],
+				fake_posterior[:σ],
+				fake_posterior[:ξ]), 10)...);
+	desired = []
+	sampled = []
+	for q in 1 .- 1 ./ [2, 5, 10, 25, 50, 100, 250, 500, 1000]
+		append!(desired, quantile(fake_dist, q))
+		append!(sampled, quantile(fake_yhat, q))
+	end
+end
 
 # ╔═╡ 87a8ac97-e394-414b-ab86-d0db3e7c84ac
 begin
@@ -159,16 +175,6 @@ md"### Prior Predictive
 
 Now we will sample from the prior predictive distribution
 "
-
-# ╔═╡ ce1c31ed-87ac-496d-a061-087ff7031070
-function sample_fit(fit::Chains, N::Int)
-    yhat = [
-        rand(GeneralizedExtremeValue(μ, σ, ξ), N) for
-        (μ, σ, ξ) in zip(fit[:μ], fit[:σ], fit[:ξ])
-    ]
-    yhat_flat = vcat(yhat...)[:]
-    return yhat, yhat_flat
-end;
 
 # ╔═╡ babba5ae-ea3d-4912-a363-e4ecbc45c1a7
 md"
@@ -195,7 +201,7 @@ obs = get_norfolk_annual(); # from custom built NorfolkFloods package
 y = ustrip.(u"ft", obs.surge);
 
 # ╔═╡ f462f258-d730-484c-873f-0de883d8edbf
-yhat_prior, yhat_prior_flat = sample_fit(prior, length(y));
+yhat_prior, yhat_prior_flat = sample_predictive(prior, length(y));
 
 # ╔═╡ 28d9b25f-1681-472e-9e2f-d49fc2170d8e
 predictive_plot = histogram(
@@ -230,11 +236,7 @@ md"### Fit Model
 Let's draw some samples from our posterior"
 
 # ╔═╡ 37977dde-5181-4f95-97fb-f6b80f2da858
-posterior = sample(
-	GEVModel(y), NUTS(), MCMCThreads(),
-	samples_per_chain, n_chains;
-	drop_warmup = true
-);
+posterior = get_fits(GEVModel(y), "posterior", n_samples);
 
 # ╔═╡ 04d8d18b-7e00-436d-82b4-8082539c2aac
 md"### Sampling Statistics
@@ -254,7 +256,7 @@ Now let's look at our posterior predictive distribution
 "
 
 # ╔═╡ 0f8d90aa-19b4-47c9-9975-fdb0a63b0cd8
-yhat, yhat_flat = sample_fit(posterior, length(y));
+yhat, yhat_flat = sample_predictive(posterior, length(y));
 
 # ╔═╡ 49acc5db-fd4f-4104-806d-8e2dc4b54c36
 begin
@@ -272,9 +274,6 @@ begin
 	hline!(predictive_plot, [quantile(yhat_prior_flat, 0.99)], color = colors[1], label = "Prior Q99")
 	hline!(predictive_plot, [quantile(yhat_flat, 0.99)], color = colors[2], label = "Posterior Q99")
 end
-
-# ╔═╡ d4fc5193-1f9c-4e98-937b-b3561a59b932
-
 
 # ╔═╡ a7e84094-bb04-4f68-9c09-52ae3c66c1af
 md"### Visualization
@@ -382,8 +381,8 @@ end;
 # ╔═╡ 504ebfe6-b3b6-46a8-a9f2-2b9563370735
 function plot_return_period(obs::AnnualGageRecord, posterior::Chains; q = [0.1, 0.9])
 
-    yhat, yhat_flat = sample_fit(posterior, length(obs.surge))
-    return_periods = empirical_return_period(yhat_flat)
+    yhat, yhat_flat = sample_predictive(posterior, length(obs.surge))
+    return_periods = empirical_return_period(ustrip.(u"ft", obs.surge))
 	
     rt_plot = 10 .^ (range(0, log10(500); length = 101)[2:end])
     quantile_plot = 1 .- 1 ./ rt_plot
@@ -439,31 +438,17 @@ md"## Save SOWs
 Now that we are relatively happy with our model, we can save our set of synthetic future storm surges to use in our decision model.
 "
 
-# ╔═╡ a63fae68-e070-4df0-9ae7-fef90fe426b1
-typeof(prior) <: Turing.Chains
-
-# ╔═╡ 832326af-d9ae-406c-86c5-2b2e04ccf5b5
-typeof(model) <: DynamicPPL.Model
-
 # ╔═╡ 34645ff8-7e7d-4530-b94c-01c4964d192f
+future_surges, _ = sample_predictive(posterior, 100); # 100 years
 
+# ╔═╡ 1be519e0-9a6f-48e7-8e63-41a4730fb96c
+future_surges_array = transpose(hcat(future_surges...))
 
-# ╔═╡ b8c909c2-e73e-4110-826c-8bd25b6a0f79
-fake_data = [4.43435768746394, 3.8334454506122513, 4.12210297809982, 3.65332873945143, 4.661002000378053, 3.3358915634102013, 4.255893865839665, 3.7115058067700866, 4.890960616426221, 4.84776451739973, 3.730221123450618, 3.731106390741323, 3.7147269548660584, 4.187758384210941, 3.864337754334344, 3.455404397498816, 3.656819695412396, 3.7619278996914036, 4.0446097119281585, 5.033350144871372, 4.365045186716466, 4.198103349098112, 3.960933172291017, 5.974425167345157, 4.0508314871354365, 4.320288458629776, 4.562079790295174, 4.55051992793628, 4.408353309949116, 5.136324744023722, 4.207567037620518, 3.4573594305563122, 4.325327882473579, 4.799928770924252, 5.128776581655985, 4.648583228114229, 4.48580297978011, 4.372843073671519, 4.216071789266268, 3.6922386113800654, 3.9527566745503164, 6.102209918225432, 4.223379433264358, 4.772986069111374, 3.6939482227774096, 3.887440120203203, 3.9579908820572967, 5.460151212155381, 4.781150719225517, 5.406361676993717, 4.626888061260966, 3.738683679784292, 4.845047794694001, 4.301332680049105, 4.0254511290847725, 3.948616408710317, 5.934198971901559, 4.2814026440932, 4.370032677403946, 4.300283964030525, 3.8920062132766344, 3.91588615105011, 3.3977453505804, 3.6804104865354064, 4.084574234921651, 3.820733807858943, 5.286604033397312, 3.7304545267985154, 3.9305315861920582, 4.930670769377999, 4.274604365880339, 4.095050443018732, 3.609655131511273, 4.018833288207049, 3.0076050056593946, 4.36377298176344, 4.265484546114235, 4.336016869166124, 4.395238056083271, 4.10154401685188, 3.9693618483918782, 4.301772108146553, 7.693560538475685, 4.824215189287001, 4.623694536082042, 3.720614959250153, 5.355562570393488, 3.6667267094100473]
+# ╔═╡ 8a367bb7-175d-4702-a0df-be18ab0be84d
+md"We can see that the variable we have saved is a 100_000 by 100 matrix. The 100_000 rows are 100_000 samples from the posterior distribution. The 100 columns are 100 future years."
 
-# ╔═╡ 37508701-6009-4975-b538-08f7a497fc9c
-begin
-	fake_dist = GeneralizedExtremeValue(4, 0.5, 0.15);
-	fake_data = rand(fake_dist, 88);
-	fake_posterior = sample(GEVModel(fake_data), DynamicNUTS(), 25_000, drop_warmup = true);
-	fake_yhat = vcat(rand.(GeneralizedExtremeValue.(fake_posterior[:μ], fake_posterior[:σ], fake_posterior[:ξ]), 10)...);
-	desired = []
-	sampled = []
-	for q in 1 .- 1 ./ [2, 5, 10, 25, 50, 100, 250, 500, 1000]
-		append!(desired, quantile(fake_dist, q))
-		append!(sampled, quantile(fake_yhat, q))
-	end
-end
+# ╔═╡ 577c21bb-41d1-4d82-a0bb-47df3c2a1502
+DrWatson.wsave(datadir("processed", "surge_projections.jld2"), Dict("future_surge" => future_surges_array))
 
 # ╔═╡ Cell order:
 # ╟─89ee305e-a1f1-11eb-2b0b-bf4e4913ac08
@@ -485,18 +470,15 @@ end
 # ╠═718a638e-b1a4-4f99-affe-11523181e204
 # ╟─c024becc-77bb-4537-9814-49a3907bc6cb
 # ╠═65130fcb-4285-4dbe-b1b1-c3edfc6ca33c
+# ╠═665d984c-88fd-4f02-9af7-68492832cfc2
 # ╟─6cf4c506-c934-4fd2-8735-7567548abdf7
 # ╠═27b42c59-530f-42a8-a043-eb99c8b8309e
 # ╠═03ff3279-892a-48f0-8a16-ea0ba34bea69
 # ╟─fe5f4b4b-d317-452c-b3d0-fc8592258183
-# ╠═b8c909c2-e73e-4110-826c-8bd25b6a0f79
-# ╠═055a06b1-d2b0-4774-85dd-2bddc2c25bbf
-# ╠═45e5f9bb-6051-4eed-8cbb-6e578b3b7190
 # ╠═37508701-6009-4975-b538-08f7a497fc9c
 # ╠═87a8ac97-e394-414b-ab86-d0db3e7c84ac
 # ╟─4ef33cff-004b-4b94-bb6e-0b049525f1b6
 # ╟─9667836a-fd01-455d-9032-1e8cc537b47b
-# ╠═ce1c31ed-87ac-496d-a061-087ff7031070
 # ╠═f462f258-d730-484c-873f-0de883d8edbf
 # ╠═28d9b25f-1681-472e-9e2f-d49fc2170d8e
 # ╟─babba5ae-ea3d-4912-a363-e4ecbc45c1a7
@@ -513,8 +495,7 @@ end
 # ╟─939b5fa3-ef2b-48a2-8ea2-b7ab978b7a14
 # ╠═0f8d90aa-19b4-47c9-9975-fdb0a63b0cd8
 # ╠═49acc5db-fd4f-4104-806d-8e2dc4b54c36
-# ╠═d4fc5193-1f9c-4e98-937b-b3561a59b932
-# ╠═a7e84094-bb04-4f68-9c09-52ae3c66c1af
+# ╟─a7e84094-bb04-4f68-9c09-52ae3c66c1af
 # ╠═49bef039-9439-418f-82b4-7a591580eb82
 # ╟─812dcc5e-22f4-439a-b199-11015c4f142e
 # ╠═ffab9982-6516-4ca0-8139-2c82c08d398b
@@ -532,6 +513,7 @@ end
 # ╠═464d6b50-f0cc-41fb-af02-7010344d6ea4
 # ╠═4480d8c1-ee98-4148-a506-bd04c45b17c4
 # ╟─5a1e2a87-8747-4118-97fc-5ed2d7512f86
-# ╠═a63fae68-e070-4df0-9ae7-fef90fe426b1
-# ╠═832326af-d9ae-406c-86c5-2b2e04ccf5b5
 # ╠═34645ff8-7e7d-4530-b94c-01c4964d192f
+# ╠═1be519e0-9a6f-48e7-8e63-41a4730fb96c
+# ╟─8a367bb7-175d-4702-a0df-be18ab0be84d
+# ╠═577c21bb-41d1-4d82-a0bb-47df3c2a1502

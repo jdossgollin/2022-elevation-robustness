@@ -1,6 +1,8 @@
 module NorfolkFloods
 
 include("surge.jl")
+include("stationary.jl")
+
 export get_norfolk_hourly,
     get_norfolk_annual,
     HourlyGageRecord,

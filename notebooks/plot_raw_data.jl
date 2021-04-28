@@ -9,17 +9,17 @@ using DrWatson
 
 # ╔═╡ 0c531ffe-381a-448a-90d2-ca1bd42d28c6
 begin
-	using PlutoUI
-	using Plots
-	using Unitful
-	using ColorSchemes
-	using UnitfulRecipes
-	
-	using NorfolkFloods
-	using HouseElevation
-	
-	colors = ColorSchemes.tab10;
-	PlutoUI.TableOfContents()
+    using PlutoUI
+    using Plots
+    using Unitful
+    using ColorSchemes
+    using UnitfulRecipes
+
+    using NorfolkFloods
+    using HouseElevation
+
+    colors = ColorSchemes.tab10
+    PlutoUI.TableOfContents()
 end
 
 
@@ -207,10 +207,13 @@ There are large disparities between the HAZUS and EUROPA datasets, which is unsu
 It would certainly be advisable to use depth-damage functions better tailored to a particular house.
 *Engineers should be aware that this design choice has a big effect and is very hard to measure*.
 
-- Rözer, V., Kreibich, H., Schröter, K., Müller, M., Sairam, N., Doss-Gollin, J., et al. (2019). Probabilistic models significantly reduce uncertainty in Hurricane Harvey pluvial flood loss estimates. Earth’s Future, 7(4). https://doi.org/10.1029/2018ef001074
-- Rözer, V., Müller, M., Bubeck, P., Kienzler, S., Thieken, A., Pech, I., et al. (2016). Coping with pluvial floods by private households. Water, 8(7), 304. https://doi.org/10.3390/w8070304
-- Johnson, J. F. (2000). Generic depth-damage relationships (Economic Guidance Memorandum No. EGM 01-03). United States Army Corps of Engineers Planning and Policy Division. Retrieved from https://planning.erdc.dren.mil/toolbox/library/EGMs/egm01-03.pdf
-- de Moel, H., van Vliet, M., & Aerts, J. C. J. H. (2014). Evaluating the effect of flood damage-reducing measures: a case study of the unembanked area of Rotterdam, the Netherlands. Regional Environmental Change, 14(3), 895–908. https://doi.org/10.1007/s10113-013-0420-z
+> Rözer, V., Kreibich, H., Schröter, K., Müller, M., Sairam, N., Doss-Gollin, J., et al. (2019). Probabilistic models significantly reduce uncertainty in Hurricane Harvey pluvial flood loss estimates. Earth’s Future, 7(4). https://doi.org/10.1029/2018ef001074
+
+> Rözer, V., Müller, M., Bubeck, P., Kienzler, S., Thieken, A., Pech, I., et al. (2016). Coping with pluvial floods by private households. Water, 8(7), 304. https://doi.org/10.3390/w8070304
+
+> Johnson, J. F. (2000). Generic depth-damage relationships (Economic Guidance Memorandum No. EGM 01-03). United States Army Corps of Engineers Planning and Policy Division. Retrieved from https://planning.erdc.dren.mil/toolbox/library/EGMs/egm01-03.pdf
+
+> de Moel, H., van Vliet, M., & Aerts, J. C. J. H. (2014). Evaluating the effect of flood damage-reducing measures: a case study of the unembanked area of Rotterdam, the Netherlands. Regional Environmental Change, 14(3), 895–908. https://doi.org/10.1007/s10113-013-0420-z
 "
 
 # ╔═╡ f3bfa252-9fea-4371-be86-94cafd166956

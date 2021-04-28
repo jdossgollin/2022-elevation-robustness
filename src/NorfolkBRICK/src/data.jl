@@ -1,14 +1,12 @@
-#=
-Basic functions to handle the LSL data
-=#
-
-import NetCDF, Unitful
+using NetCDF
+using Unitful
 
 data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 
 """
 A single BRICK trajectory has the following information: time (defined by start and end year), local sea level, an RCP scenario, and a BRICK dynamics model (fast or slow)
-See Ruckert, K. L., Srikrishnan, V., & Keller, K. (2019). Characterizing the deep uncertainties surrounding coastal flood hazard projections: A case study for Norfolk, VA. Scientific Reports, 9(1), 1–12. https://doi.org/10/ggfsbt =#
+
+> Ruckert, K. L., Srikrishnan, V., & Keller, K. (2019). Characterizing the deep uncertainties surrounding coastal flood hazard projections: A case study for Norfolk, VA. Scientific Reports, 9(1), 1–12. https://doi.org/10/ggfsbt =#
 """
 struct BRICKtrajectory{I<:Integer,T<:AbstractFloat}
     years::UnitRange{I}
@@ -18,8 +16,7 @@ struct BRICKtrajectory{I<:Integer,T<:AbstractFloat}
 end
 
 """
-Parse the naive BRICK sea level simulations. It's very quick so no need to cache.
-Note that the default value for `fname` assumes the particular directory structure of this project; if you are using this for another project you will need to specify the filename explicitly or else change this argument manually.
+Parse the naive BRICK sea level simulations. It's very quick so no need to cache. Note that the default value for `fname` assumes the particular directory structure of this project; if you are using this for another project you will need to specify the filename explicitly or else change this argument manually.
 """
 function get_norfolk_brick(
     fname::AbstractString = joinpath(data_dir, "BRICK.nc");

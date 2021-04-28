@@ -1,13 +1,11 @@
 using Distributions
-using Turing
-using DynamicPPL
 using JLD2
+using Turing
 
 data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 cache_dir = abspath(joinpath(@__DIR__, "..", "..", "..", "data", "processed"))
 
-"""Get the priors on various return levels
-"""
+"Specifies priors over the return levels. See `notebooks/surge_model.jl` for visualization and description."
 function get_GEV_priors()
     return [
         (0.9, Distributions.LogNormal(1.8, 0.4)), # 10 year flood
@@ -16,10 +14,10 @@ function get_GEV_priors()
     ]
 end
 
+# this is not exported
 gev_priors = get_GEV_priors()
 
-"""A stationary GEV model. See `get_GEV_priors` for info on the priors.
-"""
+"A stationary GEV model. See `get_GEV_priors` for info on the priors."
 @model function GEVModel(y)
 
     # completely flat priors (albeit positive -- see docstring)
@@ -33,7 +31,7 @@ gev_priors = get_GEV_priors()
     # implement the prior on quantile levels
     for (prob, prior_dist) in gev_priors
         rl = Distributions.quantile(dist, prob)
-        Turing.@addlogprob! logpdf(prior_dist, rl)
+        Turing.@addlogprob!(logpdf(prior_dist, rl))
     end
 
     # data model
@@ -42,9 +40,7 @@ gev_priors = get_GEV_priors()
     end
 end
 
-"""Draw samples from the posterior distribution of fit.
-This will simulate a vector of N samples for each  posterior draw in fit.
-"""
+"Draws samples from the posterior distribution of fit. This will simulate a vector of `N` samples for each  posterior draw in `fit`."
 function sample_predictive(fit::Chains, N::Int)
     yhat = [
         rand(Distributions.GeneralizedExtremeValue(μ, σ, ξ), N) for
@@ -54,8 +50,7 @@ function sample_predictive(fit::Chains, N::Int)
     return yhat, yhat_flat
 end
 
-"""No need to re-run computations; this will cache outputs effectively
-"""
+"Cache the sampling outputs to avoid constant re-running"
 function get_fits(
     model::DynamicPPL.Model,
     model_name::String,

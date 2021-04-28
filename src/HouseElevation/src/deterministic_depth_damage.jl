@@ -1,10 +1,3 @@
-#=
-Create deterministic depth-damage functions. Could be extended easily enough to stochastic depth-damage functions.
-To add another curve:
-1. create a function to parse it
-2. add an elseif block to parse_data(key)
-3. produce a fitted model at the bottom
-=#
 import CSV
 import DataFrames
 import Interpolations
@@ -12,6 +5,11 @@ import Unitful
 
 data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 
+"""
+Parse the file containing the parameters of the Europa depth-damage model
+
+See [https://github.com/mahkam/Zarekarizi-flood-home-elavate/blob/master/Source_Code/S03_Construction_Cost.R](https://github.com/mahkam/Zarekarizi-flood-home-elavate/blob/master/Source_Code/S03_Construction_Cost.R) for details.
+"""
 function parse_europa()
     fname = joinpath(data_dir, "fragility_europa.csv")
     dat = DataFrames.DataFrame(CSV.File(fname))
@@ -20,6 +18,11 @@ function parse_europa()
     return depth, damage_frac
 end
 
+"""
+Parse the file containing the parameters of the HAZUS depth-damage model
+
+See [https://github.com/mahkam/Zarekarizi-flood-home-elavate/blob/master/Source_Code/S03_Construction_Cost.R](https://github.com/mahkam/Zarekarizi-flood-home-elavate/blob/master/Source_Code/S03_Construction_Cost.R) for details.
+"""
 function parse_hazus()
     fname = joinpath(data_dir, "fragility_hazus.csv")
     dat = DataFrames.DataFrame(CSV.File(fname))
@@ -28,6 +31,7 @@ function parse_hazus()
     return depth, damage_frac
 end
 
+"Generic function to parse the function given a key"
 function parse_data(key)
     if key == :europa
         depth, damage_frac = parse_europa()
@@ -39,6 +43,7 @@ function parse_data(key)
     return depth, damage_frac
 end
 
+"Get the depth-damage interpolation function"
 function get_depth_damage(key)
     depth, damage_frac = parse_data(key)
     prepend!(depth, minimum(depth) - 0.1ft)
@@ -58,6 +63,7 @@ end
 depth_damage_frac_europa = get_depth_damage(:europa)
 depth_damage_frac_hazus = get_depth_damage(:hazus)
 
+"Depth vs damage as a fraction of house value"
 function depth_damage_frac(
     house::HouseStructure,
     gauge_depth::T,
@@ -74,6 +80,7 @@ function depth_damage_frac(
     return damage_frac
 end
 
+"Depth vs damage in actual dollars"
 function depth_damage(
     house::HouseStructure,
     gauge_depth::T,

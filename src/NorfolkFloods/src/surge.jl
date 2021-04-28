@@ -7,7 +7,7 @@ using TimeSeries
 using Unitful
 
 using Statistics: mean
-using DataFrames: DataFrame
+import DataFrames: DataFrame # to extend
 
 data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 cache_dir = abspath(joinpath(@__DIR__, "..", "..", "..", "data", "processed"))
@@ -23,9 +23,7 @@ struct HourlyGageRecord
     gage_id::String
 end
 
-"""
-Parse a single file containing sea gauge information from NOAA into a TimeArray object
-"""
+"Parse a single file containing sea gauge information from NOAA into a TimeArray object"
 function _parse_noaa_file(fname::Union{String,Vector{String}})
 
     if typeof(fname) <: Vector
@@ -42,17 +40,13 @@ function _parse_noaa_file(fname::Union{String,Vector{String}})
     return TimeSeries.TimeArray(surge, timestamp = :datetime)[:sl]
 end
 
-"""
-Read in the Norfolk surge data at Sewell's Point
-"""
+"Read in the Norfolk surge data at Sewell's Point"
 function produce_norfolk_hourly()
     hourly_surge = _parse_noaa_file(norfolk_hourly_fnames)
     return HourlyGageRecord(hourly_surge, "Sewell's Point, VA", "8638610")
 end
 
-"""
-Cache the Norfolk surge data if possible
-"""
+"Cache the Norfolk surge data if possible"
 function get_norfolk_hourly(overwrite::Bool = false)
     cachename = joinpath(cache_dir, "hourly_surge.jld2")
     read_raw = true
@@ -68,9 +62,7 @@ function get_norfolk_hourly(overwrite::Bool = false)
     return hourly
 end
 
-"""
-Get the return period using a standard formula for the plotting position
-"""
+"Get the return period using a standard formula for the plotting position"
 function return_period(obs::AbstractVector; a = 0.44)
 
     @assert length(size(obs)) == 1
@@ -83,9 +75,7 @@ function return_period(obs::AbstractVector; a = 0.44)
     return @. 1 / (1 - prob)
 end
 
-"""
-Create a structure for annual gauge records
-"""
+"Create a structure for annual gauge records"
 struct AnnualGageRecord{I<:Integer,T<:AbstractFloat}
     year::Vector{I}
     surge::Vector{<:Unitful.Length}
@@ -120,9 +110,7 @@ function AnnualGageRecord(hourly::HourlyGageRecord)
     return AnnualGageRecord(annual_df)
 end
 
-"""
-It's nice to easily convert the annual gage record to and from a DataFrame
-"""
+"It's nice to easily convert the annual gage record to and from a DataFrame"
 function DataFrame(annual::AnnualGageRecord)
     return DataFrames.DataFrame(
         :year => annual.year,
@@ -134,9 +122,7 @@ function DataFrame(annual::AnnualGageRecord)
     )
 end
 
-"""
-Get the annual stage data
-"""
+"Get the annual stage data"
 function get_norfolk_annual()
     return AnnualGageRecord(get_norfolk_hourly())
 end

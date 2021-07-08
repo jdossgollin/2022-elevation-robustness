@@ -1,15 +1,13 @@
 ### A Pluto.jl notebook ###
-# v0.14.3
+# v0.14.9
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ cfaa1f89-3fa7-4ca3-b32b-88c68d2e2081
-using DrWatson
-
 # ╔═╡ 0c531ffe-381a-448a-90d2-ca1bd42d28c6
 begin
-    using PlutoUI
+    using DrWatson
+	using PlutoUI
     using Plots
     using Unitful
     using ColorSchemes
@@ -18,7 +16,6 @@ begin
     using NorfolkFloods
     using HouseElevation
 
-    colors = ColorSchemes.tab10
     PlutoUI.TableOfContents()
 end
 
@@ -33,92 +30,17 @@ In this notebook we will plot some constants and fixed quantities from our model
 Start with package imports and definitions of constants
 "
 
-# ╔═╡ 386000ba-3b50-4f55-b674-065149a2eddf
-@quickactivate "2021-elevation-robustness"
-
-# ╔═╡ d03aeb0d-ab72-49f3-8352-c5ddc4d475fb
-md"## Historic Storms
-
-Let's start by plotting historic annual  maximum storm surges.
-We will annotate these with some information (from Wikipedia, NWS, etc) on what caused these surges.
-
-We plot surge plus sea level.
-"
-
-# ╔═╡ 7acfee42-a1ff-11eb-2ddb-93669963b4a6
-function plot_historic_annmax_flood()
-
-    annual = get_norfolk_annual()
-    surge_ft = (annual.msl + annual.surge) .|> x -> ustrip(u"ft", x)
-
-    p = plot(
-        annual.year,
-        surge_ft,
-        label = "",
-        ylabel = "Annual Maximum Storm Surge (ft)",
-        marker = :circle,
-        size = (500, 300),
-        title = "NOAA $(annual.gage_id): $(annual.gage_name)",
-        titlefontsize = 10,
-        labelfontsize = 9,
-    )
-
-    for (year, name, Δx, Δy, is_tc) in zip(
-        [1933, 2003, 2015, 2009, 1962],
-        ["Chesapeake–Potomac", "Isabel", "Irene", "Nor'Ida", "Ash Wednesday"],
-        [12.5, -7.5, 2.5, 0, 10],
-        [0.75, 0.5, 0.5, 1, 0.75],
-        [true, true, true, false, false],
-    )
-        yobs = ustrip(surge_ft[findfirst(annual.year .== year)])
-        x0 = year + Δx
-        y0 = yobs + Δy
-        color = is_tc ? colors[2] : colors[1]
-        plot!(
-            [x0, year],
-            [y0, yobs],
-            arrow = :closed,
-            color = color,
-            linewidth = 1,
-            label = "",
-        )
-        scatter!(
-            p,
-            [x0],
-            [y0],
-            markercolor = :white,
-            label = false,
-            markerstrokecolor = :white,
-            markersize = 10,
-        )
-        annotate!(p, x0, y0, text(name, :center, 7, color = color))
-    end
-    return p
-end
-
-# ╔═╡ 972e6a82-819d-4d1e-b240-5a8e88fdcb61
-annmax_flood = plot_historic_annmax_flood()
-
-# ╔═╡ 6d1ef7b4-653e-4046-a49c-884c152c5489
-savefig(annmax_flood, plotsdir("ts_historic_anmax_flood.pdf"))
-
-# ╔═╡ 3e0aafd4-5777-4fbe-ae87-17d28f1bd91b
-obs = get_norfolk_annual();
-
-# ╔═╡ 6cd4d7b1-eae0-4a17-92c0-638135c994c9
-md"""
-The largest flood occurred in 1933 as part of the Chesapeake–Potomac hurricane.
-Since then there has been significant sea level rise; if that event occurred with current sea level it might be much higher
-Specifically, if it occurred with the maximum observed mean sea level then it would be
-
-$(uconvert(u"ft", maximum(obs.surge) + maximum(obs.msl)))
-"""
+# ╔═╡ 0422680b-afb4-4e5e-a1fe-421562b1d66f
+colors = ColorSchemes.okabe_ito;
 
 # ╔═╡ 785eb441-acb7-46dd-9ce3-61847a789bcf
 md"""
 ## Elevation Cost
 
-Now let's visualize the cost of elevating a house -- this is another fixed quantity that we can examine
+Now let's visualize the cost of elevating a house -- this is another fixed quantity that we can examine.
+This plot should reproduce supplemental figure S3 of Zarekarizi et al (2020).
+
+> Zarekarizi, M., Srikrishnan, V., & Keller, K. (2020). Neglecting uncertainties biases house-elevation decisions to manage riverine flood risks. Nature Communications, 11(1), 5361. https://doi.org/10.1038/s41467-020-19188-9
 """
 
 # ╔═╡ b02ce2d7-2128-4d1d-93ee-0781ea61fbb9
@@ -157,9 +79,7 @@ md"""
 The most striking thing about the elevation cost is that it is very gentle for small increases.
 Thus, if it makes sense to elevate a little bit, it probably makes sense to elevate a lot.
 
-This curve is very important, but we are relying on rather shaky data (see Zarekarizi et al, 2020); using more accurate elevation cost data would *definitely change results*
-
-- Zarekarizi, M., Srikrishnan, V., & Keller, K. (2020). Neglecting uncertainties biases house-elevation decisions to manage riverine flood risks. Nature Communications, 11(1), 5361. https://doi.org/10.1038/s41467-020-19188-9
+This curve is very important, but we are relying on rather shaky data (see Zarekarizi et al, 2020); using more accurate elevation cost data would *very likely change results*.
 """
 
 # ╔═╡ 20cb9bcb-e57c-46fa-9c43-75685b85eef7
@@ -175,7 +95,7 @@ Now we plot the depth-damage functions that we are using
 # ╔═╡ 6929dab9-204a-41cc-91b4-391ab33c0fea
 function plot_depth_damage()
 
-    depths = (-2:0.1:30)u"ft"
+    depths = (-3:0.1:30)u"ft"
     house = HouseStructure(1000u"ft^2", 185_000, 0u"ft")
 
     p = plot(
@@ -221,15 +141,8 @@ savefig(depth_damage, plotsdir("depth_damage.pdf"))
 
 # ╔═╡ Cell order:
 # ╟─fcfb26dd-1767-49f7-ae97-259e09790be5
-# ╠═cfaa1f89-3fa7-4ca3-b32b-88c68d2e2081
-# ╠═386000ba-3b50-4f55-b674-065149a2eddf
 # ╠═0c531ffe-381a-448a-90d2-ca1bd42d28c6
-# ╟─d03aeb0d-ab72-49f3-8352-c5ddc4d475fb
-# ╠═7acfee42-a1ff-11eb-2ddb-93669963b4a6
-# ╠═972e6a82-819d-4d1e-b240-5a8e88fdcb61
-# ╠═6d1ef7b4-653e-4046-a49c-884c152c5489
-# ╠═3e0aafd4-5777-4fbe-ae87-17d28f1bd91b
-# ╟─6cd4d7b1-eae0-4a17-92c0-638135c994c9
+# ╠═0422680b-afb4-4e5e-a1fe-421562b1d66f
 # ╟─785eb441-acb7-46dd-9ce3-61847a789bcf
 # ╠═b02ce2d7-2128-4d1d-93ee-0781ea61fbb9
 # ╠═cf822e50-9eb3-42a9-ba6b-c2c9d8748c2e

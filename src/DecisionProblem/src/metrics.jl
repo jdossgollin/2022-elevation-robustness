@@ -1,57 +1,75 @@
 using HouseElevation
 using DataFrames
+using StatsBase
 
-"The construction cost is a performance metric"
-function construction_cost(x::HouseStructure, l::Lever, sow::StateOfWorld)
-    HouseElevation.elevation_cost(x, l.Δh)
-end
+"Check whether all elements of `x` are equal"
+allsame(x) = all(y -> y == first(x), x)
 
-"NPV damages is a metric"
-function npv_damages(
+"""
+Evaluate a fixed decision on a single state of the world
+
+`x` gives the initial house to be elevated
+`l` gives the elver to be evaluated
+`sow` describes the state of the world
+`γ` gives the discount rate
+`dmg_model` gives the depth_damage model used
+
+Returns a `Dict` of metrics
+"""
+function evaluate(
     x::HouseStructure,
     l::Lever,
-    sow::StateOfWorld;
-    γ = 0.98,
-    dmg_model = :europa,
+    sow::StateOfWorld,
+    γ::Real,
+    dmg_model::Symbol,
 )
 
     # apply the action: raise the house
     house = copy(x)
     house.h += l.Δh
+    construction_cost = elevation_cost(x, l.Δh)
 
     # calculate flood damages
     flood = sow.msl .+ sow.surge
-    damage = [HouseElevation.depth_damage(house, floodᵢ, dmg_model) for floodᵢ in flood]
+    damage = [depth_damage(house, fᵢ, dmg_model) for fᵢ in flood]
 
     # convert to NPV
     discount = [γ^(Δt) for Δt in (years(sow) .- sow.syear)]
-    return sum(discount .* damage)
-end
+    npv_damages = sum(discount .* damage)
 
-"Compute all performance metrics for a particular decision, on a single `StateOfWorld`"
-function evaluate(
-    x::HouseStructure,
-    l::Lever,
-    sow::StateOfWorld;
-    γ = 0.98,
-    dmg_model = :europa,
-)
-    metrics = DataFrames.DataFrame(
-        :construction_cost => construction_cost(x, l, sow),
-        :npv_damages => npv_damages(x, l, sow; γ = γ, dmg_model = dmg_model),
+    # return a dict of metrics
+    return Dict(
+        :construction_cost => construction_cost,
+        :npv_damages => npv_damages,
+        :total_cost => construction_cost + npv_damages,
     )
-    metrics[!, :total_cost] = metrics[!, :construction_cost] + metrics[!, :npv_damages]
-    return metrics
 end
 
-"Compute metrics for each SOW"
+"""
+Evaluate a fixed decision on a set of states of the world
+
+Returns a `DataFrame` of metrics indexed by their State of World
+"""
 function evaluate(
     x::HouseStructure,
     l::Lever,
-    sc::SOWCollection;
-    γ = 0.98,
-    dmg_model = :europa,
+    sows::Vector{StateOfWorld};
+    γ::Real = 0.98,
+    dmg_model::Symbol = :europa,
 )
-    return vcat([evaluate(x, l, sow; γ = γ, dmg_model = dmg_model) for sow in sc.sows]...)
+    return vcat([DataFrame(evaluate(x, l, sow, γ, dmg_model)) for sow in sows]...)
 end
 
+"""
+Get the expected performance of a lever, given a set of weights
+
+```julia
+expected_performance(metrics, w)
+```
+
+where `metrics` is the output from `evaluate()` and `w` are weights
+"""
+function expected_performance(metrics::DataFrame, w::AbstractWeights)
+    @assert nrow(metrics) == length(w)
+    mapcols(x -> mean(x, w), metrics)
+end

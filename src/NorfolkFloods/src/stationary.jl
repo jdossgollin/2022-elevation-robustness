@@ -44,10 +44,9 @@ end
 function sample_predictive(fit::Chains, N::Int)
     yhat = [
         rand(Distributions.GeneralizedExtremeValue(μ, σ, ξ), N) for
-        (μ, σ, ξ) in zip(fit[:μ], fit[:σ], fit[:ξ])
+        (μ, σ, ξ) in zip(fit[:μ][:], fit[:σ][:], fit[:ξ][:])
     ]
-    yhat_flat = vcat(yhat...)[:]
-    return yhat, yhat_flat
+    return yhat
 end
 
 "Cache the sampling outputs to avoid constant re-running"
@@ -61,7 +60,7 @@ function get_fits(
 )
     cachename =
         joinpath(cache_dir, "surge_models", "stationary_$(model_name)_$(n_samples).jld2")
-    samples_per_chain = Int(n_samples / n_chains)
+    samples_per_chain = Int(ceil(n_samples / n_chains))
 
     try
         @assert !overwrite

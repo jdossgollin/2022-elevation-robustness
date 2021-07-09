@@ -1,20 +1,22 @@
-import Unitful
-import JLD2
 import Interpolations
+import JLD2
+import Unitful
+import DrWatson
+using StatsBase: mean
 
-import NorfolkFloods
 import HouseElevation
+import NorfolkFloods
 
 data_dir = abspath(joinpath(@__DIR__, "..", "data"))
 cache_dir = abspath(joinpath(@__DIR__, "..", "..", "..", "data", "processed"))
 
-const ft = u"ft"
+const ft = Unitful.u"ft"
 
 "Get a bunch of synthetic storm surges!"
 function draw_surges(n_samples::Int)
     obs = NorfolkFloods.get_norfolk_annual()
     N = Int(ceil(n_samples / 100_000))
-    y = ustrip.(u"ft", obs.surge)
+    y = Unitful.ustrip.(ft, obs.surge)
     model = NorfolkFloods.GEVModel(y)
     posterior = NorfolkFloods.get_fits(model, "stationary", 100_000; n_chains = 4)
     y_hat = NorfolkFloods.sample_predictive(posterior, N)
@@ -39,14 +41,14 @@ This can be approximated as
 where ``y^*_1, \\ldots, y^*_N`` are draws from ``p(y')``.
 """
 function expected_damage_frac(h::Unitful.Length, s::Vector{<:Unitful.Length}; key = :hazus)
-    house = HouseStructure(2000u"ft^2", 150_000, h)
+    house = HouseElevation.HouseStructure(2000ft^2, 150_000, h)
     dmg = [HouseElevation.depth_damage_frac(house, si, key) for si in s]
     return mean(dmg)
 end
 
 "Fit an interpolation function that estimates expected annual damage given difference between house elevation and MSL"
 function fit_expected_damage_emulator(key::Symbol)
-    depths = collect(-30:0.5:30)u"ft"
+    depths = collect(-30:0.5:30)ft
     surge_mc = draw_surges(1_000_000)
     xp_dmg = [expected_damage_frac(depth, surge_mc; key = key) for depth in depths]
     interp_fn = Interpolations.LinearInterpolation(

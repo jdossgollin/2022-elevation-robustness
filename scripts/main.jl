@@ -1,7 +1,7 @@
 using Revise
+using DrWatson
 @quickactivate "2021-elevation-robustness"
 
-using DrWatson
 using PlutoSliderServer
 using Pluto
 
@@ -15,7 +15,12 @@ function clean_outputs()
 end
 
 function get_all_scripts()
-    return scriptsdir.(["01_basic_plots.jl", "02_surge_model.jl", "03_plot_historical.jl"])
+    return scriptsdir.([
+        "01_basic_plots.jl",
+        "02_surge_model.jl",
+        "03_plot_historical.jl",
+        "04_expected_annual_damage.jl",
+    ])
 end
 
 function run_pluto()

@@ -291,7 +291,7 @@ deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[DecisionProblem]]
-deps = ["DataFrames", "Distributions", "HouseElevation", "StatsBase", "Unitful"]
+deps = ["DataFrames", "Distributions", "DrWatson", "HouseElevation", "Interpolations", "JLD2", "NorfolkFloods", "StatsBase", "Unitful"]
 path = "src/DecisionProblem"
 uuid = "a2308b2c-a7fc-48d4-b4d5-6ad1bdbbf0f0"
 version = "0.1.0"

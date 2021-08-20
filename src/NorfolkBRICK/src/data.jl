@@ -30,10 +30,7 @@ function get_norfolk_brick(
     dynamics = NetCDF.ncread(fname, "dynamics")
     years = Int.(NetCDF.ncread(fname, "time_proj"))
     sims = NetCDF.ncread(fname, "simulation")
-    lsl =
-        Array{typeof(rcp_scenarios[1]),4}(
-            NetCDF.ncread(fname, "LocalSeaLevel_RCP26"),
-        )Unitful.u"m" # meters
+    lsl = Array{typeof(rcp_scenarios[1]),4}(NetCDF.ncread(fname, "lsl_m"))Unitful.u"m" # meters
 
     nsim = length(sims)
     nrcp = length(rcp_scenarios)
@@ -61,4 +58,16 @@ function get_norfolk_brick(
         ) for i = 1:nsim, j = 1:nrcp, k = 1:ndynam
     ][:]
     return trajectories
+end
+
+"Get the data from a particular year"
+function get_year_data(t::BRICKtrajectory, y::Int)
+    idx = findfirst(t.years .== y)
+    return t.lsl_m[idx]
+end
+
+"Get the data from a particular year"
+function get_year_data(ts::Vector{<:BRICKtrajectory}, y::Int)
+    idx = findfirst(first(ts).years .== y)
+    return [t.lsl_m[idx] for t in ts]
 end

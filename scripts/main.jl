@@ -20,6 +20,7 @@ function get_all_scripts()
         "02_surge_model.jl",
         "03_plot_historical.jl",
         "04_expected_annual_damage.jl",
+        "05_probabilistic_msl.jl",
     ])
 end
 

@@ -15,10 +15,10 @@
 \pagestyle{empty}
 
 
-\tikzstyle{function} = [circle, draw, fill=TurquoiseGreen, text=RichBlack, text width=4.5em, text centered]
+\tikzstyle{function} = [circle, draw, fill=TurquoiseGreen, text=RichBlack, text width=5.5em, text centered]
 \tikzstyle{block} = [rectangle, draw, fill=TurquoiseGreen, text=RichBlack, minimum width=6em, text centered,  minimum height=4em, align=center]
 \tikzstyle{derived} = [rectangle, draw, rounded corners, fill=YellowOrange!33, text=RichBlack, minimum width=6em, text centered,  minimum height=4em, align=center]
-\tikzstyle{check} = [rectangle, draw, fill=TealBlue!20, text=RichBlack, minimum width=4em, text centered,  minimum height=3em, align=center]
+\tikzstyle{check} = [text=TealBlue, align=center]
 
 \tikzstyle{line} = [draw, very thick, color=RichBlack, ->]
 \tikzset{>=latex}
@@ -27,46 +27,38 @@
 
 \begin{tikzpicture}[auto]
 
-    \node [block] (decision) at (0, 2.5) {decision\\{\color{TealBlue}$x_i$}};
-    \node [block] at (0, -2.5) (scenarios) {many scenarios\\{\color{TealBlue}$\qty{s_1, \ldots, s_n} \in \Omega$}};
-    \node [function] (model) at (1, 0) {system model\\{\color{TealBlue}$f(x, s)$}};
-    \node [derived] at (5, 1.25) (smetrics) {scenario metrics\\{\color{TealBlue}$u_{ij} = f(x_i, s_j)$}};
+    \node [block] (decision) at (4, 3) {Candidate decisions\\{\color{TealBlue}$\qty{x_1, x_2, \ldots, x_I}$}};
+    \node [block] at (-4, 3) (scenarios) {Many possible futures\\{\color{TealBlue}$\qty{s_1, \ldots, s_J} \in \Omega$}};
+    \node [function] (model) at (0, 0) {Deterministic system model\\{\color{TealBlue}$f(x, s)$}};
+    \node [derived] at (0, -3) (smetrics) {Scenario metrics\\{\color{TealBlue}$u_{ij} = f(x_i, s_j)$}};
+    \node [block] (prior) at (-4, -6) {Prior over scenarios\\{\color{TealBlue}$p(s)$}};\
+    \node [derived] (weights) at (0, -6) {Scenario weights\\{\color{TealBlue}eq.~XX}};
+    \node [derived] (combined) at (4, -6) {Distribution over\\outcomes\\{\color{TealBlue}$\hat{p}(u | x_i)$}};
+    \node [derived] (dmetrics) at (8, -6) {Decision metrics\\{\color{TealBlue}$\hat{m}(x_i)$}};
+
     \path [line] (decision) -- (model);
     \path [line] (scenarios) -- (model);
-    \path [line] (model) to[out=22.5, in=180] (smetrics.west);
-
-    \draw [color=TealBlue] (-2, -3.5) -- (6.75, -3.5) -- (6.75, 3.5) -- (-2, 3.5) -- (-2, -3.5);
-    \node [rectangle, text=TealBlue, rotate=90] at (-1.75, 1) {Exploratory Modeling};
-
-    \node [block] (priortop) at (10.3, -2.2) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
-    \node [block] at (10.2, -2.3) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
-    \node [block] at (10.1, -2.4) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
-    \node [block] (prior) at (10, -2.5) {subjective belief\\{\color{TealBlue}$p_\text{belief}(x)$}};
-
-    \node [derived] (weights) at (9, 0) {weights\\{\color{TealBlue}eq.~2}};
-    \path [line] (scenarios) to [out=0, in=180] (weights);
+    \path [line] (model) to (smetrics);
+    \path [line] (scenarios.south) to[out=-90, in=135] (weights.north west);
     \path [line] (prior) -- (weights);
+    \path [line] (smetrics) to (combined);
+    \path [line] (weights) -- (combined);
+    \path [line] (combined) to (dmetrics);
 
-    \node [derived] (combined) at (10, 2.5) {distribution of outcomes\\{\color{TealBlue}$\hat{p}(u | x_i)$}};
-    \path[line] (smetrics.east) to [out=0, in=180] (combined);
-    \path[line] (weights) -- (combined);
-
-    \node [derived] (dmetrics) at (15, 2.5) {decision metrics\\{\color{TealBlue}$\hat{m}(x_i)$}};
-    \path[line] (combined) -- (dmetrics);
-
-    \draw [color=TealBlue] (7.2, -3.5) -- (16.5, -3.5) -- (16.5, 3.5) -- (7.25, 3.5) -- (7.25, -3.5);
-    \node [rectangle, text=TealBlue, rotate=270] at (16.25, -1) {Probabilistic Modeling};
-
-    \draw [color=TealBlue] (-2, -4) -- (16.5, -4) -- (16.5, -6.5) -- (-2, -6.5) -- (-2, -4);
-    \node [rectangle, text=TealBlue, rotate=0, align=left] at (-1, -5.25) {Critique};
-    \node [check] (discovery) at (3, -5.25) {scenario discovery};
-    \node [check] (ppc) at (7, -5.25) {prior checks};
-    \node [check] (posterior) at (11, -5.25) {posterior checks};
-    \node [check] (compare) at (15, -5.25) {compare\\{\color{TealBlue}$\hat{m}(x_{\neq i})$}};
-    \path [line, dashed, color=TealBlue] (prior) to[out=-157.5, in=67.5] (ppc);
-    \path [line, dashed, color=TealBlue] (smetrics) to[out=-120, in=90] (discovery);
-    \path [line, dashed, color=TealBlue] (combined.-22.5) to [out=-60, in=60] (posterior.60);
-    \path [line, dashed, color=TealBlue] (dmetrics) -- (compare);
+    \node [check] at (-9, 3) (span) {Do scenarios span\\plausible outcomes?};
+    \path [line, dashed] (scenarios) -- (span);
+    \node [check] at (9, 3) (represented) {Are relevant levers\\represented?};
+    \path [line, dashed] (decision) -- (represented);
+    \node [check] at (5, 0) (interpretable) {Is the model credible?\\Interpretable?};
+    \path [line, dashed] (model) -- (interpretable);
+    \node [check] at (5, -3) (discovery) {What are relevant regions\\of the $\qty(s, x)$ space?};
+    \path [line, dashed] (smetrics) -- (discovery);
+    \node [check] at (-4, -8) (priorcheck) {Are these consistent\\with prior knowledge?};
+    \path [line, dashed] (prior) -- (priorcheck);
+    \node [check] at (0, -8) (weightcheck) {Are computational\\issues apparent?};
+    \path [line, dashed] (weights) -- (weightcheck);
+    \node [check] at (4, -8) (ppc) {Are these consistent\\with our expectations?};
+    \path [line, dashed] (combined) -- (ppc);
 
 \end{tikzpicture}
 

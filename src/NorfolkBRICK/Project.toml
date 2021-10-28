@@ -1,8 +1,0 @@
-name = "NorfolkBRICK"
-uuid = "84515ef5-3549-4c19-93f4-4191edf2fe18"
-authors = ["James Doss-Gollin <jdossgollin@rice.edu>"]
-version = "0.1.0"
-
-[deps]
-NetCDF = "30363a11-5582-574a-97bb-aa9a979735b9"
-Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"

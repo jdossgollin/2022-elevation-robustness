@@ -34,10 +34,15 @@
     \path [line] (slr) to (relationships);
     \node [lever] (elevate) at (0, 2.5) {How high to elevate?};
     \path [line] (elevate) to (relationships);
-    \node [metric] (ccost) at (3.5, 1.25) {Construction Costs};
+
+    \node [metric] (ccost) at (3.5, 2.25) {Construction cost};
     \path [line] (relationships) to (ccost);
-    \node [metric] (fcost) at (3.5, -1.25) {Flood Damages};
+    \node [metric] (fcost) at (3.5, 0.75) {NPV expected flood damages};
     \path [line] (relationships) to (fcost);
+    \node [metric] (bcr) at (3.5, -0.75) {Fraction of SOWs with $\text{BCR} > 1$};
+    \path [line] (relationships) to (bcr);
+    \node [metric] (q95) at (3.5, -2.25) {95th percentile of total costs};
+    \path [line] (relationships) to (q95);
 
     \node[uncertainty] (rcp) at (-4.5, -2.5) {RCP Scenario\\{\footnotesize (4 Scenarios)}};
     \node[uncertainty] (ice) at (-4.5, 0.75) {Ice Sheet Dynamics\\{\footnotesize (3 Models)}};

@@ -1,14 +1,19 @@
 # 2021-elevation-robustness
 
-This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/) to make a reproducible scientific project named
-> 2021-elevation-robustness
+This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/) to make a reproducible scientific project as described in the paper
 
-It is authored by James Doss-Gollin.
+```bibtex
+TBD
+```
+
+The code is authored by James Doss-Gollin.
+
+## Setup
 
 To (locally) reproduce this project, do the following:
 
-1. Download this code base. Notice that raw data are typically not included in the git-history and may need to be downloaded independently.
-1. Open a Julia console and do:
+1. Download this code base.
+1. Open a Julia console and do the following:
 
    ```julia
    using Pkg
@@ -19,10 +24,6 @@ To (locally) reproduce this project, do the following:
 
 This will install all necessary packages for you to be able to run the scripts and everything should work out of the box.
 
-## Scratchpad
+## Organization
 
-To add the local packages
-
-```julia
-Pkg.develop(PackageSpec(path="directory"))
-```
+* [`data/`](data/) contains raw data. This data is documented in [`data/raw`](data/raw/).

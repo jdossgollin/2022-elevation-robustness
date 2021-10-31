@@ -1,14 +1,14 @@
 ### A Pluto.jl notebook ###
-# v0.16.4
+# v0.17.0
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 50a61c27-768a-4cf8-8494-e9f99da073c6
 begin
-	# we start by loading in the packages we use
 	using Pkg
 	Pkg.activate("..")
+	using Arrow
 	using Base: @kwdef
 	using ColorSchemes
 	using CSV
@@ -18,7 +18,8 @@ begin
 	using Downloads
 	using DrWatson
 	using DynamicPPL
-	using ExtremeStats
+	using LinearAlgebra: normalize
+	using Optim
 	using PlutoUI
 	using Plots
 	using Plots: mm
@@ -27,7 +28,7 @@ begin
 	using TimeSeries
 	using Turing
 	using Statistics
-	using StatsBase: pacf, corkendall
+	using StatsBase
 	using StatsPlots
 	using Unitful
 	using UnitfulRecipes
@@ -76,6 +77,15 @@ Next, we use the `Extremes` packages to develop a fit to the storm surge data, a
 We'll use the probability-weighted moments method since this is widely used in practice.
 """
 
+# ╔═╡ 806a03f3-13c9-4747-b93c-4a45f796d581
+@model function MLEGEV(y)
+    μ ~ Turing.Flat()
+	ϕ ~ Turing.Flat() # reparameterize
+    σ = exp(ϕ)
+    ξ ~ Turing.FlatPos(0.0)
+    y ~ GeneralizedExtremeValue(μ, σ, ξ)
+end;
+
 # ╔═╡ 40b6f48b-efcd-43d0-b6f1-39c40abe3959
 md"""
 It's always good to look at some diagnostics; these appear qualitatively plausible.
@@ -116,10 +126,15 @@ Specifically:
 
 # ╔═╡ 68e097e1-34f7-4e81-9b60-0c0e7a7631c5
 gev_priors = [
-	(0.9, Distributions.LogNormal(1.75, 0.3)), # 10 year
-	(0.99, Distributions.LogNormal(2, 0.35)), # 100 year
-	(0.999, Distributions.LogNormal(2.2, 0.35)), # 1000 year
+	(0.9, Distributions.LogNormal(1.75, 0.2)), # 10 year
+	(0.99, Distributions.LogNormal(2, 0.2)), # 100 year
+	(0.999, Distributions.LogNormal(2.25, 0.2)), # 1000 year
 ];
+
+# ╔═╡ a1deb075-4660-4c1c-b084-cc2af869cc21
+md"""
+>TODO: we can revise these priors
+"""
 
 # ╔═╡ b198fc1f-4655-4020-80e6-4d113ed20296
 md"""
@@ -231,6 +246,9 @@ md"""
 Only now that we have run a few basic checks to ensure that our model seems plausible are we ready to actually look at data!
 """
 
+# ╔═╡ b5812bc5-a1e3-4538-95f7-7dca2758cbef
+N_draws = 10_000;
+
 # ╔═╡ 44108282-59c1-477a-84b1-5d0176765476
 md"""
 Unsurprisingly, our uncertainties have shrunk well beyond the prior.
@@ -260,7 +278,19 @@ We can see that our estimates (histogram and density) are broadly quite consiste
 
 # ╔═╡ 97cb91a4-abde-4752-a13a-343ae69a2d5b
 md"""
+### Posterior Plots 
+
 Finally we'll create a plot of draws from our posterior
+"""
+
+# ╔═╡ 128fccc1-fab6-4a57-9b9c-76ce851ba503
+md"""
+we can also visualize this as a return period
+"""
+
+# ╔═╡ 2ddb440a-812b-4766-b4f1-73e5bb270ead
+md"""
+Last but not least, we can visualize the spread of the 100 year return level in our posterior
 """
 
 # ╔═╡ 5586c372-498e-4649-a455-b7054ca33404
@@ -316,7 +346,7 @@ md"Parse one of the CSV files downloaded from NOAA"
 
 # ╔═╡ 0361bed0-96a9-4c96-964d-4778a88fea77
 function parse_noaa_csv_file(fname)
-    surge = DataFrame(CSV.File(fname))[[1, 2]]
+    surge = DataFrame(CSV.File(fname))[!, [1, 2]]
     DataFrames.rename!(surge, [:datetime, :sl])
     surge[!, :datetime] =
         map(x -> DateTime(x, "YYYY-mm-dd HH:MM"), surge[!, :datetime])
@@ -421,14 +451,15 @@ annual = hourly_to_annual(hourly)
 # ╔═╡ 669536c8-db51-479c-924f-bbad20faae02
 annmax_surge_ft = ustrip.(u"ft", annual.surge);
 
-# ╔═╡ 806a03f3-13c9-4747-b93c-4a45f796d581
-bm = BlockMaxima(annmax_surge_ft, 1);
+# ╔═╡ f1743aac-c262-4b51-90b9-bcfe7b1533b2
+mle_estimate = optimize(MLEGEV(annmax_surge_ft), MLE(), [1, 1, 0.5])
 
-# ╔═╡ f517fad2-e3f9-4dcd-948a-2e69775dac64
-mle = fit(GeneralizedExtremeValue, bm)
-
-# ╔═╡ b9e6af3d-8930-4334-b1cd-ba55b2df682c
-mle.μ, mle.σ, mle.ξ
+# ╔═╡ 92859431-1be7-4e46-809a-88ac17c968e2
+mle = GeneralizedExtremeValue(
+	mle_estimate.values[:μ],
+	exp(mle_estimate.values[:ϕ]),
+	mle_estimate.values[:ξ],
+);
 
 # ╔═╡ b4966d0e-6825-47f1-ba49-5cea35a8e342
 n_years = length(annmax_surge_ft);
@@ -456,14 +487,14 @@ end;
 # ╔═╡ 3fe5866f-e500-4865-9919-25ddd0ff7b3d
 begin
 	function plot_surge_cdf()
-		xplot = 0:0.1:11
+		xplot = 1.5:0.05:11
 		yplot = cdf.(mle, xplot)
 		p = plot(
 			xplot,
 			yplot,
 			xlabel="Storm Surge [ft]",
 			ylabel="Cumulative Probability",
-			legend=:topleft,
+			legend=:right,
 			label="Best Fit",
 			linewidth=2,
 			color=colors[1],
@@ -471,7 +502,7 @@ begin
 		)
 		plot!(
 			p,
-			[0, bfe, bfe],
+			[minimum(xplot), bfe, bfe],
 			[0.99, 0.99, 0],
 			label="100 Year Surge",
 			color=colors[2],
@@ -480,6 +511,8 @@ begin
 			markerfacecolor=colors[2],
 			markeredgecolor=false,
 		)
+		vline!(p, [maximum(annmax_surge_ft)], color=colors[3], label="Observed Max")
+		return p
 	end
 	p2 = plot_surge_cdf()
 	savefig(p2, plotsdir("surge_cdf.pdf"))
@@ -572,20 +605,19 @@ function get_fits(
     drop_warmup::Bool = true,
     overwrite::Bool = false,
 )
-	cache_dir = datadir("processed")
-    cachename = joinpath(
-		cache_dir,
+	cachename = datadir(
+		"processed",
 		"surge_models",
-		"stationary_$(model_name)_$(n_samples).jld2",
+		"stationary_$(model_name)_$(n_samples).jls",
 	)
     samples_per_chain = Int(ceil(n_samples / n_chains))
 
     try
         @assert !overwrite
-        mcmc_chains = DrWatson.load(cachename, "mcmc_chains")
-        return mcmc_chains
+        chains = read(cachename, chains)
+        return chains
     catch err
-        mcmc_chains = sample(
+        chains = sample(
             model,
             NUTS(),
             MCMCThreads(),
@@ -593,8 +625,9 @@ function get_fits(
             n_chains;
             drop_warmup = drop_warmup,
         )
-        DrWatson.wsave(cachename, Dict("mcmc_chains" => mcmc_chains))
-        return mcmc_chains
+		mkpath(dirname(cachename))
+        write(cachename, chains)
+        return chains
     end
 end;
 
@@ -602,7 +635,7 @@ end;
 prior_fits = get_fits(
 	prior_model,
 	"prior_model",
-	25_000;
+	100_000;
 	n_chains = 4,
 );
 
@@ -610,16 +643,23 @@ prior_fits = get_fits(
 summarystats(prior_fits)
 
 # ╔═╡ 1f95e7a0-c403-4e62-bcc1-bcd523c1c0a9
-plot(prior_fits)
+begin
+	p_prior = plot(prior_fits)
+	savefig(p_prior, plotsdir("surge_prior_convergence.pdf"))
+	p_prior
+end
 
 # ╔═╡ 8af5a42e-6a5a-4e81-9f16-a0a6af64fb04
 begin
 	function plot_fake_data_experiment()
 		fake_dist = GeneralizedExtremeValue(4, 0.5, 0.15)
-		fake_data = DataFrame(CSV.File(datadir("raw", "fake_data.csv")))[!, :fake_data]
+		rng1 = Random.MersenneTwister(713) # Houston Area Code
+		fake_data = rand(rng1, fake_dist, length(annmax_surge_ft))
 		fake_posterior = get_fits(GEVModel(fake_data), "fake_data", 10_000)
+		rng2 = Random.MersenneTwister(203) # New Haven
 		fake_yhat = vcat(
 			rand.(
+				rng2,
 				GeneralizedExtremeValue.(
 					fake_posterior[:μ],
 					fake_posterior[:σ],
@@ -633,26 +673,47 @@ begin
 			ylabel = "Estimated Return Level [ft]",
 			aspect_ratio = :equal,
 			legend = :topleft,
+			size = (500, 500),
 		)
-		for rt in [2, 5, 10, 25, 50, 100, 250, 500, 1000]
+		for rt in [2, 5, 10, 25, 50, 100, 250, 500]
 			q = 1 - 1 / rt
+			xplot = quantile(fake_dist, q)
+			yplot = quantile(fake_yhat, q)
 			scatter!(
 				p,
-				[quantile(fake_dist, q)],
-				[quantile(fake_yhat, q)],
+				[xplot],
+				[yplot],
 				label = "",
-				color = :gray,
+				markersize = 3,
 			)
 			annotate!(
 				p,
-				quantile(fake_yhat, q) + 0.1,
-				quantile(fake_dist, q),
-				("$rt year surge", 8, :left)
+				xplot + 0.225,
+				yplot,
+				("$rt year", 8, :left)
 			)
 		end
-		Plots.abline!(p, 1, 0, label = "1:1 Line")
+		Plots.abline!(p, 1, 0, label = "1:1 Line", color=:gray)
+		xx = 1 .- 1 ./ exp.(range(log(2), log(1000); length=100))
+		plot!(
+			p,
+			quantile.(fake_dist, xx),
+			[quantile(fake_yhat, xxi) for xxi in xx],
+			label="Sampled Posterior",
+			color = colors[1],
+		)
+		annotate!(
+				p,
+				[5.5, 8.5],
+				[8.5, 5.5],
+				[
+					text("Over-Estimate", 8, :left, rotation=45, colors[2]),
+					text("Under-Estimate", 8, :left, rotation=45, colors[2]),
+				]
+			)
+		xlims!(p, 3.5, 10.5)
 		return p
-	end
+		end
 	p4 = plot_fake_data_experiment()
 	savefig(p4, plotsdir("surge_fake_data_experiment.pdf"))
 	plot(p4)
@@ -662,7 +723,7 @@ end
 posterior_fits = get_fits(
 	posterior_model,
 	"posterior_model",
-	25_000;
+	N_draws;
 	n_chains = 4,
 );
 
@@ -712,10 +773,116 @@ begin
 	p5
 end
 
+# ╔═╡ a3a7d738-36ea-4057-b9c0-f3293e5aa539
+begin
+	function weibull_plot_pos(y)
+		N = length(y)
+		ys = sort(y; rev=false) # sorted values of y
+		nxp = xp = [r / (N + 1) for r in 1:N] # exceedance probability
+		xp = 1 .- nxp
+		return xp, ys
+	end
+	function plot_return_period(obs)
+		
+		rts = range(1.25, 1000, length=500) # return periods
+		aeps = 1 .- 1 ./ rts # annual exceedance probability
+		
+		xticks = [2, 5, 10, 25, 50, 100, 250, 500, 1000]
+
+		# create the plot, specifying the axes, grid, and ticks
+		p = plot(
+			xlabel="Return Period [years]",
+			ylabel="Return Level [ft]",
+			xscale = :log,
+			legend = :topleft,
+			xticks = (xticks, string.(xticks)),
+			dpi=250, # for saving
+		)
+		
+		# start with Bayesian posterior draws
+		df = DataFrame(posterior_fits)
+		for i in 1:1_000
+			row = df[rand(1:nrow(df)), :]
+			dist = GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ])
+			plot!(
+				p,
+				rts,
+				quantile.(dist, aeps),
+				color = :gray,
+				linewidth = 0.1,
+				alpha = 0.25,
+				label = (i == 1) ? "Posterior Draws" : false,
+			)
+		end
+		
+		# next add the observed data (with Weibull plotting position!)
+		xp, ys = weibull_plot_pos(obs)
+		scatter!(
+			p,
+			1 ./ xp,
+			ys,
+			label="Observed",
+			color=colors[1],
+			alpha = 1,
+		)
+		
+		# then on top add the MLE
+		plot!(
+			p,
+			rts,
+			quantile.(mle, aeps),
+			color = colors[2],
+			linewidth = 2,
+			label = "MLE",
+		)
+
+		# return the plot
+		return p
+	end
+	p_rt = plot_return_period(annmax_surge_ft)
+	savefig(p_rt, plotsdir("surge_return_period.png"))
+	p_rt
+end
+
+# ╔═╡ 61a65bef-9e9b-4b00-8c00-1e735b847237
+begin
+	function plot_100()
+		df = DataFrame(posterior_fits)
+		rt_100 = map(eachrow(df)) do row
+			gev = GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ])
+			quantile(gev, 0.99)
+		end
+		p = plot(
+			xlabel = "100 Year Return Level [ft]",
+			ylabel = "Probability Density",
+			size = (500, 300),
+		)
+		density!(
+			p,
+			rt_100,
+			c=colors[2],
+			label="Posterior Draws",
+			linewidth=3,
+		)
+		vline!(p, [quantile(mle, 0.99)], c=colors[1], label="MLE", linewidth=3)
+		vline!(
+			p,
+			[maximum(annmax_surge_ft)],
+			c=colors[3],
+			label="Historical Record",
+			linewidth=3,
+		)
+		return p
+	end
+	p_100 = plot_100()
+	savefig(p_100, plotsdir("surge_100_year_uncertainty.pdf"))
+	p_100
+end
+
 # ╔═╡ d0fe9336-6eb6-404c-bcd3-cc5299b1c464
-DrWatson.wsave(
-	datadir("processed", "surge_posterior.jld2"),
-	Dict("posterior" => posterior_fits),
+write(
+	datadir("processed", "surge_posterior.jls"),
+	posterior_fits
 )
 
 # ╔═╡ 59213bea-dd9c-45bd-84b0-a1fd731a0452
@@ -726,7 +893,7 @@ function sample_predictive(fit::Chains, N::Int)
 	df = DataFrame(fit)
     yhat = [
         rand(GeneralizedExtremeValue(μ, σ, ξ), N) for
-        (μ, σ, ξ) in zip(df[:μ], df[:σ], df[:ξ])
+        (μ, σ, ξ) in zip(df[!, :μ], df[!, :σ], df[!, :ξ])
     ]
     return yhat
 end;
@@ -736,19 +903,21 @@ begin
 	function plot_predictive(p, chains::Chains, N::Int, label::String)
 		predictive = sample_predictive(chains, N)
 		predictive_flat = vcat(predictive...)[:]
-		bins=range(
+		edges = range(
 			quantile(predictive_flat, 0.001),
 			quantile(predictive_flat, 0.999),
 			length=250,
 		)
-		histogram!(
+		h = normalize(fit(Histogram, predictive_flat, edges); mode=:pdf)
+		r = h.edges[1]
+		x = first(r)+step(r)/2:step(r):last(r)
+		plot!(
 			p,
-			predictive_flat,
-			bins=bins,
+			x,
+			h.weights,
 			label=label,
 			xlabel="Storm Surge [ft]",
 			ylabel="Probability Density",
-			yticks=[],
 			left_margin=2.5mm,
 		)
 		return p
@@ -762,10 +931,10 @@ end
 
 # ╔═╡ b3ddd371-7d1a-48a9-b88d-c8ae34f3a5a2
 begin
-	predictive = plot_predictive(prior_fits, n_years, "Prior Predictive")
-	plot_predictive(predictive, posterior_fits, n_years, "Posterior Predictive")
-	savefig(predictive, plotsdir("prior_posterior_predictive.pdf"))
-	plot(predictive)
+	p_predictive = plot_predictive(prior_fits, n_years, "Prior Predictive")
+	plot_predictive(p_predictive, posterior_fits, n_years, "Posterior Predictive")
+	savefig(p_predictive, plotsdir("prior_posterior_predictive.pdf"))
+	p_predictive
 end
 
 # ╔═╡ 0f93af74-6cf8-4e15-a349-3c137c109b3a
@@ -818,12 +987,6 @@ begin
 	plot(test_plots)
 end
 
-# ╔═╡ 9d727408-29ae-42c7-acb2-9bf25170ec75
-p = get_params(posterior_fits)
-
-# ╔═╡ 44263932-e183-4643-bdd7-079c17215553
-DataFrame(posterior_fits)
-
 # ╔═╡ Cell order:
 # ╟─37b93f78-3750-11ec-2245-4d3c8e4a5b39
 # ╠═50a61c27-768a-4cf8-8494-e9f99da073c6
@@ -837,16 +1000,18 @@ DataFrame(posterior_fits)
 # ╟─80915922-3f67-4d2f-853d-6e50c1e8706e
 # ╠═669536c8-db51-479c-924f-bbad20faae02
 # ╠═806a03f3-13c9-4747-b93c-4a45f796d581
-# ╠═f517fad2-e3f9-4dcd-948a-2e69775dac64
+# ╠═f1743aac-c262-4b51-90b9-bcfe7b1533b2
+# ╠═92859431-1be7-4e46-809a-88ac17c968e2
 # ╟─40b6f48b-efcd-43d0-b6f1-39c40abe3959
 # ╟─c85a5ad9-7a8f-46b6-af8a-7e86eaac2c63
-# ╠═3fe5866f-e500-4865-9919-25ddd0ff7b3d
+# ╟─3fe5866f-e500-4865-9919-25ddd0ff7b3d
 # ╟─b50a65fe-b2b3-489d-b3ac-1d8515f19b25
 # ╟─683e3231-79ea-4f92-93a3-ccac083ec80e
 # ╟─b1d2dc0d-e456-468e-bda9-c71319ac82bb
 # ╠═68e097e1-34f7-4e81-9b60-0c0e7a7631c5
+# ╟─a1deb075-4660-4c1c-b084-cc2af869cc21
 # ╟─b198fc1f-4655-4020-80e6-4d113ed20296
-# ╠═808f2a15-36bb-4855-a044-f86656bfdcfb
+# ╟─808f2a15-36bb-4855-a044-f86656bfdcfb
 # ╟─600cf274-ff38-42ef-8056-2d3d4de73f2a
 # ╟─f76ba3d4-f3f5-4b32-8a84-b4d623c91872
 # ╠═dd688efd-f37a-4dc2-ae39-f5107fd0412e
@@ -855,10 +1020,9 @@ DataFrame(posterior_fits)
 # ╠═549f9646-f012-440f-94dc-484e0399d717
 # ╠═41e3000a-1ad3-4f67-b6a3-aa96e706969d
 # ╟─c152a675-097e-4fa6-92f9-714f87c66691
-# ╠═1f95e7a0-c403-4e62-bcc1-bcd523c1c0a9
+# ╟─1f95e7a0-c403-4e62-bcc1-bcd523c1c0a9
 # ╟─5956c651-294c-442c-a8ea-ee0635bf6079
-# ╠═b9e6af3d-8930-4334-b1cd-ba55b2df682c
-# ╠═28c54f53-218f-42e4-8e1b-a6c6d7f132ae
+# ╟─28c54f53-218f-42e4-8e1b-a6c6d7f132ae
 # ╟─8af5a42e-6a5a-4e81-9f16-a0a6af64fb04
 # ╟─b4966d0e-6825-47f1-ba49-5cea35a8e342
 # ╟─6d808cfd-10df-4107-8b27-2e9a20bbcdb6
@@ -866,6 +1030,7 @@ DataFrame(posterior_fits)
 # ╟─8a33c2e1-d073-438a-a8da-33e3e1f747dc
 # ╟─60e16292-b948-4905-a4fe-605d2bbcf974
 # ╠═a91ae172-171f-41f0-86b3-e6e5c8adb3ec
+# ╠═b5812bc5-a1e3-4538-95f7-7dca2758cbef
 # ╠═6c1e1afe-2e07-406d-a3a4-4bbec74b2ecc
 # ╟─716569f7-d706-4c6c-954c-8ce316596382
 # ╟─213f25b0-006d-4cda-a360-5511f67970e6
@@ -874,8 +1039,12 @@ DataFrame(posterior_fits)
 # ╟─441a9767-c82d-4f77-a7b2-7aab95e6fb0f
 # ╟─0f93af74-6cf8-4e15-a349-3c137c109b3a
 # ╟─1473baa8-98ac-4cef-81c6-1b7044f0e599
-# ╠═97cb91a4-abde-4752-a13a-343ae69a2d5b
-# ╠═d9d8c5b1-97b9-4a95-b8e3-34e2285c4156
+# ╟─97cb91a4-abde-4752-a13a-343ae69a2d5b
+# ╟─d9d8c5b1-97b9-4a95-b8e3-34e2285c4156
+# ╟─128fccc1-fab6-4a57-9b9c-76ce851ba503
+# ╟─a3a7d738-36ea-4057-b9c0-f3293e5aa539
+# ╟─2ddb440a-812b-4766-b4f1-73e5bb270ead
+# ╟─61a65bef-9e9b-4b00-8c00-1e735b847237
 # ╟─5586c372-498e-4649-a455-b7054ca33404
 # ╠═d0fe9336-6eb6-404c-bcd3-cc5299b1c464
 # ╟─acf6d7d6-8ab7-4015-adf9-f4245af9ee54
@@ -903,5 +1072,3 @@ DataFrame(posterior_fits)
 # ╠═153f976b-9be7-4789-82e4-10e6d6770789
 # ╟─59213bea-dd9c-45bd-84b0-a1fd731a0452
 # ╠═1e2137bf-c514-4948-886e-c3f9163b25ee
-# ╠═9d727408-29ae-42c7-acb2-9bf25170ec75
-# ╠═44263932-e183-4643-bdd7-079c17215553

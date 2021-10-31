@@ -27,3 +27,10 @@ This will install all necessary packages for you to be able to run the scripts a
 ## Organization
 
 * [`data/`](data/) contains raw data. This data is documented in [`data/raw`](data/raw/).
+
+## Scratchpad (move before publishing)
+
+1. Tony Wong, July 12th:
+   1. the `BRICK_NOfastDynamics_SP_20Nov2018.nc` projections are the WK2017 paper’s model projections, redone with Kopp et al 2014 subsidence, extended to 2200, and downscaled to Norfolk instead of NOLA
+   1. `BRICK_sewellsPoint_FastDynamics_20Nov2018.nc` is the same thing, but with fast dynamics
+1. See original data [on GitHub](https://github.com/scrim-network/local-coastal-flood-risk/tree/master/Data)

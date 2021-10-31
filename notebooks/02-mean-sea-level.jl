@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.4
+# v0.17.0
 
 using Markdown
 using InteractiveUtils
@@ -161,7 +161,7 @@ function get_norfolk_brick(
 end;
 
 # ╔═╡ 09815c58-3c3b-4b1d-a9a1-8a7191774019
-all_trajs = get_norfolk_brick(syear=2020, eyear=2100)
+all_trajs = get_norfolk_brick(syear=2000, eyear=2100)
 
 # ╔═╡ c73ddb13-50d4-4e6d-ac54-c171c66b3786
 begin
@@ -310,7 +310,7 @@ end
 # ╔═╡ eece84cd-3f44-4d8b-851e-933d22151c19
 begin
 	function plot_all_trajs()
-		all_trajs = get_norfolk_brick(syear=2020, eyear=2100)
+		all_trajs = get_norfolk_brick(syear=2000, eyear=2100)
 		noaa = get_noaa_scenarios()
 		p = plot(
 			xlabel = "Year",
@@ -324,7 +324,7 @@ begin
 				traj.years,
 				ustrip.(u"ft", traj.lsl),
 				linewidth=0.25,
-				alpha=0.5,
+				alpha=0.25,
 				color=:gray,
 				label=false,
 			)
@@ -348,7 +348,7 @@ end
 # ╔═╡ Cell order:
 # ╟─49cd8998-378d-11ec-3ceb-811bf9c58697
 # ╠═6eaeeaaf-5fe8-44b2-8957-b47918f26b17
-# ╠═ab567401-943f-4877-8572-cfa8ffb531d4
+# ╟─ab567401-943f-4877-8572-cfa8ffb531d4
 # ╟─c259b7d3-0873-4502-9d4b-a5d18c5adcd8
 # ╠═09815c58-3c3b-4b1d-a9a1-8a7191774019
 # ╠═eb8aa132-023a-4cb1-8799-87ec85621c98
@@ -360,11 +360,11 @@ end
 # ╟─f251e057-4409-4c8b-a2d7-4603c8af6750
 # ╟─c73ddb13-50d4-4e6d-ac54-c171c66b3786
 # ╟─5f912aeb-c9e4-485a-897f-a71e84ec6038
-# ╠═eece84cd-3f44-4d8b-851e-933d22151c19
+# ╟─eece84cd-3f44-4d8b-851e-933d22151c19
 # ╟─48b37aa3-b756-4628-be82-5289ed202aa2
 # ╠═4e5b01a7-bf2c-4092-b9e2-580e46c289f5
-# ╠═15ad5394-ee85-4aff-851d-e9e9a58ff1a0
-# ╠═3a5a60eb-3493-4359-924e-ad19ddd28b63
+# ╟─15ad5394-ee85-4aff-851d-e9e9a58ff1a0
+# ╟─3a5a60eb-3493-4359-924e-ad19ddd28b63
 # ╠═9c416662-ce22-4b35-9d34-7474551811dc
 # ╟─b69d8c44-3271-4f15-bcd2-bab67d3807b9
 # ╠═7b384702-3938-4b71-8df5-68ddcbd8c0dd

@@ -20,7 +20,9 @@ begin
 	using UnitfulRecipes
 	using PlutoUI
 	using Plots
+	using ProgressBars
 	using Tullio
+	using StatsPlots
 	TableOfContents()
 end
 
@@ -69,7 +71,7 @@ We'll discretize this and look at results over all the discrete values for simpl
 """
 
 # ╔═╡ 37a5ab0d-db74-4bff-aa12-f79a6404368a
-𝐱 = (0:0.5:16)u"ft";
+𝐱 = (0:0.5:14)u"ft";
 
 # ╔═╡ 26eb91da-a71b-4eb9-9a8c-a9a336b34446
 md"""
@@ -94,25 +96,64 @@ As Zarekarizi et al (2020) describe, this can make a big difference for predicte
 Since our focus here is on sea level rise, we'll stick the HAZUS curve for now -- a proper decision support tool should look for better estimates of depth-damage curves (and, indeed, should consider additional predictors -- see our paper for more discussion).
 """
 
+# ╔═╡ ba716c60-0b2e-4abe-b195-afa49dbe63d8
+md"""
+### Elevation Cost
+
+The cost of construction is modeled as piecewise linear as in Zarekarizi et al (2020).
+There is no cost of not elevating the house.
+The house cannot be lifted more than 14ft.
+"""
+
+# ╔═╡ 031e6664-ff59-414b-83eb-1f8eda4c23f7
+md"""
+### Expected Damage Emulator
+
+We use a Monte Carlo approximation to estimate annual expected damages given a house's elevation relative to mean sea level.
+
+The expected damages ``d`` as a function of ``h``, the difference between the elevation of the house and mean sea level, is the convolution of the probability density of storm surge ``p(y')`` and the depth-damage function ``d(y')``:
+
+``\mathbb{E}(d | h) = \int p(y') d(y') dy'``
+
+This can be approximated as
+
+``
+\frac{1}{N} \sum_{i=1}^N d(y^*_i)
+``
+
+where ``y^*_1, \ldots, y^*_N`` are draws from ``p(y')``.
+With sufficiently large `N`, this is a good approximation.
+
+This is implemented below (see `Helper Functions`).
+The function takes in the distance between the mean sea level and the house and returns the expected fraction of damages.
+We run this Monte Carlo for a lot of iterations, so it takes quite a while the first time, but then it's cached (we use a progress bar to track... progress... but it shows up in the terminal you're running Pluto from, not on this page. Go check there!).
+"""
+
 # ╔═╡ 9a126e57-0316-4caf-ab6a-89e502fb71f1
 md"""
 ### System Function
 
-Following our paper's notation, we need to define a function 𝑓 (`\itf`) that takes in a scenario sᵢ (`s\_i`) and a decision xⱼ (`x\_j`) and spits out an outcome, which is just a vector of length $K$.
-We'll use some notation magic with the `Tullio.jl` package.
+Following our paper's notation, we need to define a function 𝑓 (`\itf`) that takes in a scenario s and a decision x and spits out an outcome, which is just a vector of length $K$.
 """
 
 # ╔═╡ 0fbff6fd-69b8-4aa9-904a-cf6b004428ba
 K = 4;
 
-# ╔═╡ e88d50e9-fe5c-46e8-9cd0-45cebdb0d652
-function 𝑓(sᵢ, xⱼ)::Vector
-	return 1:K
-end
-
 # ╔═╡ f180e72b-d2c5-46d7-a2ef-84c012e59cf4
 md"""
 ## Calculate Outcomes
+
+We'll use some notation magic with the `Tullio.jl` package to create an array of outcomes indexed by [scenario, decision, outcome variable].
+"""
+
+# ╔═╡ 0bd6b397-59ad-429d-bc84-c5ab6bc91ba2
+md"""
+## Scenario Discovery
+"""
+
+# ╔═╡ adefc367-4f7e-41b1-8666-b716c346cbd1
+md"""
+## Save Scenarios
 """
 
 # ╔═╡ e5456332-766a-48e3-82c9-34224b7589a2
@@ -120,11 +161,17 @@ md"""
 ## Helper Functions
 """
 
+# ╔═╡ 3e970722-0b5c-4288-80b7-302398d34313
+md"""
+### Core
+
+Define what a state of the world (``s \in \mathcal{S}``) is
+"""
+
 # ╔═╡ 16bb254d-3773-4820-b4dd-fe114f7016a4
-struct SOW{I<:Integer,T<:AbstractFloat}
+struct SOW{I<:Integer,T<:AbstractFloat,L<:Unitful.Length}
     years::UnitRange{I}
-    lsl::Vector{<:Unitful.Length}
-	gev::typeof(GeneralizedExtremeValue(1, 2, 0.))
+    lsl::Vector{L}
     rcp::T
     dynamics::AbstractString
 end
@@ -133,17 +180,10 @@ end
 begin
 	𝐬 = []
 	for _ in 1:n_SOWs
-		row = rand(1:nrow(posterior_df))
-		surge = GeneralizedExtremeValue(
-			posterior_df[row, :μ],
-			posterior_df[row, :σ],
-			posterior_df[row, :ξ],
-		)
 		lsl = rand(lsl_trajs)
 		sow = SOW(
 			lsl.years,
 			lsl.lsl,
-			surge,
 			lsl.rcp,
 			lsl.dynamics,
 		)
@@ -153,13 +193,51 @@ begin
 end
 
 # ╔═╡ 31b3c3af-32d6-410d-bca2-f200e0326801
-y = zeros(length(𝐬), length(𝐱), K);
+y = zeros(Float64, length(𝐬), length(𝐱), K);
 
-# ╔═╡ b04b1325-df46-47c1-9d75-0ce91434c600
-y[1, 1, :]
+# ╔═╡ 3f3a888b-4cc9-4415-9e50-ef941b7fdd95
+DrWatson.wsave(datadir("processed", "sows.jld2"), Dict("y" => y));
 
-# ╔═╡ 58e0aea3-3ea2-4584-a70e-c670a7184395
-@tullio y[i, j, :] = 𝑓(𝐬[i], 𝐱[j]);
+# ╔═╡ dd4b7937-b95a-4a12-b306-ae9bfdcd4c3d
+begin
+	function plot_scenario_map(x)
+		j = findfirst(x .== 𝐱)
+		k = 3 # total costs
+		sidx = rand(1:length(𝐬), 25_000)
+		ss = 𝐬[sidx]
+		msl_2100_ft = ustrip.(u"ft", [last(s.lsl) for s in ss])
+		total_costs = y[sidx, j, k]
+		p = plot(
+			xlabel="Mean Sea Level in 2100",
+			ylabel = "Expected NPV Total Costs [1000 USD]",
+			title="Δh = $x",
+			size=(750, 750),
+		)
+
+		scatter!(
+			p,
+			msl_2100_ft,
+			total_costs ./ 1_000,
+			markerstrokewidth=0,
+			markersize=3,
+			label=false,
+			alpha = 0.5,
+		)
+		return p
+	end
+	p_scenario_maps = plot(
+		[plot_scenario_map(xi) for xi in [0, 3, 6, 9, 12, 14]u"ft"]...,
+		dpi=150,
+		size=(1200, 900)
+	)
+	savefig(p_scenario_maps, plotsdir("scenario_maps.png"))
+	p_scenario_maps
+end
+
+# ╔═╡ 86277361-9319-46fd-8fe9-448176668e6a
+md"""
+### Depth Damage
+"""
 
 # ╔═╡ 5f18caa2-9916-4d24-ac6e-0788357d341d
 md"""
@@ -192,33 +270,35 @@ function parse_hazus()
 end;
 
 # ╔═╡ fdf4b10a-bbbb-4ddc-9591-3262afd2d452
-md"Generic function to parse the function given a key"
-
-# ╔═╡ 13f2a4a4-39a0-4163-ad0a-a009c41d4fb1
-function parse_data(key)
-    if key == :europa
-        depth, damage_frac = parse_europa()
-    elseif key == :hazus
-        depth, damage_frac = parse_hazus()
-    else
-        throw("Invalid key")
-    end
-    return depth, damage_frac
-end;
+md"Generic function to parse the europa/hazus data given a key"
 
 # ╔═╡ f17cc599-2fff-454a-8597-45ed264829db
 md"Get the depth-damage interpolation function"
 
 # ╔═╡ 082e36d3-7c6d-4f26-8bef-a710535272ea
 function get_depth_damage(key)
-    depth, damage_frac = parse_data(key)
+
+	# parse the raw file
+	if key == :europa
+        depth, damage_frac = parse_europa()
+    elseif key == :hazus
+        depth, damage_frac = parse_hazus()
+    else
+        throw("Invalid key")
+    end
+
+	# add a zero to the beginning of the data
     prepend!(depth, minimum(depth) - 0.1u"ft")
     prepend!(damage_frac, 0)
+
+	# interpolate
     interp_fn = Interpolations.LinearInterpolation(
         ustrip.(u"ft", depth),
         damage_frac,
         extrapolation_bc = Interpolations.Flat(),
     )
+
+	# return a *function*
     damage_fn = function (depth::T) where {T<:Unitful.Length}
         return interp_fn(ustrip.(u"ft", depth))
     end
@@ -236,47 +316,7 @@ mutable struct HouseStructure{P<:Unitful.Area,T<:Real,L<:Unitful.Length}
 end;
 
 # ╔═╡ 52d492ca-882d-460b-975f-03de1cb273ab
-house = HouseStructure(1000u"ft^2", 185_000, 5u"ft");
-
-# ╔═╡ ce166d96-c511-44ad-8758-5e92770a316d
-md"copy a house structure"
-
-# ╔═╡ f69af79d-02c3-4dd2-9ab5-595e34eff20b
-function copy(hs::HouseStructure)
-    return HouseStructure(hs.A, hs.V, hs.h)
-end;
-
-# ╔═╡ e9fc3a08-048e-41bf-bd72-f9fa81663cb3
-md"""
-    elevation_cost(house, Δh)
-Compute the cost of elevating a particular HouseStructure `house` by `Δh`, where `house` is a `HouseStructure` and `Δh` is a length.
-This cost function follows Zarekarizi et al (2020), which is in turn based on the CLARA model. The valid domain of `Δh` is [0, 14ft].
-> Zarekarizi, M., Srikrishnan, V., & Keller, K. (2020). Neglecting uncertainties biases house-elevation decisions to manage riverine flood risks. Nature Communications, 11(1), 5361. https://doi.org/10.1038/s41467-020-19188-9
-"""
-
-# ╔═╡ 332ffd8c-f240-4544-b9ea-2eca882200d8
-begin
-	elevation_thresholds = [0 5.0 8.5 12.0 14.0][:] # cost is piecewise linear
-	elevation_rates = [80.36 82.5 86.25 103.75 113.75][:] # cost per unit increase per area
-	elevation_itp = LinearInterpolation(elevation_thresholds, elevation_rates)
-end;
-
-# ╔═╡ 04bc3669-07d4-4000-8f91-971bea160cbf
-function elevation_cost(house::HouseStructure, Δh::T) where {T<:Unitful.Length}
-    area_ft2 = to_sq_feet(house.A)
-    base_cost = (10000 + 300 + 470 + 4300 + 2175 + 3500) # all costs are in dollars
-    if Δh < 0.0ft
-        throw(DomainError(Δh, "Cannot lower the house"))
-    elseif Δh ≈ 0.0ft
-        cost = 0.0
-    elseif 0.0ft < Δh <= 14.0ft
-        rate = elevation_itp(to_feet(Δh))
-        cost = base_cost + area_ft2 * rate
-    else
-        throw(DomainError(Δh, "Cannot elevate >14ft"))
-    end
-    return cost
-end;
+house = HouseStructure(1000u"ft^2", 185_000, 5.0u"ft");
 
 # ╔═╡ 01f44422-a92f-42f7-a0c6-86e797f09c3d
 md"Depth vs damage as a fraction of house value"
@@ -341,6 +381,206 @@ begin
 	p1
 end
 
+# ╔═╡ a52ea94f-3f4a-4a0c-b5ba-56f1600da7e5
+md"""
+
+### Elevation Cost
+
+Compute the cost of elevating a particular HouseStructure `house` by `Δh`, where `house` is a `HouseStructure` and `Δh` is a length.
+This cost function follows Zarekarizi et al (2020), which is in turn based on the CLARA model. The valid domain of `Δh` is [0, 14ft].
+"""
+
+# ╔═╡ bba1a940-a3f2-43df-ba0d-a05c03a829be
+begin
+	# constants
+	elevation_thresholds = [0 5.0 8.5 12.0 14.0][:] # piecewise linear
+	elevation_rates = [80.36 82.5 86.25 103.75 113.75][:] # cost /ft / ft^2
+
+	# interpolation
+	elevation_itp = LinearInterpolation(elevation_thresholds, elevation_rates)
+
+	# user-facing function
+	function elevation_cost(house::HouseStructure, Δh::T) where {T<:Unitful.Length}
+	    area_ft2 = ustrip(u"ft^2", house.A)
+	    base_cost = (10000 + 300 + 470 + 4300 + 2175 + 3500) # in USD
+	    if Δh < 0.0u"ft"
+	        throw(DomainError(Δh, "Cannot lower the house"))
+	    elseif Δh ≈ 0.0u"ft"
+	        cost = 0.0
+		elseif 0.0u"ft" < Δh <= 14.0u"ft"
+	        rate = elevation_itp(ustrip(u"ft", Δh))
+	        cost = base_cost + area_ft2 * rate
+	    else
+	        throw(DomainError(Δh, "Cannot elevate >14ft"))
+	    end
+	    return cost
+	end
+end;
+
+# ╔═╡ 9f8016bd-c104-4d0c-9e5f-61a495f4fdbb
+begin
+	function plot_elevation()
+		Δh = (0:0.5:14)u"ft"
+		cost = map(Δhᵢ -> elevation_cost(house, Δhᵢ), Δh)
+		p = plot(
+			xlabel="Height Increase [ft]",
+			ylabel="Construction Cost [1000 USD]",
+			legend=:topleft,
+			size=(500, 500),
+		)
+		plot!(p, ustrip.(u"ft", Δh), cost ./ 1_000, label=false)
+		return p
+	end
+	p2 = plot_elevation()
+	savefig(plotsdir("elevation_cost.pdf"))
+	p2
+end
+
+# ╔═╡ ea3ec96a-b53e-48f9-82f2-8b615772c110
+md"""
+### Expected Damage Emulator
+"""
+
+# ╔═╡ af851075-eeda-4c9b-a442-5052d171a9ea
+md"""We've seen this function before to sample from the predictive distribution"""
+
+# ╔═╡ 0e6125a2-bc5f-4bff-b67f-7f382a4e122b
+function sample_predictive(fit::Chains, N::Int)
+	df = DataFrame(fit)
+    yhat = [
+        rand(GeneralizedExtremeValue(μ, σ, ξ), N) for
+        (μ, σ, ξ) in zip(df[!, :μ], df[!, :σ], df[!, :ξ])
+    ]
+    return yhat
+end;
+
+# ╔═╡ be8ee31b-fa31-46b8-8665-ca73c9e4e527
+md"Get a bunch of synthetic storm surges!"
+
+# ╔═╡ e43561b6-41c8-41f0-8d1d-8f5133e9a2f2
+function draw_surges(N::Int)
+    posterior = read(datadir("processed", "surge_posterior.jls"), Chains)
+    y_hat = sample_predictive(posterior, N)
+    return vcat(y_hat...) .* 1.0u"ft"
+end;
+
+# ╔═╡ 6d90dcaa-a438-49d3-bf22-97a7d897479d
+md"""
+Fit an interpolation function that estimates expected annual damage given difference between house elevation and MSL.
+This returns a function that takes in the distance between the house floor and the mean sea level, and returns an expected annual damage fraction.
+The nice thing is that nothinga about this emulator is specific to a particular house (just to a particular depth-damage function).
+"""
+
+# ╔═╡ 93e3cbe4-cf3c-4cd4-b5e6-6d40c6b2b78e
+function fit_expected_damage_emulator(key::Symbol=:hazus; N::Int=2_000)
+    clearances = collect(-30:0.5:30)u"ft"
+    surges = draw_surges(N)
+	dmg_fn = get_depth_damage(key)
+    xp_dmg =
+		[
+			mean(dmg_fn.(surges .- cᵢ))
+			for cᵢ in ProgressBar(clearances)
+		]
+    interp_fn = Interpolations.LinearInterpolation(
+        ustrip.(u"ft", clearances),
+        xp_dmg,
+        extrapolation_bc = Interpolations.Flat(),
+    )
+    damage_fn = function (h::T) where {T<:Unitful.Length}
+        return interp_fn(ustrip.(u"ft", h))
+    end
+    return damage_fn
+end;
+
+# ╔═╡ 71847fa9-f9c8-49e5-86bc-0c97d3f08eca
+
+
+# ╔═╡ 5f0f47a9-c4b0-49bf-b17e-6c8ba7a7ebd5
+md"Get an interpolation function that estimates expected annual damage given difference between house elevation and MSL"
+
+# ╔═╡ 5da48412-b3fa-407d-8c3b-63d118f77735
+function get_expected_damage_emulator(key::Symbol; overwrite::Bool = false)
+
+    # where to save the emulator
+    cachename = datadir("processed", "expected_depth_damage_$key.jld2")
+
+    try
+        @assert !overwrite
+        damage_fn = DrWatson.load(cachename, "damage_fn")
+		@assert 0 <= damage_fn(2u"ft") <= 1
+        return damage_fn
+    
+	catch err
+        damage_fn = fit_expected_damage_emulator(key)
+        DrWatson.wsave(cachename, Dict("damage_fn" => damage_fn))
+        return damage_fn
+    end
+end;
+
+# ╔═╡ d388fd82-fb94-4874-9308-0d7be5d9cd17
+expected_damage = get_expected_damage_emulator(:hazus);
+
+# ╔═╡ 331ee751-2cf7-4d4c-b188-e0fce7e47709
+begin
+	function plot_expected_dmg_msl()
+		clearances = (0:0.25:21)u"ft"
+		damages = map(h -> expected_damage(h), clearances) * house.V
+		yticks = [5, 10, 100, 1000, 1000, 5_000, 25_000]
+		p = plot(
+			xlabel="House Height Above MSL [ft]",
+			ylabel="Expected Annual Damages [USD]",
+			legend=:bottomleft,
+			yscale = :log,
+			yticks = (yticks, string.(yticks)),
+			xticks = 0:3:21,
+			size = (500, 500),
+		)
+		plot!(p, ustrip.(u"ft", clearances), damages, label=false)
+		return p
+	end
+	p3 = plot_expected_dmg_msl()
+	savefig(p3, plotsdir("expected_damage_msl.pdf"))
+	p3
+end
+
+# ╔═╡ e88d50e9-fe5c-46e8-9cd0-45cebdb0d652
+function 𝑓(
+	s,
+	x;
+	house_area::A = 1000.0u"ft^2",
+	house_value_usd::Float64 = 185_000.0,
+	house_ft_above_gage::L = 7.0u"ft",
+	discount_rate::Float64 = 0.02,
+) where A <: Unitful.Area{Float64} where L <: Unitful.Length{Float64}
+
+	# create a house
+	h = HouseStructure(house_area, house_value_usd, house_ft_above_gage)
+	
+	# outcome 1: up front cost
+	construction_cost = elevation_cost(h, x)
+	h.h += x
+
+	# outcome 2: NPV damages each year
+	N = length(s.years)
+	clearances = h.h .- s.lsl
+	damage_fracs = map(h -> expected_damage(h), clearances)
+	damage_usd = damage_fracs .* h.V
+	Γ = (1 - discount_rate) .^ collect(0:(N-1))
+	npv_damages = Γ .* damage_usd
+	total_npv = sum(npv_damages)
+
+	# outcome 3: total cost
+	total_cost = construction_cost + total_npv
+
+	# outcome 4: probability of flooding in final year
+	final_damage_frac = last(damage_fracs)
+	
+	return [construction_cost, total_npv, total_cost, final_damage_frac]
+end;
+
+# ╔═╡ 58e0aea3-3ea2-4584-a70e-c670a7184395
+@tullio y[i, j, :] = 𝑓(𝐬[i], 𝐱[j]);
+
 # ╔═╡ Cell order:
 # ╟─49cd8998-378d-11ec-3ceb-811bf9c58697
 # ╠═6eaeeaaf-5fe8-44b2-8957-b47918f26b17
@@ -357,33 +597,49 @@ end
 # ╠═52d492ca-882d-460b-975f-03de1cb273ab
 # ╟─fcb1ddc0-e6b8-4847-b994-fce762046f8e
 # ╟─ef2d2c8d-afda-461e-beab-6ce07b8d8650
-# ╠═9a126e57-0316-4caf-ab6a-89e502fb71f1
+# ╟─ba716c60-0b2e-4abe-b195-afa49dbe63d8
+# ╟─9f8016bd-c104-4d0c-9e5f-61a495f4fdbb
+# ╟─031e6664-ff59-414b-83eb-1f8eda4c23f7
+# ╠═d388fd82-fb94-4874-9308-0d7be5d9cd17
+# ╟─331ee751-2cf7-4d4c-b188-e0fce7e47709
+# ╟─9a126e57-0316-4caf-ab6a-89e502fb71f1
 # ╠═0fbff6fd-69b8-4aa9-904a-cf6b004428ba
 # ╠═e88d50e9-fe5c-46e8-9cd0-45cebdb0d652
-# ╠═f180e72b-d2c5-46d7-a2ef-84c012e59cf4
+# ╟─f180e72b-d2c5-46d7-a2ef-84c012e59cf4
 # ╠═31b3c3af-32d6-410d-bca2-f200e0326801
 # ╠═58e0aea3-3ea2-4584-a70e-c670a7184395
-# ╠═b04b1325-df46-47c1-9d75-0ce91434c600
-# ╠═e5456332-766a-48e3-82c9-34224b7589a2
+# ╟─0bd6b397-59ad-429d-bc84-c5ab6bc91ba2
+# ╟─dd4b7937-b95a-4a12-b306-ae9bfdcd4c3d
+# ╟─adefc367-4f7e-41b1-8666-b716c346cbd1
+# ╠═3f3a888b-4cc9-4415-9e50-ef941b7fdd95
+# ╟─e5456332-766a-48e3-82c9-34224b7589a2
+# ╟─3e970722-0b5c-4288-80b7-302398d34313
 # ╠═16bb254d-3773-4820-b4dd-fe114f7016a4
+# ╟─86277361-9319-46fd-8fe9-448176668e6a
 # ╟─5f18caa2-9916-4d24-ac6e-0788357d341d
 # ╠═a54b43fd-bc71-44bd-a051-98401f8a549d
 # ╟─417aef6e-f03d-4d8b-998c-b86fb09f403c
 # ╠═457888c0-8877-4a0f-bb4a-2ece1238b4b2
 # ╠═fdf4b10a-bbbb-4ddc-9591-3262afd2d452
-# ╠═13f2a4a4-39a0-4163-ad0a-a009c41d4fb1
 # ╟─f17cc599-2fff-454a-8597-45ed264829db
 # ╠═082e36d3-7c6d-4f26-8bef-a710535272ea
-# ╠═7259cd4f-bdcb-4628-906b-b6c05781ac25
+# ╟─7259cd4f-bdcb-4628-906b-b6c05781ac25
 # ╠═83924484-c6b2-46d1-afc3-78f1b1a0e77b
-# ╠═ce166d96-c511-44ad-8758-5e92770a316d
-# ╠═f69af79d-02c3-4dd2-9ab5-595e34eff20b
-# ╠═e9fc3a08-048e-41bf-bd72-f9fa81663cb3
-# ╠═332ffd8c-f240-4544-b9ea-2eca882200d8
-# ╠═04bc3669-07d4-4000-8f91-971bea160cbf
 # ╟─01f44422-a92f-42f7-a0c6-86e797f09c3d
 # ╠═23d027d6-5c53-4d0b-997e-eb0db96f2e8f
 # ╟─88694dd1-f070-4255-81f0-6379451f01b8
 # ╠═890ebc2c-89cb-4ce3-92a7-b64f2f656c90
 # ╟─87d22dcc-aeaf-4a1c-9b8c-518873b3674d
 # ╠═6bf54483-ec3d-471a-8012-6246e57b8908
+# ╟─a52ea94f-3f4a-4a0c-b5ba-56f1600da7e5
+# ╠═bba1a940-a3f2-43df-ba0d-a05c03a829be
+# ╟─ea3ec96a-b53e-48f9-82f2-8b615772c110
+# ╟─af851075-eeda-4c9b-a442-5052d171a9ea
+# ╠═0e6125a2-bc5f-4bff-b67f-7f382a4e122b
+# ╟─be8ee31b-fa31-46b8-8665-ca73c9e4e527
+# ╠═e43561b6-41c8-41f0-8d1d-8f5133e9a2f2
+# ╟─6d90dcaa-a438-49d3-bf22-97a7d897479d
+# ╠═93e3cbe4-cf3c-4cd4-b5e6-6d40c6b2b78e
+# ╠═71847fa9-f9c8-49e5-86bc-0c97d3f08eca
+# ╟─5f0f47a9-c4b0-49bf-b17e-6c8ba7a7ebd5
+# ╠═5da48412-b3fa-407d-8c3b-63d118f77735

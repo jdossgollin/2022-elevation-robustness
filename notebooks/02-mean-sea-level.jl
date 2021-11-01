@@ -161,7 +161,7 @@ function get_norfolk_brick(
 end;
 
 # ╔═╡ 09815c58-3c3b-4b1d-a9a1-8a7191774019
-all_trajs = get_norfolk_brick(syear=2000, eyear=2100)
+all_trajs = get_norfolk_brick(syear=2020, eyear=2100)
 
 # ╔═╡ c73ddb13-50d4-4e6d-ac54-c171c66b3786
 begin

@@ -797,6 +797,7 @@ begin
 			legend = :topleft,
 			xticks = (xticks, string.(xticks)),
 			dpi=250, # for saving
+			size=(500, 500),
 		)
 		
 		# start with Bayesian posterior draws
@@ -1042,7 +1043,7 @@ end
 # ╟─97cb91a4-abde-4752-a13a-343ae69a2d5b
 # ╟─d9d8c5b1-97b9-4a95-b8e3-34e2285c4156
 # ╟─128fccc1-fab6-4a57-9b9c-76ce851ba503
-# ╟─a3a7d738-36ea-4057-b9c0-f3293e5aa539
+# ╠═a3a7d738-36ea-4057-b9c0-f3293e5aa539
 # ╟─2ddb440a-812b-4766-b4f1-73e5bb270ead
 # ╟─61a65bef-9e9b-4b00-8c00-1e735b847237
 # ╟─5586c372-498e-4649-a455-b7054ca33404

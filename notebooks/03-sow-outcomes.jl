@@ -20,8 +20,10 @@ begin
 	using UnitfulRecipes
 	using PlutoUI
 	using Plots
+	using Plots: mm
 	using ProgressBars
 	using Tullio
+	using StaticArrays
 	using StatsPlots
 	TableOfContents()
 end
@@ -84,7 +86,7 @@ md"""
 We'll start by defining a house.
 We'll use the same house for all our calculations.
 A house is characterized by its floor plan, in square feet, its dollar value, and its initial elevation relative to the gauge.
-Like Zarekarizi et al (2020), we'll consider a house that is below the BFE.
+Like Zarekarizi et al (2020), we'll consider a house that was at the BFE in 2000.
 """
 
 # ╔═╡ fcb1ddc0-e6b8-4847-b994-fce762046f8e
@@ -136,8 +138,8 @@ md"""
 Following our paper's notation, we need to define a function 𝑓 (`\itf`) that takes in a scenario s and a decision x and spits out an outcome, which is just a vector of length $K$.
 """
 
-# ╔═╡ 0fbff6fd-69b8-4aa9-904a-cf6b004428ba
-K = 4;
+# ╔═╡ 5e9e8516-cf5d-4a62-8617-ba7bca1c6580
+K = 4; # number of outcomes to track
 
 # ╔═╡ f180e72b-d2c5-46d7-a2ef-84c012e59cf4
 md"""
@@ -148,7 +150,7 @@ We'll use some notation magic with the `Tullio.jl` package to create an array of
 
 # ╔═╡ 0bd6b397-59ad-429d-bc84-c5ab6bc91ba2
 md"""
-## Scenario Discovery
+## Scenario visualizations
 """
 
 # ╔═╡ adefc367-4f7e-41b1-8666-b716c346cbd1
@@ -190,48 +192,6 @@ begin
 		push!(𝐬, sow)
 	end
 	first(𝐬)
-end
-
-# ╔═╡ 31b3c3af-32d6-410d-bca2-f200e0326801
-y = zeros(Float64, length(𝐬), length(𝐱), K);
-
-# ╔═╡ 3f3a888b-4cc9-4415-9e50-ef941b7fdd95
-DrWatson.wsave(datadir("processed", "sows.jld2"), Dict("y" => y));
-
-# ╔═╡ dd4b7937-b95a-4a12-b306-ae9bfdcd4c3d
-begin
-	function plot_scenario_map(x)
-		j = findfirst(x .== 𝐱)
-		k = 3 # total costs
-		sidx = rand(1:length(𝐬), 25_000)
-		ss = 𝐬[sidx]
-		msl_2100_ft = ustrip.(u"ft", [last(s.lsl) for s in ss])
-		total_costs = y[sidx, j, k]
-		p = plot(
-			xlabel="Mean Sea Level in 2100",
-			ylabel = "Expected NPV Total Costs [1000 USD]",
-			title="Δh = $x",
-			size=(750, 750),
-		)
-
-		scatter!(
-			p,
-			msl_2100_ft,
-			total_costs ./ 1_000,
-			markerstrokewidth=0,
-			markersize=3,
-			label=false,
-			alpha = 0.5,
-		)
-		return p
-	end
-	p_scenario_maps = plot(
-		[plot_scenario_map(xi) for xi in [0, 3, 6, 9, 12, 14]u"ft"]...,
-		dpi=150,
-		size=(1200, 900)
-	)
-	savefig(p_scenario_maps, plotsdir("scenario_maps.png"))
-	p_scenario_maps
 end
 
 # ╔═╡ 86277361-9319-46fd-8fe9-448176668e6a
@@ -315,8 +275,10 @@ mutable struct HouseStructure{P<:Unitful.Area,T<:Real,L<:Unitful.Length}
     h::L # the height of the house relative to the gauge
 end;
 
-# ╔═╡ 52d492ca-882d-460b-975f-03de1cb273ab
-house = HouseStructure(1000u"ft^2", 185_000, 5.0u"ft");
+# ╔═╡ a0a7288a-a838-4f05-950a-68088258d7db
+function get_default_house()
+	return HouseStructure(1_000u"ft^2", 185_000.0, 8.5u"ft")
+end;
 
 # ╔═╡ 01f44422-a92f-42f7-a0c6-86e797f09c3d
 md"Depth vs damage as a fraction of house value"
@@ -366,7 +328,7 @@ end;
 begin
 	function plot_depth_damage()
 		depths = (0:0.1:32)u"ft"
-		damage = map(d -> depth_damage(house, d, :hazus), depths)
+		damage = map(d -> depth_damage(get_default_house(), d, :hazus), depths)
 		p = plot(
 			xlabel="Gauge Depth [ft]",
 			ylabel="Structural Flood Damage [1000 USD]",
@@ -421,7 +383,7 @@ end;
 begin
 	function plot_elevation()
 		Δh = (0:0.5:14)u"ft"
-		cost = map(Δhᵢ -> elevation_cost(house, Δhᵢ), Δh)
+		cost = map(Δhᵢ -> elevation_cost(get_default_house(), Δhᵢ), Δh)
 		p = plot(
 			xlabel="Height Increase [ft]",
 			ylabel="Construction Cost [1000 USD]",
@@ -492,9 +454,6 @@ function fit_expected_damage_emulator(key::Symbol=:hazus; N::Int=2_000)
     return damage_fn
 end;
 
-# ╔═╡ 71847fa9-f9c8-49e5-86bc-0c97d3f08eca
-
-
 # ╔═╡ 5f0f47a9-c4b0-49bf-b17e-6c8ba7a7ebd5
 md"Get an interpolation function that estimates expected annual damage given difference between house elevation and MSL"
 
@@ -523,6 +482,7 @@ expected_damage = get_expected_damage_emulator(:hazus);
 # ╔═╡ 331ee751-2cf7-4d4c-b188-e0fce7e47709
 begin
 	function plot_expected_dmg_msl()
+		house = get_default_house()
 		clearances = (0:0.25:21)u"ft"
 		damages = map(h -> expected_damage(h), clearances) * house.V
 		yticks = [5, 10, 100, 1000, 1000, 5_000, 25_000]
@@ -547,39 +507,101 @@ end
 function 𝑓(
 	s,
 	x;
-	house_area::A = 1000.0u"ft^2",
-	house_value_usd::Float64 = 185_000.0,
-	house_ft_above_gage::L = 7.0u"ft",
-	discount_rate::Float64 = 0.02,
+	house = get_default_house(),
+	discount_rate = 0.01,
+	house_lifetime_yrs = 81,
 ) where A <: Unitful.Area{Float64} where L <: Unitful.Length{Float64}
 
-	# create a house
-	h = HouseStructure(house_area, house_value_usd, house_ft_above_gage)
+	# sanity checks
+	@assert length(s.years) >= house_lifetime_yrs
 	
 	# outcome 1: up front cost
-	construction_cost = elevation_cost(h, x)
-	h.h += x
+	construction_cost = elevation_cost(house, x)
+	house.h += x
 
 	# outcome 2: NPV damages each year
 	N = length(s.years)
-	clearances = h.h .- s.lsl
-	damage_fracs = map(h -> expected_damage(h), clearances)
-	damage_usd = damage_fracs .* h.V
+	clearances = house.h .- s.lsl
+	damage_fracs = map(x -> expected_damage(x), clearances)
+	damage_usd = damage_fracs .* house.V
 	Γ = (1 - discount_rate) .^ collect(0:(N-1))
 	npv_damages = Γ .* damage_usd
-	total_npv = sum(npv_damages)
+	total_npv = sum(npv_damages[1:house_lifetime_yrs])
 
 	# outcome 3: total cost
 	total_cost = construction_cost + total_npv
 
 	# outcome 4: probability of flooding in final year
 	final_damage_frac = last(damage_fracs)
-	
-	return [construction_cost, total_npv, total_cost, final_damage_frac]
+
+	# make sure it's the right length and type
+	return SVector{K, Float64}(
+		construction_cost,
+		total_npv,
+		total_cost,
+		final_damage_frac,
+	)
 end;
 
-# ╔═╡ 58e0aea3-3ea2-4584-a70e-c670a7184395
-@tullio y[i, j, :] = 𝑓(𝐬[i], 𝐱[j]);
+# ╔═╡ 31b3c3af-32d6-410d-bca2-f200e0326801
+begin
+	u = zeros(Float64, length(𝐬), length(𝐱), K)
+	@tullio u[i, j, :] = 𝑓(𝐬[i], 𝐱[j])
+end;
+
+# ╔═╡ dd4b7937-b95a-4a12-b306-ae9bfdcd4c3d
+begin
+	function plot_scenario_map(x, title)
+		j = findfirst(x .== 𝐱)
+		k = 3 # total costs
+		sidx = rand(1:length(𝐬), 25_000)
+		ss = 𝐬[sidx]
+		msl_2100_ft = ustrip.(u"ft", [last(s.lsl) for s in ss])
+		total_costs = u[sidx, j, k]
+		p = plot(
+			xlabel="Sea Level Rise from 2000 to 2100 [ft]",
+			ylabel = "Expected NPV Total Costs [1000 USD]",
+			title="$title",
+			size=(750, 750),
+			left_margin = 5mm,
+			title_align = :left,
+			bottom_margin = 6mm,
+		)
+
+		scatter!(
+			p,
+			msl_2100_ft,
+			total_costs ./ 1_000,
+			markerstrokewidth=0,
+			markersize=1,
+			label=false,
+			alpha = 0.5,
+		)
+		return p
+	end
+	yticks = [20, 50, 100, 200, 400]
+	heights_plot = [0, 3, 6, 9, 12, 14]u"ft"
+	titles = ["($('a'+(i-1))): Δh = $Δh" for (i, Δh) in enumerate(heights_plot)]
+	p_scenario_maps = plot(
+		[
+			plot_scenario_map(xi, t)
+			for (xi, t) in zip(heights_plot, titles)
+		]...,
+		dpi=150,
+		size=(1200, 900),
+		link=:y,
+		ylims=(20, 400),
+		yscale=:log10,
+		yticks = (yticks, string.(yticks)),
+	)
+	savefig(p_scenario_maps, plotsdir("scenario_maps.png"))
+	p_scenario_maps
+end
+
+# ╔═╡ 3f3a888b-4cc9-4415-9e50-ef941b7fdd95
+DrWatson.wsave(datadir("processed", "sows_outcomes.jld2"),
+	Dict("u" => u,  "𝐬" => 𝐬, "𝐱" => 𝐱)
+);
 
 # ╔═╡ Cell order:
 # ╟─49cd8998-378d-11ec-3ceb-811bf9c58697
@@ -594,7 +616,7 @@ end;
 # ╠═37a5ab0d-db74-4bff-aa12-f79a6404368a
 # ╟─26eb91da-a71b-4eb9-9a8c-a9a336b34446
 # ╟─cf4c37c4-0755-4af3-857c-529cce25583d
-# ╠═52d492ca-882d-460b-975f-03de1cb273ab
+# ╠═a0a7288a-a838-4f05-950a-68088258d7db
 # ╟─fcb1ddc0-e6b8-4847-b994-fce762046f8e
 # ╟─ef2d2c8d-afda-461e-beab-6ce07b8d8650
 # ╟─ba716c60-0b2e-4abe-b195-afa49dbe63d8
@@ -603,11 +625,10 @@ end;
 # ╠═d388fd82-fb94-4874-9308-0d7be5d9cd17
 # ╟─331ee751-2cf7-4d4c-b188-e0fce7e47709
 # ╟─9a126e57-0316-4caf-ab6a-89e502fb71f1
-# ╠═0fbff6fd-69b8-4aa9-904a-cf6b004428ba
+# ╠═5e9e8516-cf5d-4a62-8617-ba7bca1c6580
 # ╠═e88d50e9-fe5c-46e8-9cd0-45cebdb0d652
 # ╟─f180e72b-d2c5-46d7-a2ef-84c012e59cf4
 # ╠═31b3c3af-32d6-410d-bca2-f200e0326801
-# ╠═58e0aea3-3ea2-4584-a70e-c670a7184395
 # ╟─0bd6b397-59ad-429d-bc84-c5ab6bc91ba2
 # ╟─dd4b7937-b95a-4a12-b306-ae9bfdcd4c3d
 # ╟─adefc367-4f7e-41b1-8666-b716c346cbd1
@@ -640,6 +661,5 @@ end;
 # ╠═e43561b6-41c8-41f0-8d1d-8f5133e9a2f2
 # ╟─6d90dcaa-a438-49d3-bf22-97a7d897479d
 # ╠═93e3cbe4-cf3c-4cd4-b5e6-6d40c6b2b78e
-# ╠═71847fa9-f9c8-49e5-86bc-0c97d3f08eca
 # ╟─5f0f47a9-c4b0-49bf-b17e-6c8ba7a7ebd5
 # ╠═5da48412-b3fa-407d-8c3b-63d118f77735

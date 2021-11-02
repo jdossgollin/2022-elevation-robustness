@@ -165,36 +165,35 @@ all_trajs = get_norfolk_brick(syear=2020, eyear=2100)
 
 # ╔═╡ c73ddb13-50d4-4e6d-ac54-c171c66b3786
 begin
-	function plot_lsl_models()
+	function plot_lsl_models(;ub = 0.95, lb = 0.05)
 		p = plot(
 			legend=:topleft,
 			xlabel="Year",
 			ylabel="Mean Sea Level at Norfolk, VA [ft]",
 			size = (500, 500),
 		)
-		models = ((2.6, "slow"), (4.5, "fast"), (8.5, "fast"))
+		models = ((2.6, "slow"), (4.5, "slow"), (6.0, "fast"), (8.5, "fast"))
 		for (model, color) in zip(models, colors)
 			rcp, dyn = model
 			trajs = [
 				traj for
-					traj in all_trajs if (traj.rcp == rcp) & (traj.dynamics == dyn)
-					]
-			traj = first(trajs)
+				traj in all_trajs if (traj.rcp == rcp) & (traj.dynamics == dyn)
+			]
 			sims = ustrip.(u"ft", hcat([traj.lsl for traj in trajs]...))
 			N = size(sims)[1]
-
-			upper = [quantile(sims[i, :], 0.95) for i = 1:N]
-			lower = [quantile(sims[i, :], 0.05) for i = 1:N]
+			upper = [quantile(sims[i, :], ub) for i = 1:N]
+			lower = [quantile(sims[i, :], lb) for i = 1:N]
 			plot!(
 				p,
-				traj.years,
+				first(trajs).years,
 				upper,
 				fillrange = lower,
 				fillalpha = 0.45,
-				label = "RCP $rcp / $dyn, 90% CI",
+				label = "RCP $rcp / BRICK $dyn",
 				color = color,
-				linewidth = 0,
+				linewidth = 1,
 			)
+			plot!(p, first(trajs).years, lower, label=false, color=color, linewidth=1)
 		end
 		return p
 	end

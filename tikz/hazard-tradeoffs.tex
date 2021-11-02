@@ -1,0 +1,73 @@
+\documentclass[tikz, border=1pt]{standalone}
+
+\usepackage{libertine}
+\usepackage{graphicx}
+\usepackage{fontawesome5}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  shapes,
+  arrows,
+  shapes.geometric,
+  positioning,
+}
+
+% Define block styles
+\tikzstyle{model} = [
+  rectangle,
+  align=left,
+  %draw,
+]
+
+
+% set consistent font size
+\tikzset{
+    every picture/.style={font issue=\small},
+    font issue/.style={execute at begin picture={#1\selectfont}}
+ }
+
+\begin{document}
+\begin{tikzpicture}[auto, family=\sffamily]
+    \node[model] (msl) at (0,0) {
+        (a)\\
+        \includegraphics[height=2.5in]{../plots/msl_ranges_threemodels.pdf}
+    };
+    \node (left-paren) [left = 0.1in of msl] {
+    $\left[\vphantom{\includegraphics[height=1.5in]{../plots/msl_ranges_threemodels.pdf}}\right.$
+    };
+    \node[model] (plus) [right = 0.1in of msl] {\Large \faIcon{plus-circle}};
+    \node[model] (surge) [right = 0.1in of plus] {
+        (b)\\
+        \includegraphics[height=2.5in]{../plots/surge_return_period.png}
+    };
+    \node (right-paren) [right = 0.1in of surge] {
+        $\left.\vphantom{\includegraphics[height=1.5in]{../plots/msl_ranges_threemodels.pdf}}\right]$
+    };
+    \node[model] (times) [right = 0.1in of right-paren] {\Large \faIcon{times-circle}};
+    \node[model] (dmg) [right = 0.1in of times] {
+        (c)\\
+        \includegraphics[height=2.5in]{../plots/depth_damage_cost.pdf}
+    };
+    \node[model] (tradeoff1) [below = of msl] {
+        (d)\\
+        \includegraphics[height=2.5in]{../plots/tradeoffs_height_damages_byscenario.pdf}
+    };
+    \node (left-paren-2) [left = 0.1in of tradeoff1] {
+        $\left(\vphantom{\includegraphics[height=1.5in]{../plots/tradeoffs_height_damages_byscenario.pdf}}\right.$
+    };
+    \node[model] (equals) [left = 0.1in of left-paren-2] {\Large \faIcon{arrow-circle-right}};
+    \node[model] (comma) [right = 0.1in of tradeoff1] {\Large $,$};
+    \node[model] (tradeoff2) [right = 0.1in of comma] {
+        (e)\\
+        \includegraphics[height=2.5in]{../plots/tradeoffs_height_totalcost_byscenario.pdf}
+    };
+    \node[model] (comma2) [right = 0.1in of tradeoff2] {\Large $,$};
+    \node[model] (tradeoff3) [right = 0.1in of comma2] {
+        (f)\\
+        \includegraphics[height=2.5in]{../plots/tradeoffs_height_iqr_byscenario.pdf}
+    };
+    \node (right-paren-2) [right = 0.1in of tradeoff3] {
+    $\left.\vphantom{\includegraphics[height=1.5in]{../plots/tradeoffs_height_totalcost_byscenario.pdf}}\right)$
+    };
+\end{tikzpicture}
+\end{document}

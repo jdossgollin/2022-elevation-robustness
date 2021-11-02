@@ -1,5 +1,5 @@
 using DrWatson
-using PlutoSliderServer
+using PlutoSliderServer: export_notebook
 using Pluto
 
 NB_DIR = projectdir("notebooks")
@@ -29,8 +29,8 @@ function get_all_notebooks()
 end
 
 """run Pluto"""
-function run_pluto()
-    Pluto.run()
+function run_pluto(; port = 8888)
+    Pluto.run(port = port)
 end
 
 """run all notebooks and convert to HTML files"""

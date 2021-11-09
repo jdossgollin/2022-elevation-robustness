@@ -69,6 +69,18 @@ We can plot this annual data
 # ╔═╡ 140cf28e-e0ce-41f2-a61e-51907805ad40
 colors = ColorSchemes.okabe_ito; # colorblind friendly
 
+# ╔═╡ ea8110ab-bf2b-4f66-aae5-382695a97607
+md"""
+It's worth having a couple of historical references
+"""
+
+# ╔═╡ 96a9bfa1-72fd-4dff-8a49-fbb193aa5273
+historical_floods = [
+	(year=1749, surge=15u"ft", name="Storm of 1749",)
+	(year=1821, surge=10u"ft", name="Norfolk-Long Island Hurricane of 1821",)
+
+];
+
 # ╔═╡ 80915922-3f67-4d2f-853d-6e50c1e8706e
 md"""
 ## Maximum Likelihood Fit
@@ -998,14 +1010,16 @@ end
 # ╟─ee7a0e99-3e1b-4413-ac40-0628fa1d5d0b
 # ╠═140cf28e-e0ce-41f2-a61e-51907805ad40
 # ╟─d694f959-4946-488a-a505-5df4ef43297d
+# ╟─ea8110ab-bf2b-4f66-aae5-382695a97607
+# ╠═96a9bfa1-72fd-4dff-8a49-fbb193aa5273
 # ╟─80915922-3f67-4d2f-853d-6e50c1e8706e
 # ╠═669536c8-db51-479c-924f-bbad20faae02
 # ╠═806a03f3-13c9-4747-b93c-4a45f796d581
 # ╠═f1743aac-c262-4b51-90b9-bcfe7b1533b2
 # ╠═92859431-1be7-4e46-809a-88ac17c968e2
 # ╟─40b6f48b-efcd-43d0-b6f1-39c40abe3959
-# ╟─c85a5ad9-7a8f-46b6-af8a-7e86eaac2c63
-# ╟─3fe5866f-e500-4865-9919-25ddd0ff7b3d
+# ╠═c85a5ad9-7a8f-46b6-af8a-7e86eaac2c63
+# ╠═3fe5866f-e500-4865-9919-25ddd0ff7b3d
 # ╟─b50a65fe-b2b3-489d-b3ac-1d8515f19b25
 # ╟─683e3231-79ea-4f92-93a3-ccac083ec80e
 # ╟─b1d2dc0d-e456-468e-bda9-c71319ac82bb

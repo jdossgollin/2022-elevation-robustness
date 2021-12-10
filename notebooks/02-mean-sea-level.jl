@@ -176,7 +176,7 @@ begin
 			legend=:topleft,
 			xlabel="Year",
 			ylabel="Mean Sea Level at Norfolk, VA [ft]",
-			size = (500, 500),
+			size = (400, 400),
 		)
 		models = ((2.6, "slow"), (4.5, "slow"), (6.0, "fast"), (8.5, "fast"))
 		for (model, color) in zip(models, colors)
@@ -396,7 +396,7 @@ end
 # ╟─2022a380-290f-45fb-930c-e0b00d1806ee
 # ╟─37d98257-5de6-456a-a542-36d0dc1c7a96
 # ╟─f251e057-4409-4c8b-a2d7-4603c8af6750
-# ╟─c73ddb13-50d4-4e6d-ac54-c171c66b3786
+# ╠═c73ddb13-50d4-4e6d-ac54-c171c66b3786
 # ╠═5f912aeb-c9e4-485a-897f-a71e84ec6038
 # ╟─eece84cd-3f44-4d8b-851e-933d22151c19
 # ╟─f815e33f-97fa-4a1b-b8fc-77241d81d172

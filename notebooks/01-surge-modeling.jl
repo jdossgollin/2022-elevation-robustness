@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.3
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
@@ -810,7 +810,7 @@ begin
 			legend = :topleft,
 			xticks = (xticks, string.(xticks)),
 			dpi=250, # for saving
-			size=(500, 500),
+			size=(400, 400),
 		)
 		
 		# start with Bayesian posterior draws

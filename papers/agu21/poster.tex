@@ -13,12 +13,14 @@
 \usepackage{graphicx}
 \graphicspath{{../../plots/}{./}{../../tikz/}}
 \usepackage[%
-    %font={footnotesize},
+    font={footnotesize},
     labelfont=bf,
     format=plain,
     margin=0pt,
 ]{caption}
 \usepackage[list=true]{subcaption}
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{2pt}
 
 \usepackage[ttscale=0.8]{libertine} % better font
 
@@ -40,7 +42,7 @@
 
 %------ BIBLATEX WITH EXTREMELY MINAMALIST STYLE -----
 \usepackage[backend=biber,style=nature,maxnames=1,uniquelist=false,date=year]{biblatex}
-\ExecuteBibliographyOptions{isbn=false,url=false,doi=false,eprint=false}
+\ExecuteBibliographyOptions{isbn=false,url=false,doi=true,eprint=false}
 
 % One-paragraph bibliography environment
 \defbibenvironment{bibliography}
@@ -90,11 +92,9 @@
 	\clearfield{number}%
 	\clearfield{volume}%
 	\clearfield{issue}%
-	\clearfield{name:given}
-	\clearfield{name:first}
-	\ifentrytype{article}{%
-		\clearfield{title}%
-	}%
+	\clearfield{name:given}%
+	\clearfield{name:first}%
+  \clearfield{title}%
 }
 
 \addbibresource{library.bib}
@@ -118,7 +118,7 @@
 \newcommand{\footright}{\textbf{Let's Collaborate!} \href{mailto:jdossgollin@rice.edu}{jdossgollin@rice.edu}}
 \title{Which Scenario Should We Design For? Insights from House Elevation for the Multiple PDF Problem}
 \author{James Doss-Gollin\inst{*1} \quad Klaus Keller\inst{2,3,4}}
-\institute{\inst{*}\href{mailto:jdossgollin@rice.edu}{jdossgollin@rice.edu} \quad \inst{1} Department of Civil and Environmental Engineering, Rice University \\  \inst{2} Department of Geosciences, the Pennsylvania State University \quad \inst{3} Earth and Environmental Systems Institute, the Pennsylvania State University \quad \inst{4} Thayer School of Engineering, btmouth College}
+\institute{\inst{*}\href{mailto:jdossgollin@rice.edu}{jdossgollin@rice.edu} \quad \inst{1} Department of Civil and Environmental Engineering, Rice University \\  \inst{2} Department of Geosciences, The Pennsylvania State University \quad \inst{3} Earth and Environmental Systems Institute, The Pennsylvania State University \quad \inst{4} Thayer School of Engineering, Dartmouth College}
 
 %-------------------------------------------------------------------
 

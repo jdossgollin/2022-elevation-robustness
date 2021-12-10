@@ -86,7 +86,8 @@ begin
             xlabel="MSL at Norfolk, VA in 2100 [ft]",
             ylabel="Probability Density",
             xlims=(0, 8),
-            size=(700, 300),
+            size=(400, 400),
+			bottom_margin=5mm,
         )
         for (i, prior) in enumerate(priors)
             plot!(p, prior; label=prior_names[i], c=colors[i], linewidth=2)
@@ -210,7 +211,6 @@ function plot_tradeoff(weights, kx, ky; size = (400, 400), kwargs...)
     p = plot(;
 		xlabel = mnames[kx],
 		ylabel = mnames[ky],
-		top_margin = 10mm,
 		size = size,
 		kwargs...
 	)
@@ -235,21 +235,21 @@ end;
 
 # ╔═╡ 95add889-a398-4bae-a3cb-37ca7c620644
 begin
-    pt3 = plot_tradeoff(scenario_weights, 1, 4; size=(500, 500))
+    pt3 = plot_tradeoff(scenario_weights, 1, 4; legend=:topright)
 	savefig(pt3, plotsdir("tradeoffs_height_totalcost_byscenario.pdf"))
     pt3
 end
 
 # ╔═╡ 37f159ec-1cd2-4463-8862-e39bae53e9cb
 begin
-    pt4 = plot_tradeoff(scenario_weights, 1, 3; size=(500, 500), legend=:topright)
+    pt4 = plot_tradeoff(scenario_weights, 1, 3; legend=:topright)
     savefig(pt4, plotsdir("tradeoffs_height_damages_byscenario.pdf"))
     pt4
 end
 
 # ╔═╡ 1fd21800-92cb-4b8b-bd4b-3c4afa73b43a
 begin
-    pt6 = plot_tradeoff(scenario_weights, 1, 5; size=(500, 500), legend=:topright)
+    pt6 = plot_tradeoff(scenario_weights, 1, 5; legend=:topright)
     savefig(pt6, plotsdir("tradeoffs_height_iqr_byscenario.pdf"))
     pt6
 end
@@ -278,21 +278,21 @@ prior_weights = [(name=n, w=w) for (n, w) in zip(prior_names, weights)];
 
 # ╔═╡ 31620a55-ce09-4de7-a5b5-b2f6ef850abd
 begin
-    pt1 = plot_tradeoff(prior_weights, 1, 4; size=(500, 500), legend=:topright)
+    pt1 = plot_tradeoff(prior_weights, 1, 4; legend=:topright)
     savefig(pt1, plotsdir("tradeoffs_height_totalcost_byprior.pdf"))
     pt1
 end
 
 # ╔═╡ 4147df61-2b35-4583-ba5e-c55c6f90d5cb
 begin
-    pt2 = plot_tradeoff(prior_weights, 1, 3; size=(500, 500), legend=:topright)
+    pt2 = plot_tradeoff(prior_weights, 1, 3; legend=:topright)
     savefig(pt2, plotsdir("tradeoffs_height_damages_byprior.pdf"))
     pt2
 end
 
 # ╔═╡ 5bead18e-ee79-46ad-9cbe-b234791561b8
 begin
-    pt5 = plot_tradeoff(prior_weights, 1, 5; size=(500, 500), legend=:topright)
+    pt5 = plot_tradeoff(prior_weights, 1, 5; legend=:topright)
     savefig(pt5, plotsdir("tradeoffs_height_iqr_byprior.pdf"))
     pt5
 end
@@ -421,10 +421,10 @@ end;
 # ╟─a641f9cc-dd1e-409f-8ad6-1afe78f3012a
 # ╠═31620a55-ce09-4de7-a5b5-b2f6ef850abd
 # ╠═4147df61-2b35-4583-ba5e-c55c6f90d5cb
-# ╟─5bead18e-ee79-46ad-9cbe-b234791561b8
+# ╠═5bead18e-ee79-46ad-9cbe-b234791561b8
 # ╠═95add889-a398-4bae-a3cb-37ca7c620644
-# ╟─37f159ec-1cd2-4463-8862-e39bae53e9cb
-# ╟─1fd21800-92cb-4b8b-bd4b-3c4afa73b43a
+# ╠═37f159ec-1cd2-4463-8862-e39bae53e9cb
+# ╠═1fd21800-92cb-4b8b-bd4b-3c4afa73b43a
 # ╟─6e81c5b2-ede4-4197-aa29-a41a3dfcae34
 # ╟─13edb614-2d68-4c4e-beb8-22c916b7cccd
 # ╠═2ae53ed4-1671-4fb6-a13e-9505d02d262a

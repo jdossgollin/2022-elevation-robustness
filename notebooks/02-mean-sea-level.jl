@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
@@ -16,6 +16,7 @@ begin
 	using NetCDF
 	using PlutoUI
 	using Plots
+	using Plots: mm
 	using Statistics
 	using StatsBase
 	using StatsPlots
@@ -76,7 +77,12 @@ Next, let's plot 95% Confidence Intervals for a couple of representative models
 
 # ╔═╡ 5f912aeb-c9e4-485a-897f-a71e84ec6038
 md"""
-Last, we can show individual scenarios with lines
+Alternatively, we can show individual scenarios with lines
+"""
+
+# ╔═╡ f815e33f-97fa-4a1b-b8fc-77241d81d172
+md"""
+Last, we can create boxplots
 """
 
 # ╔═╡ 48b37aa3-b756-4628-be82-5289ed202aa2
@@ -344,6 +350,39 @@ begin
 	p3
 end
 
+# ╔═╡ 84182c9e-1b97-4e3e-b3dc-b1c8c50d899c
+begin
+	function make_boxplots()
+
+		all_trajs = get_norfolk_brick()
+		noaa = get_noaa_scenarios()
+		
+		rows = [
+			DataFrame(
+				"scenario" => "RCP $(traj.rcp), $(traj.dynamics) dynamics",
+				"msl_2100" => ustrip(u"ft", get_year_data(traj, 2100))
+			)
+			for traj in all_trajs
+		]
+		lsl_2100 = vcat(rows...)
+
+		p = plot(
+			ylabel = "MSL at Norfolk, VA in 2100 [ft]",
+			bottom_margin = 10mm,
+			left_margin = 5mm,
+			size = (700, 300),
+			xtickfontsize = 7,
+			ylabelfontsize = 9,
+		)
+		@df lsl_2100 violin!(p, :scenario, :msl_2100, xrotation=30, legend=false)
+		
+		return p
+	end
+	p4 = make_boxplots()
+	savefig(p4, plotsdir("msl_boxplots.pdf"))
+	plot(p4)
+end
+
 # ╔═╡ Cell order:
 # ╟─49cd8998-378d-11ec-3ceb-811bf9c58697
 # ╠═6eaeeaaf-5fe8-44b2-8957-b47918f26b17
@@ -358,8 +397,10 @@ end
 # ╟─37d98257-5de6-456a-a542-36d0dc1c7a96
 # ╟─f251e057-4409-4c8b-a2d7-4603c8af6750
 # ╟─c73ddb13-50d4-4e6d-ac54-c171c66b3786
-# ╟─5f912aeb-c9e4-485a-897f-a71e84ec6038
+# ╠═5f912aeb-c9e4-485a-897f-a71e84ec6038
 # ╟─eece84cd-3f44-4d8b-851e-933d22151c19
+# ╟─f815e33f-97fa-4a1b-b8fc-77241d81d172
+# ╠═84182c9e-1b97-4e3e-b3dc-b1c8c50d899c
 # ╟─48b37aa3-b756-4628-be82-5289ed202aa2
 # ╠═4e5b01a7-bf2c-4092-b9e2-580e46c289f5
 # ╟─15ad5394-ee85-4aff-851d-e9e9a58ff1a0

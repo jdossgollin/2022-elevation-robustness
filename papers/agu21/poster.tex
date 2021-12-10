@@ -1,0 +1,169 @@
+\documentclass[serif,mathserif,final]{beamer}
+\mode<presentation>{\usetheme{Lankton}}
+
+\RequirePackage{fontawesome5}
+\usepackage[
+  orientation=landscape,
+  width=48in,height=36in,%size=a0, % paper size
+  scale=1.2 % font scale factor
+  ]{beamerposter}
+ \setbeamertemplate{caption}[numbered] % number figs
+
+% Graphics Path
+\usepackage{graphicx}
+\graphicspath{{../../plots/}{./}{../../tikz/}}
+\usepackage[%
+    %font={footnotesize},
+    labelfont=bf,
+    format=plain,
+    margin=0pt,
+]{caption}
+\usepackage[list=true]{subcaption}
+
+\usepackage[ttscale=0.8]{libertine} % better font
+
+% OTHER PACKAGE CALLS
+\usepackage[utf8]{inputenc}
+\usepackage{
+  amsmath,
+  amsfonts,
+  amssymb,
+  xspace,
+  framed,
+  siunitx,
+  nth,
+  physics,
+  nicefrac,
+}
+%\sisetup{round-mode = figures, round-precision = 3}
+\usepackage{cleveref}
+
+%------ BIBLATEX WITH EXTREMELY MINAMALIST STYLE -----
+\usepackage[backend=biber,style=nature,maxnames=1,uniquelist=false,date=year]{biblatex}
+\ExecuteBibliographyOptions{isbn=false,url=false,doi=false,eprint=false}
+
+% One-paragraph bibliography environment
+\defbibenvironment{bibliography}
+  {\list
+     {\printtext[labelnumberwidth]{%
+        \printfield{prefixnumber}%
+        \printfield{labelnumber}}%
+      \ifentrytype{article}{% Suppress remaining fields/names/lists here
+        \clearfield{title}}{}}
+     {\setlength{\leftmargin}{0pt}%
+      \setlength{\topsep}{0pt}}%
+      \renewcommand*{\makelabel}[1]{##1}}
+  {\endlist}
+  {\mkbibitem}
+
+% \mkbibitem just prints item label and non-breakable space
+\makeatletter
+\newcommand{\mkbibitem}{\@itemlabel\addnbspace}
+\makeatother
+
+% Add breakable space between bibliography items
+\renewcommand*{\finentrypunct}{\addperiod\space}
+
+% et al. string upright (nature style applies \mkbibemph)
+\renewbibmacro*{name:andothers}{%
+  \ifboolexpr{
+    test {\ifnumequal{\value{listcount}}{\value{liststop}}}
+    and
+    test \ifmorenames
+  }
+    {\ifnumgreater{\value{liststop}}{1}{\finalandcomma}{}%
+     \andothersdelim
+     \bibstring{andothers}}
+    {}}
+
+% Set fields to clear
+\AtEveryBibitem{%
+	\clearfield{month}%
+	\clearfield{day}%
+  \clearfield{year}%
+  \clearfield{url}%
+  \clearlist {language}% this has to be clear list.....
+  \clearfield{pages}%
+	\clearfield{pagetotal}%
+	\clearfield{eprinttype}%
+	\clearfield{eprint}%
+	\clearfield{number}%
+	\clearfield{volume}%
+	\clearfield{issue}%
+	\clearfield{name:given}
+	\clearfield{name:first}
+	\ifentrytype{article}{%
+		\clearfield{title}%
+	}%
+}
+
+\addbibresource{library.bib}
+
+%------- GLOSSARIES PACKAGE -------
+\usepackage[acronym]{glossaries}
+\newacronym{rcp}{RCP}{representative concentration pathway}
+\newacronym[]{fema}{FEMA}{the Federal Emergency Management Agency}
+\newacronym{bfe}{BFE}{base flood elevation}
+
+\usepackage{xspace}
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+
+%-- Header and footer information ----------------------------------
+\newcommand{\footleft}{\textbf{Preprint Coming Soon}: follow \href{https://twitter.com/jdossgollin}{@jdossgollin} on Twitter or visit \href{https://dossgollin-lab.github.io}{dossgollin-lab.github.io}}
+\newcommand{\footright}{\textbf{Let's Collaborate!} \href{mailto:jdossgollin@rice.edu}{jdossgollin@rice.edu}}
+\title{Which Scenario Should We Design For? Insights from House Elevation for the Multiple PDF Problem}
+\author{James Doss-Gollin\inst{*1} \quad Klaus Keller\inst{2,3,4}}
+\institute{\inst{*}\href{mailto:jdossgollin@rice.edu}{jdossgollin@rice.edu} \quad \inst{1} Department of Civil and Environmental Engineering, Rice University \\  \inst{2} Department of Geosciences, the Pennsylvania State University \quad \inst{3} Earth and Environmental Systems Institute, the Pennsylvania State University \quad \inst{4} Thayer School of Engineering, btmouth College}
+
+%-------------------------------------------------------------------
+
+
+%-- Main Document --------------------------------------------------
+\begin{document}
+\begin{frame}{}
+  \begin{columns}[t]
+
+    %-- Column 1 ---------------------------------------------------
+    \begin{column}{0.22\linewidth}
+
+      \input{house-elevation.tex}
+      \input{case-study.tex}
+
+    \end{column}%1
+
+    %-- Column 2 ---------------------------------------------------
+    \begin{column}{0.22\linewidth}
+
+      \input{doesnt-fit-all.tex}
+      \input{multiple-pdf.tex}
+      \begin{block}{references}
+        \renewcommand*{\bibfont}{\footnotesize}
+        \printbibliography[heading=none]
+      \end{block}
+
+    \end{column}
+
+    %-- Column 3 ---------------------------------------------------
+    \begin{column}{0.22\linewidth}
+
+      \input{scenario-matters.tex}
+      \input{combining.tex}
+
+
+    \end{column}
+
+    %-- Column 4 ---------------------------------------------------
+    \begin{column}{0.22\linewidth}
+
+      \input{not-equally-plausible.tex}
+      \input{other-applications.tex}
+
+    \end{column}
+  \end{columns}
+\end{frame}
+\end{document}

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.17.3
 
 using Markdown
 using InteractiveUtils
@@ -39,7 +39,7 @@ end
 md"""
 # Notebook 01: Surge Modeling
 
-> Doss-Gollin and Keller, 2021, In Prep. **Do not circulate!**
+> Doss-Gollin, James and Klaus Keller (In Prep). "*Which Scenario Should We Design For? Insights from House Elevation on the Multiple PDF Problem.*" **Do not circulate!**
 
 In this notebook we'll explore the storm surge data and fit an extreme value distribution to it.
 """
@@ -563,7 +563,8 @@ begin
 			markerstrokewidth = 0,
 			titlefontsize = 10,
 			labelfontsize = 9,
-			size = (750, 500),
+			size = (750, 250),
+			left_margin = 5mm,
 		)
 
 		storms = [
@@ -1001,7 +1002,7 @@ begin
 end
 
 # ╔═╡ Cell order:
-# ╟─37b93f78-3750-11ec-2245-4d3c8e4a5b39
+# ╠═37b93f78-3750-11ec-2245-4d3c8e4a5b39
 # ╠═50a61c27-768a-4cf8-8494-e9f99da073c6
 # ╟─57cc380e-c124-488b-af10-a63acab149b0
 # ╟─e33670da-89a8-4feb-8b0c-35cead899baf
@@ -1009,7 +1010,7 @@ end
 # ╠═f9a2c638-2988-4a70-b774-5dc6babc3aaf
 # ╟─ee7a0e99-3e1b-4413-ac40-0628fa1d5d0b
 # ╠═140cf28e-e0ce-41f2-a61e-51907805ad40
-# ╟─d694f959-4946-488a-a505-5df4ef43297d
+# ╠═d694f959-4946-488a-a505-5df4ef43297d
 # ╟─ea8110ab-bf2b-4f66-aae5-382695a97607
 # ╠═96a9bfa1-72fd-4dff-8a49-fbb193aa5273
 # ╟─80915922-3f67-4d2f-853d-6e50c1e8706e

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
@@ -73,7 +73,7 @@ We'll discretize this and look at results over all the discrete values for simpl
 """
 
 # ╔═╡ 37a5ab0d-db74-4bff-aa12-f79a6404368a
-𝐱 = (0:0.5:14)u"ft";
+𝐱 = (0:0.125:14)u"ft";
 
 # ╔═╡ 26eb91da-a71b-4eb9-9a8c-a9a336b34446
 md"""
@@ -86,7 +86,7 @@ md"""
 We'll start by defining a house.
 We'll use the same house for all our calculations.
 A house is characterized by its floor plan, in square feet, its dollar value, and its initial elevation relative to the gauge.
-Like Zarekarizi et al (2020), we'll consider a house that was at the BFE in 2000.
+We'll consider a house that was about 1ft below the BFE in 2000.
 """
 
 # ╔═╡ fcb1ddc0-e6b8-4847-b994-fce762046f8e
@@ -145,7 +145,7 @@ K = 4; # number of outcomes to track
 md"""
 ## Calculate Outcomes
 
-We'll use some notation magic with the `Tullio.jl` package to create an array of outcomes indexed by [scenario, decision, outcome variable].
+We'll use some notation magic with the `Tullio.jl` package to create an array of outcomes $u$ indexed by [scenario, decision, outcome variable].
 """
 
 # ╔═╡ 0bd6b397-59ad-429d-bc84-c5ab6bc91ba2
@@ -277,7 +277,7 @@ end;
 
 # ╔═╡ a0a7288a-a838-4f05-950a-68088258d7db
 function get_default_house()
-	return HouseStructure(1_000u"ft^2", 185_000.0, 8.5u"ft")
+	return HouseStructure(1_000u"ft^2", 185_000.0, 7.5u"ft")
 end;
 
 # ╔═╡ 01f44422-a92f-42f7-a0c6-86e797f09c3d
@@ -333,9 +333,15 @@ begin
 			xlabel="Gauge Depth [ft]",
 			ylabel="Structural Flood Damage [1000 USD]",
 			legend=:topleft,
-			size=(500, 500),
+			size=(400, 400),
 		)
-		plot!(p, ustrip.(u"ft", depths), damage ./ 1_000, label="HAZUS Model")
+		plot!(
+			p,
+			ustrip.(u"ft", depths),
+			damage ./ 1_000,
+			label="HAZUS Model",
+			linewidth=2,
+		)
 		return p
 	end
 	p1 = plot_depth_damage()
@@ -559,10 +565,10 @@ begin
 		msl_2100_ft = ustrip.(u"ft", [last(s.lsl) for s in ss])
 		total_costs = u[sidx, j, k]
 		p = plot(
-			xlabel="Sea Level Rise from 2000 to 2100 [ft]",
+			xlabel="MSL at Norfolk, VA in 2100 [ft]",
 			ylabel = "Expected NPV Total Costs [1000 USD]",
 			title="$title",
-			size=(750, 750),
+			size=(600, 600),
 			left_margin = 5mm,
 			title_align = :left,
 			bottom_margin = 6mm,
@@ -575,12 +581,12 @@ begin
 			markerstrokewidth=0,
 			markersize=1,
 			label=false,
-			alpha = 0.5,
+			alpha = 0.75,
 		)
 		return p
 	end
-	yticks = [20, 50, 100, 200, 400]
-	heights_plot = [0, 3, 6, 9, 12, 14]u"ft"
+	yticks = collect(0:100:600)
+	heights_plot = [0, 2.5, 5, 8, 11, 14]u"ft"
 	titles = ["($('a'+(i-1))): Δh = $Δh" for (i, Δh) in enumerate(heights_plot)]
 	p_scenario_maps = plot(
 		[
@@ -590,7 +596,7 @@ begin
 		dpi=150,
 		size=(1200, 900),
 		link=:y,
-		ylims=(20, 400),
+		ylims=(0, 600),
 		yscale=:log10,
 		yticks = (yticks, string.(yticks)),
 	)
@@ -618,7 +624,7 @@ DrWatson.wsave(datadir("processed", "sows_outcomes.jld2"),
 # ╟─cf4c37c4-0755-4af3-857c-529cce25583d
 # ╠═a0a7288a-a838-4f05-950a-68088258d7db
 # ╟─fcb1ddc0-e6b8-4847-b994-fce762046f8e
-# ╟─ef2d2c8d-afda-461e-beab-6ce07b8d8650
+# ╠═ef2d2c8d-afda-461e-beab-6ce07b8d8650
 # ╟─ba716c60-0b2e-4abe-b195-afa49dbe63d8
 # ╟─9f8016bd-c104-4d0c-9e5f-61a495f4fdbb
 # ╟─031e6664-ff59-414b-83eb-1f8eda4c23f7
@@ -630,7 +636,7 @@ DrWatson.wsave(datadir("processed", "sows_outcomes.jld2"),
 # ╟─f180e72b-d2c5-46d7-a2ef-84c012e59cf4
 # ╠═31b3c3af-32d6-410d-bca2-f200e0326801
 # ╟─0bd6b397-59ad-429d-bc84-c5ab6bc91ba2
-# ╟─dd4b7937-b95a-4a12-b306-ae9bfdcd4c3d
+# ╠═dd4b7937-b95a-4a12-b306-ae9bfdcd4c3d
 # ╟─adefc367-4f7e-41b1-8666-b716c346cbd1
 # ╠═3f3a888b-4cc9-4415-9e50-ef941b7fdd95
 # ╟─e5456332-766a-48e3-82c9-34224b7589a2
@@ -641,7 +647,7 @@ DrWatson.wsave(datadir("processed", "sows_outcomes.jld2"),
 # ╠═a54b43fd-bc71-44bd-a051-98401f8a549d
 # ╟─417aef6e-f03d-4d8b-998c-b86fb09f403c
 # ╠═457888c0-8877-4a0f-bb4a-2ece1238b4b2
-# ╠═fdf4b10a-bbbb-4ddc-9591-3262afd2d452
+# ╟─fdf4b10a-bbbb-4ddc-9591-3262afd2d452
 # ╟─f17cc599-2fff-454a-8597-45ed264829db
 # ╠═082e36d3-7c6d-4f26-8bef-a710535272ea
 # ╟─7259cd4f-bdcb-4628-906b-b6c05781ac25

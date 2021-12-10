@@ -18,7 +18,7 @@
 \pagestyle{empty}
 
 
-\tikzstyle{function} = [circle, draw, fill=grigio, text=rosso, text width=5.5em, text centered]
+\tikzstyle{function} = [circle, draw, fill=grigio, text=rosso, minimum width=5.5em, text centered, align=center]
 \tikzstyle{block} = [rectangle, draw, fill=giallo, text=nero, minimum width=6em, text centered,  minimum height=4em, align=center]
 \tikzstyle{derived} = [rectangle, draw, rounded corners, fill=rosso, text=grigio, minimum width=6em, text centered,  minimum height=4em, align=center]
 \tikzstyle{check} = [text=thirds, align=center]
@@ -30,39 +30,52 @@
 
 \begin{tikzpicture}[auto]
 
-    \node [block] (decision) at (4, 3) {Candidate decisions\\{$\qty{x_1, x_2, \ldots, x_I} \in \mathcal{X}$}};
-    \node [block] at (-4, 3) (scenarios) {Many possible futures\\{$\qty{s_1, \ldots, s_J} \in \Omega$}};
-    \node [function] (model) at (0, 0) {System model\\{$f(x, s)$}};
-    \node [derived] at (0, -3) (smetrics) {Outcomes\\{$u_{ij} = f(x_i, s_j)$}};
-    \node [block] (prior) at (-4, -6) {Prior over scenarios\\and model structures\\{$p(s)$}};\
-    \node [derived] (weights) at (0, -6) {Scenario weights\\{eq.~XX}};
-    \node [derived] (combined) at (4, -6) {Distribution over\\outcomes\\{$\hat{p}(u | x_i)$}};
-    \node [derived] (dmetrics) at (8, -6) {Metrics and\\tradeoffs\\{$\hat{m}(x_i)$}};
+    \node [block] (decisions) at (0, 3) {
+        Candidate decisions\\
+        $\qty{x_1, x_2, \ldots, x_I} \in \mathcal{X}$
+    };
+    \node [block] at (-4, 3) (models) {
+        Multiple PDFs\\
+        $\qty{M_1, \ldots, M_K} \in \mathcal{M}$
+    };
+    \node [block] at (-4, 0) (simulations) {
+        Simulated SOWs\\
+        $\qty{s_1, \ldots, s_{N_k}}_k$
+    };
+    \path [line] (models) -- (simulations);
+    \node [function] (model) at (0, 0) {
+        System model\\
+        $u_{ij} = f(x_i, s_j)$
+    };
+    \path [line] (simulations) -- (model);
+    \path [line] (decisions) -- (model);
 
-    \path [line] (decision) -- (model);
-    \path [line] (scenarios) -- (model);
-    \path [line] (model) to (smetrics);
-    \path [line] (scenarios.south) to[out=-90, in=135] (weights.north west);
+    \node [derived] (combined) at (4, -3) {
+        Conditional distributions\\
+        over outcomes\\
+        $\hat{p} \qty(u | x_i, M_k)$
+    };
+    \path [line] (model) -- (combined);
+
+    \node [function] (prior) at (-4, -3) {
+        Prior\\
+        over SOWs\\
+        $p\qty(s)$
+    };
+    \node [derived] (weights) at (0, -3) {
+        Model weights\\
+        $w_1, \ldots, w_K$
+    };
+    \path [line] (simulations) -- (weights);
     \path [line] (prior) -- (weights);
-    \path [line] (smetrics) to (combined);
-    \path [line] (weights) -- (combined);
-    \path [line] (combined) to (dmetrics);
 
-    \node [check] at (-9, 3) (span) {Do scenarios span\\plausible outcomes?};
-    \path [line, dashed] (scenarios) -- (span);
-    \node [check] at (9, 3) (represented) {Are relevant levers\\represented?};
-    \path [line, dashed] (decision) -- (represented);
-    \node [check] at (9, 0) (interpretable) {Is the model credible?\\Interpretable?};
-    \path [line, dashed] (model) -- (interpretable);
-    \node [check] at (9, -3) (discovery) {What are relevant regions\\of the $\qty(\Omega, \mathcal{X})$ space?};
-    \path [line, dashed] (smetrics) -- (discovery);
-    \node [check] at (-4, -8) (priorcheck) {Are these consistent\\with prior knowledge?};
-    \path [line, dashed] (prior) -- (priorcheck);
-    \node [check] at (0, -8) (weightcheck) {Are computational\\issues apparent?};
-    \path [line, dashed] (weights) -- (weightcheck);
-    \node [check] at (4, -8) (ppc) {Are these consistent\\with our expectations?};
-    \path [line, dashed] (combined) -- (ppc);
-
+    \node [derived] (aggregated) at (4, -6) {
+        Aggregated distribution\\
+        over outcomes\\
+        $\hat{p}(u | x_i)$
+    };
+    \path [line] (combined) -- (aggregated);
+    \path [line] (weights) -- (aggregated);
 \end{tikzpicture}
 
 \end{document}

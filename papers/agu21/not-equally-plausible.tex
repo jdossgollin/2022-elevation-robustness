@@ -1,17 +1,21 @@
-\begin{block}{we're always }
+\begin{block}{different beliefs emphasizes different possibilities}
+    The prior model averaging approach (\cref{fig:flowchart}) assigns a weight to each PDF based on their
+    \begin{itemize}
+        \item The prior can't be ``right''  \cite{gelman_workflow:2020,gelman_philosophy:2013} or ``scenario neutral'' \cite{quinn_exploratory:2020}
+        \item let's at least \textbf{make assumptions transparent}!
+    \end{itemize}
     \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{lsl_priors.pdf}
         \caption{
-            If we weight all scenarios equally, then our projection of MSL in 2100 follows the sampling distribution.
-            This may or may not accurately reflect available information.
-        }
+            If we weight all scenarios equally, then our projection of MSL in 2100 follows the sampling distribution; this may or may not reflect available information.        }
     \end{figure}
     \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{inference_weights.pdf}
         \caption{
-            The prior model averaging approach (\cref{fig:flowchart}) re-weights PDFs based on their distance, and that of other PDFs available, from the (ideally coproduced!) prior.
+            Weights assigned to each PDF (from \cref{fig:boxplots}) under each prior considered.
+            Horizontal line shows the weight given to each under an implicit uniform assumption.
         }
     \end{figure}
 \end{block}

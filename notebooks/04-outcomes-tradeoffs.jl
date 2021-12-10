@@ -86,7 +86,7 @@ begin
             xlabel="MSL at Norfolk, VA in 2100 [ft]",
             ylabel="Probability Density",
             xlims=(0, 8),
-            size=(600, 300),
+            size=(700, 300),
         )
         for (i, prior) in enumerate(priors)
             plot!(p, prior; label=prior_names[i], c=colors[i], linewidth=2)
@@ -236,7 +236,7 @@ end;
 # ╔═╡ 95add889-a398-4bae-a3cb-37ca7c620644
 begin
     pt3 = plot_tradeoff(scenario_weights, 1, 4; size=(500, 500))
-    savefig(pt3, plotsdir("tradeoffs_height_totalcost_byscenario.pdf"))
+	savefig(pt3, plotsdir("tradeoffs_height_totalcost_byscenario.pdf"))
     pt3
 end
 
@@ -333,7 +333,7 @@ begin
 		bottom_margin=10mm,
 		left_mm=4mm,
 		yaxis = "Weight Assigned to Each PDF",
-		size = (600, 300),
+		size = (700, 300),
 	)
 	groupedbar!(
 		p,

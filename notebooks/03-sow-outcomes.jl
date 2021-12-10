@@ -623,7 +623,7 @@ DrWatson.wsave(datadir("processed", "sows_outcomes.jld2"),
 # ╟─26eb91da-a71b-4eb9-9a8c-a9a336b34446
 # ╟─cf4c37c4-0755-4af3-857c-529cce25583d
 # ╠═a0a7288a-a838-4f05-950a-68088258d7db
-# ╟─fcb1ddc0-e6b8-4847-b994-fce762046f8e
+# ╠═fcb1ddc0-e6b8-4847-b994-fce762046f8e
 # ╠═ef2d2c8d-afda-461e-beab-6ce07b8d8650
 # ╟─ba716c60-0b2e-4abe-b195-afa49dbe63d8
 # ╟─9f8016bd-c104-4d0c-9e5f-61a495f4fdbb

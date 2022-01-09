@@ -2,8 +2,8 @@
 
 % Figures
 \usepackage{graphicx}
-\usepackage{wrapfig}
-\graphicspath{{../plots/}{../tikz/}{../img/}}
+\usepackage[list=true]{subcaption}
+\graphicspath{{../../plots/}{../../tikz/}{../../img/}}
 \usepackage[section]{placeins} % require floats to appear in the section they are defined
 
 % fonts and appearance
@@ -11,6 +11,7 @@
 \usepackage[american]{babel} 
 \usepackage[T1]{fontenc} % improved font encoding
 \usepackage[ttscale=0.8]{libertine}
+\usepackage{fontawesome5}
 
 % page size and margins
 \usepackage{geometry}
@@ -80,6 +81,14 @@
 \makeatletter
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
 \def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+
+\usepackage{xspace}
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
 \newcommand{\usd}[1]{\SI{#1}[\$]{}}
 \def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
 \def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
@@ -103,7 +112,6 @@
 ]{biblatex}
 \renewbibmacro{in:}{}
 \AtEveryBibitem{\clearfield{month}\clearfield{day}\clearfield{pages}\clearlist{language}}
-%\addbibresource{../_bibliography/library.bib}
 \addbibresource{library.bib}
 
 % load this last
@@ -127,26 +135,171 @@
     This approach can help to improve decision-making by facilitating iterative and collaborative model improvement.
 \end{abstract}
 
-\section*{Front Matter}
+\clearpage
 
-\subsection*{Submission Plan}
-We should revisit this!
-\begin{enumerate}
-    \item Earth's Future
-    \item Climatic Change
-    \item IOP Environmental Research: Infrastructure and Sustainability (new journal)
-    \item Risk analysis
-\end{enumerate}
-\subsection*{Internal peer review}
-\begin{enumerate}
-    \item Vivek
-    \item Courtney
-    \item Sanjib
-    \item Kelsey to replicate code
-\end{enumerate}
+\section{Introduction}
+
+Households elevate their homes to manage flood risks, but regulations and guidance are silent on key questions \citep{zarekarizi_suboptimal:2020,xian_elevation:2017}.
+\begin{description}
+    \item[Q1] How to adapt guidance to building characteristics or household preferences?
+    \item[Q2] How does nonstationary hazard change guidance?
+    \item[Q3] Which model of nonstationary hazard to use?
+\end{description}
+These challenges also affect other adaptation plans and engineering designs (\cref{fig:stormwater-bridge}).
+
+The paper is organized as follows.
+In \cref{sec:case-study} we describe our case study in Norfolk, VA and present results to illustrate the ``Multiple PDF problem'' and motivate our methodological advances.
+Then in \cref{sec:prior-averaging}, we present a method for combining multiple \glspl{pdf}.
+Finally in \cref{sec:conclusions} we summarize our findings, discuss implications for engineering practice, and identify needs for future research.
+
+\section{Case study}\label{sec:case-study}
+
+We model a \emph{hypothetical} house in Norfolk, VA, where sea level rise drives nonstationary future flood hazard.
+
+\subsection{Model structure and data}
+
+We follow the general modeling approach of \citet{zarekarizi_suboptimal:2020} to model expected annual damages for a particular house.
+
+\subsubsection{Multiple PDFs}
+
+\subsubsection{Candidate decisions}
+
+\subsubsection{States of the World (SOWs)}
+
+\subsubsection{System model}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{historic_surge.pdf}
+    \caption{
+        Time series of annual maximum storm surges (after subtracting mean sea level) at Sewells Point, VA.
+        Purple (orange) arrows denote notable tropical cyclones (nor'easters).
+    }
+    \label{fig:observations}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6in]{hazard-tradeoffs.pdf}
+    \caption{
+        Neglecting hydrodynamics, we add sea level rise (a) to a stationary Bayesian GEV model of storm surge (b) to get flood hazard.
+        The convolution of hazard and fragility (c) yields an assessment of damages and tradeoffs (\cref{fig:tradeoffs}).
+    }
+\end{figure}
+
+\subsection{One size does not fit all}
+
+\begin{itemize}
+    \item Tailoring guidance to specific building characteristics can improve outcomes
+    \item Elevating to ``\acrshort{bfe} plus a foot'' is not always optimal \citep{xian_elevation:2017,zarekarizi_suboptimal:2020}
+    \item Both over- and under-building can be costly \citep{ansar_bigisfragile:2017,DossGollin:2019}
+\end{itemize}
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \subcaption{\SI{2.5}{ft} below BFE}
+        \includegraphics[width=\textwidth]{5.5.pdf}
+    \end{subfigure}~
+    \begin{subfigure}{0.3\textwidth}
+        \subcaption{\SI{0.5}{ft} below BFE}
+        \includegraphics[width=\textwidth]{7.5.pdf}
+    \end{subfigure}
+    \caption{
+        Tradeoffs between construction cost and expected NPV lifetime costs for houses initially situated (a) \SI{2.5}{ft} and (b) \SI{0.5}{ft} below the \gls{bfe} (under \gls{rcp} 6.0 with fast BRICK \citep{wong_brick0.2:2017} dynamics).
+        Note unequal $y$-axis scales.
+    }
+\end{figure}
+
+\subsection{The multiple PDF problem}
+
+Uncertainties from multiple model structures (\eg, ice sheet dynamics) and/or scenarios (\eg, emissions pathways) create multiple estimates of time-varing hazard, \ie, the \textbf{\itshape{Multiple PDF Problem}}.
+Including additional models \citep[\eg,][]{kopp_evolving:2017,deconto_antarctica:2016,ruckert_coastal:2019} \emph{would compound this challenge}.
+\begin{figure}
+    \centering
+    \includegraphics[width=5in]{msl_boxplots.pdf}
+    \caption{
+        Sea level rise projections use the BRICK model \citep{wong_brick0.2:2017,ruckert_coastal:2019}.
+        We consider \emph{eight time-dependent PDFs of sea level rise}: four \gls{rcp} scenarios $\times$ two parameterizations of ice sheet processes.
+    }\label{fig:boxplots}
+\end{figure}
+
+\subsection{It matters which PDF you choose}
+
+Any optimal strategy or Pareto frontier is conditional upon an (explicit or implicit) model of future outcomes.
+\begin{figure}
+    \centering
+    \includegraphics[width=2.5in]{tradeoffs_height_totalcost_byscenario.pdf}~
+    \includegraphics[width=2.5in]{tradeoffs_height_iqr_byscenario.pdf}
+    \caption{
+        Tradeoffs between (L) construction cost and expected lifetime costs or (R) construction cost and the uncertainty of future lifetime costs depend on the PDF selected.
+    }
+    \label{fig:tradeoffs}
+\end{figure}
+Weights assigned to PDFs or simulations, \textbf{including implicit uniform weights}, should be communicated transparently to facilitate critique and improvement.
+
+\section{Synthesizing PDFs for decision relevance}\label{sec:prior-averaging}
+
+\subsection{Methods}
+
+While comparing results across many PDFs is a valuable exploratory exercise (see, \eg, \cref{fig:tradeoffs}), providing end users (\eg, households practicing engineers, and planning departments of local governments) with many PDFs may lead to confusion, inconsistency, and potentially liability \citep[see][]{schneider_dangerous:2001,schneider_scenarios:2002}.
+\begin{figure}
+    \centering
+    \includegraphics[width=4in]{bayes-rdm.pdf}
+    \caption{
+        ``Prior Model Averaging'' framework.
+    }\label{fig:flowchart}
+\end{figure}
+Our approach to synthesizing PDFs is designed for the common case of assessing decisions using simulations (SOWs) from each of $K$ PDFs.
+A system model $(f)$ quantifies the performance $(u)$ of a decision ($x$) under a single SOW ($s$).
+To synthesize, we weight PDFs using an approach based on Bayesian Model Averaging \citep{wong_surge:2018,Yao:2018bu}.
+
+\subsection{Findings}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6in]{inference_weights.pdf}
+    \caption{
+        The weights assigned to each PDF (from \cref{fig:boxplots}) under each prior considered.
+    }
+\end{figure}
+``Pessimistic'' (``Optimistic'') prior heavily weights \gls{rcp} 8.5 (2.6), which is unlikely given current policies \citep{hausfather_scenarios:2020}.
+
+\section{Conclusions}\label{sec:conclusions}
+
+To summarize:
+\begin{itemize}
+    \item Natural extensions to Bayesian updating
+    \item Belief $p(s)$ can't be ``right''  \citep{gelman_workflow:2020,gelman_philosophy:2013} or ``neutral'' \citep{quinn_exploratory:2020}
+    \item Instead, we can ask \textbf{what assumptions are different priors consistent with?}
+\end{itemize}
+
+\subsection{Implications for policy}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=3in]{lsl_priors.pdf}~
+    \includegraphics[width=3in]{tradeoffs_height_totalcost_byprior.pdf}
+    \caption{
+        The prior model averaging approach (\cref{fig:flowchart}), uses a probability distribution representing subjective belief to average insights across each PDF available.
+        Alternative priors can provide robustness checks.
+    }
+\end{figure}
+
+
+\subsection{Future needs}
+This didactic example illustrates a need for better synthesis and communication of deep uncertainties for decision making.
+\textbf{\scshape let's collaborate on:}
+\begin{itemize}
+    \item More complex models to capture more relevant metrics
+    \item Better models of nonstationary hazards
+    \item Interacting, sequential decisions
+\end{itemize}
 
 \clearpage
 \section{Introduction}
+
+
+
 
 \paragraph{Why this problem is important}
 Since infrastructure built today is likely to persist for several decades, infrastructure designs must take into account the stresses that a project is likely to face far into the future.
@@ -196,7 +349,7 @@ We then illustrate this method through a didactic case study of deciding if, and
 
 \begin{figure}
     \centering
-    \includegraphics[height=2in]{uconn-elevateA}
+    %\includegraphics[height=2in]{uconn-elevateA}
     \caption{
         Conceptual sketch illustrating the path from historical data to FEMA's guidance.
         This figure \emph{needs to be revised} (KATERINA?) to have three panels, of which this is the third.
@@ -216,7 +369,7 @@ In \cref{sec:methods-iterative} we discuss how this framework can be integrated 
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth, height=4.5in, keepaspectratio=true]{conceptual.pdf}
+    %\includegraphics[width=\textwidth, height=4.5in, keepaspectratio=true]{conceptual.pdf}
     \caption{
         Schematic of our decision support framework.
         Nodes in green are modeling choices that the modeler must make while those in yellow are computed quantities.
@@ -318,7 +471,7 @@ Real-world decision makers should consider additional uncertainties and stakehol
 
 \begin{figure}
     \centering
-    \includegraphics[height=2.5in, width=0.6\textwidth, keepaspectratio=true]{xlrm}
+    %\includegraphics[height=2.5in, width=0.6\textwidth, keepaspectratio=true]{xlrm}
     \caption{
         Diagram showing uncertainties ($X$; red), levers ($L$; yellow), system relationships ($R$; gray), and metrics ($M$; blue).
     }\label{fig:xlrm}

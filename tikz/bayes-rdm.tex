@@ -28,54 +28,69 @@
 
 \def\myshift#1{\raisebox{-2.5ex}}
 
+\pgfdeclarelayer{bg}    % declare background
+\pgfdeclarelayer{bg2}    % declare background
+\pgfdeclarelayer{bg3}    % declare background
+\pgfsetlayers{bg3, bg2, bg, main}  % order of layers (main = standard layer)
+
 \begin{tikzpicture}[auto]
 
-    \node [block] (decisions) at (0, 3) {
-        Candidate decisions\\
-        $\qty{x_1, x_2, \ldots, x_I} \in \mathcal{X}$
-    };
-    \node [block] at (-4, 3) (models) {
-        Multiple PDFs\\
-        $\qty{M_1, \ldots, M_K} \in \mathcal{M}$
-    };
-    \node [block] at (-4, 0) (simulations) {
-        Simulated SOWs\\
-        $\qty{s_1, \ldots, s_{N_k}}_k$
-    };
+    \node [block, label={[]135:{\footnotesize (d)}}] at (-4, 3) (models) {
+            Multiple models\\
+            $\qty{M_1, \ldots, M_K}$
+        };
+    \node [block, label={[]135:{\footnotesize (a)}}] (decisions) at (0, 3) {
+            Candidate decisions\\
+            $\qty{x_1, x_2, \ldots, x_I}$
+        };
+    \node [block, label={[]135:{\footnotesize (b)}}] at (-4, 0) (simulations) {
+            Simulated futures\\
+            $\qty{s_1, \ldots, s_J} \in \Omega$
+        };
     \path [line] (models) -- (simulations);
-    \node [function] (model) at (0, 0) {
-        System model\\
-        $u_{ij} = f(x_i, s_j)$
-    };
+    \node [function, label={[]45:{\footnotesize (c)}}] (model) at (0, 0) {
+            System model\\
+            $u_{ij} = f(x_i, s_j)$
+        };
     \path [line] (simulations) -- (model);
     \path [line] (decisions) -- (model);
 
-    \node [derived] (combined) at (4, -3) {
-        Conditional distributions\\
-        over outcomes\\
-        $\hat{p} \qty(u | x_i, M_k)$
-    };
-    \path [line] (model) -- (combined);
-
-    \node [function] (prior) at (-4, -3) {
-        Prior\\
-        over SOWs\\
-        $p\qty(s)$
-    };
-    \node [derived] (weights) at (0, -3) {
-        Model weights\\
-        $w_1, \ldots, w_K$
-    };
+    \node [function, label={[]135:{\footnotesize (f)}}] (prior) at (-4, -3.5) {
+            Prior over\\
+            possible futures\\
+            $p\qty(\Omega)$
+        };
+    \node [derived, label={[]90:{\footnotesize (g)}}] (weights) at (0, -3.5) {
+            Weights\\
+            $w_1, \ldots, w_J$
+        };
     \path [line] (simulations) -- (weights);
     \path [line] (prior) -- (weights);
 
-    \node [derived] (aggregated) at (4, -6) {
-        Aggregated distribution\\
-        over outcomes\\
-        $\hat{p}(u | x_i)$
-    };
-    \path [line] (combined) -- (aggregated);
-    \path [line] (weights) -- (aggregated);
+    \node [derived, label={[]135:{\footnotesize (e)}}] (combined) at (4, 0) {
+            Conditional\\
+            distribution\\
+            over outcomes\\
+            $\hat{p}(u | x_i, M_k)$
+        };
+    \path [line] (model) -- (combined);
+    \path [line] (weights) -- (combined);
+
+    \node [rotate=45, color=thirds] (s3) at (-1.25, 1.25) {\large \textbf{Section 3}};
+    \begin{pgfonlayer}{bg}    % select background
+        \path [dotted, thick, color=thirds, fill=grigio!20] (-6, -1.5) -- (2, -1.5) -- (2, 4.25) -- (-2, 4.25) -- (-2, 1.25) -- (-6, 1.25) -- (-6, -1.5);
+    \end{pgfonlayer}
+
+    \node [rotate=0, color=thirds] (s4) at (4, 3.75) {\large \textbf{Section 4}};
+    \begin{pgfonlayer}{bg2}    % select background
+        \path [dotted, thick, color=thirds, fill=rosso!20] (-6.5, 4.6) -- (-6.5, -1.75) -- (5.5, -1.75) -- (5.5, 4.6) -- (-6.5, 4.5);
+    \end{pgfonlayer}
+
+    \node [color=thirds] (s5) at (4, -3.5) {\large \textbf{Section 5}};
+    \begin{pgfonlayer}{bg3}    % select background
+        \path [dotted, thick, color=thirds, fill=giallo!20] (-6.75, 4.8) -- (-6.75, -5) -- (5.75, -5) -- (5.75, 4.8) -- (-6.75, 4.8);
+    \end{pgfonlayer}
+
 \end{tikzpicture}
 
 \end{document}

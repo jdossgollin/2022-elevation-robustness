@@ -209,7 +209,7 @@ Deeply uncertain sea level rise is the focus of our model.
 Our analysis considers the common case where a decision maker or analyst has access to an existing set of simulations.
 Specifically, we use simulations published in \citet{ruckart_hazardous:2008} that use the BRICK model version 0.2 \citep{wong_brick0.2:2017}.
 
-\Cref{fig:boxplots} shows the \glspl{pdf} of mean sea level in 2100 under each of the eight models considered: four emissions pathways (\gls{rcp} scenarios) times two models of ice sheet dynamics.
+\Cref{fig:msl-boxplots} shows the \glspl{pdf} of mean sea level in 2100 under each of the eight models considered: four emissions pathways (\gls{rcp} scenarios) times two models of ice sheet dynamics.
 Variation between different \glspl{pdf} is dominated by the \gls{rcp} 8.5 scenario with fast ice sheet dynamics \citep[see][for a discussion of these dynamics]{wong_brick0.2:2017}.
 This is also the \gls{pdf} with the greatest within-model variance.
 \begin{figure}
@@ -218,7 +218,7 @@ This is also the \gls{pdf} with the greatest within-model variance.
     \caption{
         Sea level rise projections use the BRICK model \citep{wong_brick0.2:2017,ruckert_coastal:2019}.
         We consider \emph{eight time-dependent PDFs of sea level rise}: four \gls{rcp} scenarios $\times$ two parameterizations of ice sheet processes.
-    }\label{fig:boxplots}
+    }\label{fig:msl-boxplots}
 \end{figure}
 
 For consistency with previous studies, we refer to one time series of \gls{slr} ($\overline{y}_t$) as \emph{a \acrfull{sow}}.
@@ -310,75 +310,77 @@ We calculate lifetime expected damages \emph{for each \gls{sow} separately}.
 
 \subsection{Assessing performance}\label{sec:sow-metrics}
 
-To assess the performance of a given decision for a specific \gls{sow}, we calculate three metrics for each \gls{sow}.
-\begin{enumerate}
-    \item The first metric considered is ``upfront cost,'' which reflects the cost of elevating a house. Following \citet{zarekarizi_suboptimal:2020}, we use estimates of construction cost from the Coastal Louisiana Risk Assessment \citep{fischbach_clara:2012}. We normalize this cost by house value.\james{Normalize!}
-    \item The second metric is the lifetime expected damages (\cref{eq:led})
-    \item The third metric is lifetime expected costs, which is the sum of lifetime expected damages and upfront costs
-    \item The third metric is the expected benefit-to-cost ratio.  We define this ratio in terms of the ratio of construction cost to damages averted relative to not elevating at all:
-          \begin{equation}
-              \mathrm{BCR}(\Delta h) = \begin{cases} \Delta h = 0 & 1 \\ \Delta h \neq 0 & \frac{\mathbb{E}[d_t | \Delta h = 0] - \mathbb{E}[d_t | \Delta h = \Delta h]}{C(\Delta h)}\end{cases}
-          \end{equation}
-\end{enumerate}
+To assess the performance of a given decision for a specific \gls{sow}, we calculate the following metrics \emph{for each decision-\gls{sow} combination}.
+\begin{description}
+    \item[upfront cost] reflects the cost of elevating a house. Following \citet{zarekarizi_suboptimal:2020}, we use estimates of construction cost from the Coastal Louisiana Risk Assessment \citep{fischbach_clara:2012}. We normalize this cost by house value.\james{Normalize!}
+    \item[lifetime expected damages] is discussed in \cref{sec:led}
+    \item[lifetime expected costs] is the sum of lifetime expected damages and upfront costs
+    \item[the expected benefit-to-cost ratio] is defined as the ratio of construction cost to damages averted, relative to not elevating at all:
+        \begin{equation}
+            \mathrm{BCR}(\Delta h) = \begin{cases} \Delta h = 0 & 1 \\ \Delta h \neq 0 & \frac{\mathbb{E}[d_t | \Delta h = 0] - \mathbb{E}[d_t | \Delta h = \Delta h]}{C(\Delta h)}\end{cases}
+        \end{equation}
+\end{description}
+In \cref{sec:multiple-simulation} we introduce the notation $u$ for these metrics.
 
-\section{Exploring possible states of the world}\label{sec:multiple-simulation}
+\subsection{Decision analytical framework}
 
-The literature on decision making under deep uncertainty \citep[see][]{marchau:2019} offers some insight as to how to identify decisions that perform well over many plausible \acrfullpl{sow}.
-
-The first that we consider is exploratory modeling.
-In general, we consider $J$ simulated \glspl{sow} $\qty{s_1, \ldots, S_J}$ and $I$ possible decisions $\qty{x_1, \ldots, x_I}$.
-As described in the previous section, these $J$ \glspl{sow} represent time series of mean sea level and the $I$ decisions represent how high to elevate the house.
-For each combination of these, we calculate the vector of metrics described in \cref{sec:sow-metrics}: $u_{ij} = f(x_i, s_j)$ using the system model $f$, which includes storm surge (\cref{sec:storm-surge}), damage (\cref{sec:ead,sec:led}), and calculation of additional metrics (\cref{sec:sow-metrics}).
-This framework is illustrated in \cref{fig:flowchart} inside the box labeled Section 3\klaus{Any suggestions for how I can draw these regions better?}; we return in \cref{sec:multiple-pdf,sec:synthesizing} to add additional steps to the model.
+In \cref{fig:flowchart} we introduce a general notation for model-based decision analysis which we develop incrementally.
+We consider $J$ \glspl{sow} representing time series of mean sea level and $I$ discrete decisions representing the choice for how high to elevate the house $\Delta h$.
+For each combination of these, we calculate the vector of metrics described in \cref{sec:sow-metrics}, which we denote $u_{ij} = f(x_i, s_j)$, using a system model $f$ (box c).
+This system model represents storm surge, building costs, and damages to output the metrics $u$ (which in this case is a vector).
+In \cref{sec:multiple-simulation} we consider ``the multiple \gls{pdf} problem'' by introducing boxes (d) and (e).
+Finally in \cref{sec:synthesizing} we introduce box (f) as a tool for synthesizing uncertainty across the multiple \glspl{pdf}.\klaus{Any feedback on the is figure and/or section?}
 
 \begin{figure}
     \centering
     \includegraphics[width=4in]{bayes-rdm.pdf}
     \caption{
         Outline of the generally applicable decision theoretic framework developed.
-        We begin in \cref{sec:multiple-simulation} by presenting results using exploratory modeling, \ie nodes  (a), (b), and (c).
-        In \cref{sec:multiple-pdf} we discuss nodes (d) and (e) to understand scenario-conditional probability distributions.
-        Finally in \cref{sec:synthesizing} we add nodes (f) and (g) to synthesize across multiple \glspl{pdf}.
+        Boxes are labeled in the order in which they are presented in the text: we begin in \cref{sec:multiple-simulation} using a lens of exploratory modeling, \ie boxes  (a), (b), and (c), to analyze the elevation problem.
+        In \cref{sec:multiple-pdf} we discuss Boxes (d) and (e) to understand scenario-conditional probability distributions and the ``multiple \acrshort{pdf} problem''.
+        Finally in \cref{sec:synthesizing} we add boxes (f) and (g) to synthesize across multiple \glspl{pdf}.
     }\label{fig:flowchart}
 \end{figure}
 
-Analysis of these $u_{ij}$ sheds light on the question: ``how well does a given decision perform under different possible futures?''
-\Cref{fig:scenario-map} shows each possible future as a single dot for each of several possible values for $\Delta h$.
+\section{Exploratory analysis}\label{sec:multiple-simulation}
+
+The literature on decision making under deep uncertainty \citep[see][]{marchau:2019} offers some insight as to how to identify decisions that perform well over many plausible \acrfullpl{sow}.
+The first that we consider is exploratory modeling, which sheds light the questions: ``how well does a given decision perform under different possible futures, and to which possible futures are different decisions vulnerable?''
+
+
+\Cref{fig:scenario-map} shows each possible future as a single point for each of several values of $\Delta h$.\klaus{Would it be better here to have a figure that has $\Delta h$ on the $y$ axis and uses expected lifetime cost to color the points?}
 On the $y$ axis is expected lifetime costs (see \cref{sec:sow-metrics}).
 On the $x$ axis is mean sea level in 2100, which is an interpretable 1-dimensional projection of the \glspl{sow}.
-Although our model for expected discounted total costs is deterministic, points with similar $x$-values may have different $y$-values because their sea levels before 2100 can differ.
+Although our model for expected discounted total costs is deterministic, points with similar $x$-values may have different $y$-values because their sea levels before 2100 can differ (\ie, the 1-dimensional projection of the \glspl{sow} does not represent all variance between them).
 
 \begin{figure}
     \includegraphics[width=\textwidth]{scenario_maps.png}
     \caption{
         Scenario maps: one dot represents one \gls{sow}.
+        Some work is still needed -- I think that changing to four values of $\Delta h$ and showing two or three different values of $h_0$ might be useful (alternatively we could vary the discount rate $\gamma$).
+        Also need to rescale the $y$-axis by house value.
+        It would also be cool to create an interactive online version of this figure that lets you scroll over a particular dot and learn which scenario it's from!
+        %TODO
     }\label{fig:scenario-map}
 \end{figure}
 
-\Cref{fig:scenario-map} shows that the best outcome is when $\Delta h = 0$ and when \gls{slr} is negligible.
-However, the worst outcome is also when $\Delta h = 0$ and when \gls{slr} is substantial.
+The exploratory modeling approach shown in \cref{fig:scenario-map} shows that shows that the best outcome is when $\Delta h = 0$ and when \gls{slr} is negligible, but the worst outcome is also when $\Delta h = 0$ and when \gls{slr} is substantial.
 As $\Delta h$ increases, the construction cost increases but the variability between different \glspl{sow} decreases, up to a point.
 \emph{No decision dominates} any other, including $\Delta h = 0$, in the formal sense of being optimal over all \glspl{sow}.
+\james{Revisit this paragraph once changes are made to \cref{fig:scenario-map}.}
 
-\section{The multiple PDF problem}\label{sec:multiple-pdf}
+
+\section{Scenario-conditional probabilistic analysis: the multiple PDF problem}\label{sec:multiple-pdf}
 
 Whereas the analysis in \cref{sec:multiple-simulation} shed light on how decisions perform under different \glspl{sow}, the metrics calculated represent the performance of a given decision-\gls{sow} combination, and \emph{do not shed light on the performance of the decisions themselves}.
 
-An alternative framework is to interpret the \glspl{sow} as draws from each of eight \glspl{pdf}.
+An alternative interpretation of the available \glspl{sow} is as IID draws from each of eight \glspl{pdf} of sea level rise, as shown in \cref{fig:msl-boxplots}.
 This has the approach of a probabilistic interpretation: \emph{conditional on a particular model} (\gls{rcp} scenario and ice sheet model structure), we can view corresponding \glspl{sow} as IID draws from the distribution of outcomes.
 
-Some general notation is shown in \cref{fig:flowchart} (additional terms are added in \cref{sec:synthesizing}).
-We have $K=8$ models of sea level rise, which we refer to as $\qty{\mathcal{M}_1, \ldots, \mathcal{M}_K}$.
-
-
-\subsection{Metrics}
-
-This allows us to reason formally about the \gls{pdf} of outcomes for each candidate decision, conditional on a model.
-We can use these \glspl{pdf} of outcomes to calculate metrics describing the performance of decisions.
-
-
-
-Any optimal strategy or Pareto frontier is conditional upon an (explicit or implicit) model of future outcomes.
+A more formal notation is introduced in boxes (d) and (e) of \cref{fig:flowchart}.
+Specifically, for each of $K$ models (box d), which here are our eight models for \gls{slr},\james{need to go through whole document and be consistent about MSL, SLS, SRL, RSLR, \etc} the samples of metrics are taken to be IID samples from the distribution of outcomes (box e).
+Since we define these models to estimate $p(\Omega)$, our models $M_1, \ldots, M_K$ return a probability of $1 / J_K$ for each of the $J_K$ simulations from the $K$th model, and $0$ for simulations from all other models.
+We can then use this conditional distribution over outcomes to create metrics that depend only on the decision, such as averages or quantiles of outcomes.
 
 \begin{figure}
     \centering
@@ -390,30 +392,76 @@ Any optimal strategy or Pareto frontier is conditional upon an (explicit or impl
     \label{fig:tradeoffs}
 \end{figure}
 
-Including additional models \citep[\eg,][]{kopp_evolving:2017,deconto_antarctica:2016,ruckert_coastal:2019} \emph{would compound this challenge}.
+For example, \cref{fig:tradeoffs}(a) plots the expected lifetime cost\james{update figure} as a function of $\Delta h$\james{Add $\Delta h$ to the plot} for four of the eight models available.
+Similarly, \cref{fig:tradeoffs} plots the 80\% confidence interval width (\ie, the 90th percentile minus the 10th percentile) of lifetime cost.
+This figure shows that for small $\Delta h$, expected costs are low under optimistic models (\eg, \gls{rcp} 2.6 with slow ice sheet dynamics) and high under pessimistic models (\eg, \gls{rcp} 8.6 with fast ice sheet dynamics).
+Consistent with \cref{fig:scenario-map}, the variability of lifetime costs increases as $\Delta h$ increases.
+Once $\Delta h$ reaches \SIrange[]{3}{7}{ft}, depending on the model considered, construction costs start to dominate flood losses, and thus higher values of $\Delta h$ increase average lifetime costs.
 
-Weights assigned to PDFs or simulations, \textbf{including implicit uniform weights}, should be communicated transparently to facilitate critique and improvement.\james{TODO: create a figure showing expected outcomes if you design for scenario $x$ and get scenario $y$}
+Calculating either of the quantities shown in \cref{fig:tradeoffs} \emph{requires synthesizing across \glspl{sow}}.
+However, these metrics are necessarily dependent on the model used (\ie, \gls{rcp} scenario and model of ice sheet dynamics).
+This means that any assessment of decision performance (\eg, an optimal strategy, a Pareto frontier, or a cost-benefit analysis) is conditional upon an (explicit or implicit) model of future outcomes.
+Where these models are implicit, they should be made more explicit to facilitate iterative model critique and improvement.
 
-\section{Synthesizing across PDFs for decision relevance}\label{sec:synthesizing}
+Second, this approach presents what we call ``the multiple \gls{pdf} problem'' because it leaves decision makers with many probability distributions to choose from
+Cite \citet{sharma_rcp:2021} as another example.
+Add a sentence or two explaining why this is a problem for decision makers\ldots\james{Need to bring in a bit of discussion from \citet{schneider_scenarios:2002} and from engineering docs (ASCE, FEMA, \ldots).}\klaus{Would appreciate your help putting together a succinct summary of the multiple \gls{pdf} problem}
 
-\subsection{Methods}
+\section{Synthesizing PDFs for decision relevance}\label{sec:synthesizing}
 
-While comparing results across many PDFs is a valuable exploratory exercise (see, \eg, \cref{fig:tradeoffs}), providing end users (\eg, households practicing engineers, and planning departments of local governments) with many PDFs may lead to confusion, inconsistency, and potentially liability \citep[see][]{schneider_dangerous:2001,schneider_scenarios:2002}.
+Motivated by the multiple \gls{pdf} problem, we develop in this section a framework for synthesizing information across \glspl{pdf} using subjective Bayesian modeling.
 
-Our approach to synthesizing PDFs is designed for the common case of assessing decisions using simulations (SOWs) from each of $K$ PDFs.
-A system model $(f)$ quantifies the performance $(u)$ of a decision ($x$) under a single SOW ($s$).
-To synthesize, we weight PDFs using an approach based on Bayesian Model Averaging \citep{wong_surge:2018,Yao:2018bu}.
+Specifically, we frame the set of \glspl{sow} through a sampling lens and consider the possibility that the distribution from which they are sampled, $p_\textrm{empirical}(\Omega)$, does not reflect our belief about their true distribution, $p_\mathrm{true}(\Omega)$.
+Often this is by design: exploratory modeling emphasizes the value of sampling low-probability futures as a way to learn about the system and develop insight \citep{bankes:1993}.
+This is analagous to the deliberate over- or under-sampling of certain groups in survey design, and so following standard practice in survey design we develop a re-weighting approach to correct for the over- or under-sampling of different regions of the survey space.
 
-\subsection{Findings}
+To calculate these weights, we apply a grid-based discretization scheme.
+First, we project the \glspl{sow} $s_1, \ldots, s_J$ onto a one-dimensional space, which we denote $\psi_1, \ldots, \psi_J$.
+As before, we take this space to be the mean sea level in 2100.
+Without loss of generality, we assume the $\psi_j$ to be sorted from least to greatest so that $\psi_{j-1} \leq \psi_j$, ($j \neq 1$).
+This allows us to simplify $p_\mathrm{true}(s_j) = p_\mathrm{true}(\psi_j)$.\klaus{This notation seems bad, suggestions?}
+Defining $F_\mathrm{true}(s)$ to be the cumulative distribution corresponding to $p_\mathrm{true}$, \ie
+$$F_\mathrm{true}(s) = \int_{-\infty}^{s'} p_\mathrm{true}(s) \dd{s},$$
+we calculate weights using \cref{eq:weights} as illustrated in \cref{fig:weighting}.
+\begin{equation}\label{eq:weights}
+    w_j = \begin{cases}
+        j = 1     & F_\mathrm{true}\qty(\frac{1}{2}\qty[\psi_1 + \psi_2])                                                                   \\
+        1 < j < J & F_\mathrm{true}\qty(\frac{1}{2}\qty[\psi_{j} + \psi_{j+1}]) - F_\mathrm{true}\qty(\frac{1}{2}\qty[\psi_{j-1} + \psi_j]) \\
+        j = J     & 1 - F_\mathrm{true}\qty(\frac{1}{2}\qty[\psi_{J-1} + \psi_J]).
+    \end{cases}
+\end{equation}
+This grid-based weighting scheme can be used with higher-dimensional projections of the scenarios, as is done for example in the joint probability method used for hurricanes \citep[see, \eg,][]{johnson_clara:2013,toro_jpm-os:2010}.
+
+The primary difficulty with \cref{eq:weights} is that the true probability distribution $p_\mathrm{true}(\phi)$ is not only unknown but deeply uncertain.
+Because it is unknown, it must be approximated with a model.
+And because it is deeply uncertain, multiple models for $p_(\Omega)$ should be used.
+But whereas the $M_k$ defined in \cref{sec:multiple-pdf} represented the raw input data (four \gls{rcp} scenarios times two models of ice sheet dynamics), we define the $M_k$ here to be subjective models for mean sea level in 2100.
+
+Need a few sentences here on prior uses of expert judgement and subjective belief.\klaus{Any suggested citations?}
+The key point to get across is what a subjective belief means in the Bayesian context \citep{savage:1954,gelman_philosophy:2013,gelman_subjectiveobjective:2017}.
+David Spiegelhalter had a nice comment on a podcast where he explained that in medicine, there isn't a ``true'' probability that, for example, you will get cancer; this is not some real quantity that can be measured \citep[hence the famous ``probability isn't real'' admonisment of][]{definetti_probability:1972}.
+Similarly, the probability distribution of sea level rise in 2100 isn't something that can be measured.
+However, probability provides a clear and self-consistent mathematical language for reasoning about uncertainty, which is why we're using it.
+A key advantage is that \textbf{since we can't be right, we can at least be transparent} about the assumed values of sea level in 2100, rather than hiding behind implicit assumptions.
+Thus we refer to the $M_k$ here as \emph{priors} to reflect that they consistently represent our current knowledge.
 
 \begin{figure}
     \centering
-    \includegraphics[width=6in]{inference_weights.pdf}
+    \includegraphics[width=4in]{../img/weighting.pdf}
     \caption{
-        The weights assigned to each PDF (from \cref{fig:boxplots}) under each prior considered.
-    }
+        Schematic of re-weighting scheme defined in \cref{eq:weights} for $J=4$.
+        Top panel shows $p_\mathrm{true}$ and bottom panel shows $F_\mathrm{true}$.
+        Vertical black lines show $\frac{1}{2}\qty[\psi_j + \psi_{j+1}]$ for $j=1, \ldots, J-1$.
+        Green text shows $w_1, \ldots, w_4$ and how they are calculated from $F_\mathrm{true}$.
+        Need to update this figure using real data.
+        %TODO
+    }\label{fig:weighting}
 \end{figure}
-``Pessimistic'' (``Optimistic'') prior heavily weights \gls{rcp} 8.5 (2.6), which is unlikely given current policies \citep{hausfather_scenarios:2020}.
+
+Need to explain how we came up with our two or three subjective priors.\klaus{Would love suggestions here!}
+Another advantage of this method is that it is computationally cheap to re-weight the \glspl{sow}.
+Thus, exploring performance under alternative priors is computationally cheap and easy to implement.
+\Cref{fig:tradeoffs} shows the priors used in panel (a) and in panel (b) shows average lifetime cost as a function of the decision ($\Delta h$) after integrating over all possible \glspl{sow} (\ie, after synthesizing the ``multiple \glspl{pdf}.'')
 
 \begin{figure}
     \centering
@@ -422,8 +470,23 @@ To synthesize, we weight PDFs using an approach based on Bayesian Model Averagin
     \caption{
         The prior model averaging approach (\cref{fig:flowchart}), uses a probability distribution representing subjective belief to average insights across each PDF available.
         Alternative priors can provide robustness checks.
-    }
+        Need to add panel labels, update data, \etc.
+        %TODO
+    }\label{fig:tradeoffs}
 \end{figure}
+
+This technique can also be used as a diagnostic tool.
+In \cref{fig:model-average-weights}, we can see that the ``Pessimistic'' (``Optimistic'') prior heavily weights \gls{rcp} 8.5 (2.6), which is unlikely given current policies \citep{hausfather_scenarios:2020}.\james{Discuss a bit more}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6in]{inference_weights.pdf}
+    \caption{
+        The average weight assigned to \glspl{sow} from each model (\gls{rcp} scenario and ice sheet parameterization) for both priors considered.
+        If the sampling distribution (green line) is used, then the weight assigned to each \gls{sow} is the same, regardless of whether it is over- or under-sampled.
+    }\label{fig:model-average-weights}
+\end{figure}
+
 
 \section{Conclusions}\label{sec:conclusions}
 
@@ -431,24 +494,30 @@ To summarize:
 \begin{itemize}
     \item Natural extensions to Bayesian updating
     \item Belief $p(s)$ can't be ``right''  \citep{gelman_workflow:2020,gelman_philosophy:2013} or ``neutral'' \citep{quinn_exploratory:2020}
-    \item Instead, we can ask \textbf{what assumptions are different priors consistent with?}
 \end{itemize}
 
 This didactic example illustrates a need for better synthesis and communication of deep uncertainties for decision making.
-\textbf{\scshape let's collaborate on:}
+
+Future research needs:
 \begin{itemize}
     \item More complex models to capture more relevant metrics
     \item Better models of nonstationary hazards
     \item Interacting, sequential decisions
 \end{itemize}
 
-\clearpage
+\section{Bonus (need to sort through)}
+
+This section is a work in progress -- it includes some text that used to be in the paper as well as some bullet points that may be useful for the discussion section.\klaus{Can you highlight any picese here that you find especially salient?}
+
+Including additional models \citep[\eg,][]{kopp_evolving:2017,deconto_antarctica:2016,ruckert_coastal:2019} \emph{would compound this challenge}.
 
 Most fundamentally, we are thinking about robustness a bit differently than usual.
 The typical way that the DMDU literature thinks about it is robustness to a \gls{sow}.
 We are thinking about robustness to different modeling structures and assumptions.
 This has links to the ``rival framings'' literature.
 Given a subjective prior $p(s)$, I can compute expectations of the decision metrics $m$; if there are a lot of decisions, I can start to sketch out the tradeoff curves as shown in figures XXXX (in \cref{sec:results}).
+
+Since we have priors, there are clear links to how we would update our belief (and thus decision) once more information arrives.
 
 \begin{enumerate}
     \item Links to DMDU literature
@@ -513,39 +582,6 @@ Given a subjective prior $p(s)$, I can compute expectations of the decision metr
           \end{enumerate}
 \end{enumerate}.
 
-\section{Conclusions}
-
-\begin{enumerate}
-    \item We started with the problem of ``which scenario should we design to?'' We then devised a cop-out: design to a weighted combination of all the scenarios. (So how should we wight the scenarios? Come up with a model $p(\Omega)$ that tells you.)
-    \item There is no objective way to choose $p(\Omega)$ because we don't have data on the future!
-    \item We can't get around from choosing $p(\Omega)$ implicitly\footnote{I'm not sure we have demonstrated this rigorously, or whether we want to argue it, but I think there's a way to frame this point that is valid and helpful}
-    \item Ultimately, engineering design needs to consider not only how to weight different future scenarios, but also which metrics are important, how risk aversion should be addressed, \etc.
-    \item We used a didactic case study to present a toolkit (decision framework, melding priors, prior over return levels) for making transparent and critique-friendly assessments.
-\end{enumerate}
-
-\section*{End Matter}
-
-\subsection*{Acknowledgements}
-
-\begin{enumerate}
-    \item MARISA\james{details}
-    \item PSIRC\james{details}
-    \item Rice University (for startup)
-    \item Tor Erlend Fjelde for helpful advice on implementing the GEV prior using \texttt{Turing.jl}.
-    \item For many journals, a code and data statement will go here.
-\end{enumerate}
-
-\subsection*{Author Contributions}
-
-See journal requirements and format
-
-\subsection*{Supplementary Materials}
-
-\section{Old material}
-
-\clearpage
-\newpage
-
 Federal guidance for this decision relies on standards (the $T$-year flood) rather than risk-based design.
 Be sure to note that this has parallels to lots of other engineering design guidance.
 Then note the work of \citet{zarekarizi_suboptimal:2020} and \citet{xian_elevation:2017} who show that a risk-based approach may improve significantly on a standards-based approach.\james{Need to addd some citations of ``risk-based design''}
@@ -603,11 +639,27 @@ Households elevate their homes to manage flood risks, but regulations and guidan
 \end{description}
 These challenges also affect other adaptation plans and engineering designs (\cref{fig:stormwater-bridge}).
 
+\section*{End Matter}
+
 \begin{enumerate}
     \item Supplementary figures and analysis online
     \item Link to live repository on GitHub
     \item Link to code DOI on Zenodo
 \end{enumerate}
+
+\subsection*{Acknowledgements}
+
+\begin{enumerate}
+    \item MARISA\james{details}
+    \item PSIRC\james{details}
+    \item Rice University (for startup)
+    \item Tor Erlend Fjelde for helpful advice on implementing the GEV prior using \texttt{Turing.jl}.
+    \item For many journals, a code and data statement will go here.
+\end{enumerate}
+
+\subsection*{Author Contributions}
+
+See journal requirements and format
 
 \printbibliography
 \end{document}

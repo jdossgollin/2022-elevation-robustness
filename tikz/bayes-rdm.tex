@@ -12,6 +12,9 @@
 \definecolor{grigio}{HTML}{CACACC}
 \definecolor{nero}{HTML}{000000}
 \definecolor{thirds}{HTML}{31467A}
+\definecolor{orange}{HTML}{F18101}
+\definecolor{deepblue}{HTML}{CA3CFF}
+
 
 \usetikzlibrary{shapes,arrows,positioning,calc,decorations.text}
 \begin{document}
@@ -30,14 +33,14 @@
 \begin{tikzpicture}[auto]
 
     % label the various sections
-    \path [fill=grigio!20] (-6.75, 4.8) -- (5.75, 4.8) -- (5.75, -4) -- (-6.75, -4) -- cycle;
-    \node [color=thirds] (s5) at (-4, -3) {\textbf{Synthesize (\S 5)}};
+    \path [fill=orange!30] (-6.75, 4.8) -- (5.75, 4.8) -- (5.75, -4) -- (-6.75, -4) -- cycle;
+    \node [color=thirds] (s5) at (-4, -3) {\textbf{3) Synthesize}};
 
-    \path [fill=giallo!20] (-6.5, 4.6) -- (-6.5, -1.75) -- (5.5, -1.75) -- (5.5, 4.6) -- cycle;
-    \node [rotate=0, color=thirds] (s4) at (4, 3.75) {\textbf{Condition (\S 4)}};
+    \path [fill=rosso!30] (-6.5, 4.6) -- (-6.5, -1.75) -- (5.5, -1.75) -- (5.5, 4.6) -- cycle;
+    \node [rotate=0, color=thirds] (s4) at (4, 3.75) {\textbf{2) Condition}};
 
-    \path [fill=thirds!20] (-6, -1.5) -- (2, -1.5) -- (2, 4.25) -- (-2, 4.25) -- (-2, 1.25) -- (-6, 1.25) -- cycle;
-    \node [rotate=45, color=thirds] (s3) at (-1.25, 1.25) {\textbf{Explore (\S 3)}};
+    \path [fill=thirds!30] (-6, -1.5) -- (2, -1.5) -- (2, 4.25) -- (-2, 4.25) -- (-2, 1.25) -- (-6, 1.25) -- cycle;
+    \node [rotate=45, color=thirds] (s3) at (-1.25, 1.25) {\textbf{1) Explore}};
 
     \node [block, label={[]135:{\footnotesize (d)}}] at (-4, 3) (models) {
             Multiple models\\

@@ -23,6 +23,7 @@ function supplemental()
     # COSTS
     plot_depth_damage()
     plot_cost_expected_damage()
+    plot_cost_upfront()
     return nothing
 end
 

@@ -49,7 +49,7 @@ function get_depth_damage(key)
 end
 
 """Fit the expected damage emulator"""
-function fit_expected_damage_emulator(key::Symbol=:hazus; N::Int=10_000)
+function fit_expected_damage_emulator(key::Symbol=:hazus; N::Int=1_000_000)
     clearances = collect(-30:0.5:30)u"ft" # house above MSL
     surge_fits = get_norfolk_posterior()
     surges = sample_predictive_GEV(surge_fits, N)u"ft"
@@ -85,4 +85,29 @@ function get_expected_damage_emulator(key::Symbol; overwrite::Bool=false)
     damage_fn = fit_expected_damage_emulator(key)
     save(fname, Dict("damage_fn" => damage_fn))
     return damage_fn
+end
+
+
+# constants
+elevation_thresholds = [0 5.0 8.5 12.0 14.0][:] # piecewise linear
+elevation_rates = [80.36 82.5 86.25 103.75 113.75][:] # cost /ft / ft^2
+
+# interpolation
+elevation_itp = LinearInterpolation(elevation_thresholds, elevation_rates)
+
+# user-facing function
+function elevation_cost(A::T2, Δh::T1) where {T1<:Unitful.Length, T2<:Unitful.Area}
+    area_ft2 = ustrip(u"ft^2", A)
+    base_cost = (10000 + 300 + 470 + 4300 + 2175 + 3500) # in USD
+    if Δh < 0.0u"ft"
+        throw(DomainError(Δh, "Cannot lower the house"))
+    elseif Δh ≈ 0.0u"ft"
+        cost = 0.0
+    elseif 0.0u"ft" < Δh <= 14.0u"ft"
+        rate = elevation_itp(ustrip(u"ft", Δh))
+        cost = base_cost + area_ft2 * rate
+    else
+        throw(DomainError(Δh, "Cannot elevate >14ft"))
+    end
+    return cost
 end

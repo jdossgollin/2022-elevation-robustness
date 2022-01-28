@@ -1,9 +1,9 @@
 using Base: vcat
 using CSV
-using DataFrames, DataFramesMeta
-using Dates
+using DataFrames
+using DataFramesMeta
+using Dates: Dates
 using Downloads
-using ProgressBars
 using StatsBase
 using Unitful
 
@@ -54,7 +54,7 @@ end
 Get the filename in which a given storm surge dataset is to be stored
 """
 function get_fname(stn::TidesAndCurrentsRecord, year::Int)
-    cache_dir = abspath(datadir("processed", "gage"))
+    cache_dir = abspath(data_dir("processed", "gage"))
     if !isdir(cache_dir)
         mkpath(cache_dir)
     end

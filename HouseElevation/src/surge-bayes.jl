@@ -61,7 +61,6 @@ function get_posterior(
             samples = read(fname, MCMCChains.Chains)
             return samples
         catch
-            run_model = true
         end
     end
 
@@ -96,4 +95,18 @@ function sample_predictive_GEV(fit, N)
     ξ = vec(fit[:ξ])
     idx = sample(1:length(μ), N)
     return rand.(GeneralizedExtremeValue.(μ[idx], σ[idx], ξ[idx]))
+end
+
+"""Get the posterior for Norfolk"""
+function get_norfolk_posterior()
+    stn = TidesAndCurrentsRecord()
+    annual = HouseElevation.get_annual(stn)
+    surge_ft = Unitful.ustrip.(u"ft", annual.max_surge) # scalarize in ft
+
+    model = StationaryGEV(surge_ft)
+
+    fits = get_posterior(
+        model, "surge_posterior", 10_000; n_chains=4, overwrite=false, drop_warmup=true
+    )
+    return fits
 end

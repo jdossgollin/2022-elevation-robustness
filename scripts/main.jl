@@ -8,6 +8,7 @@ colors = ColorSchemes.okabe_ito # colorblind friendly and consistent scheme
 
 include("01-surge-modeling.jl")
 include("02-mean-sea-level.jl")
+include("03-cost.jl")
 
 function supplemental()
 
@@ -19,6 +20,9 @@ function supplemental()
     plot_surge_posterior_chains()
     plot_surge_posterior_teststats()
     plot_surge_posterior_return()
+    # COSTS
+    plot_depth_damage()
+    plot_cost_expected_damage()
     return nothing
 end
 
@@ -30,4 +34,4 @@ function main()
 end
 
 main()
-# supplemental()
+#supplemental()

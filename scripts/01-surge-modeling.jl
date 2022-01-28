@@ -160,19 +160,6 @@ function plot_surge_synthetic_experiment()
     return p
 end
 
-function get_norfolk_posterior()
-    stn = HouseElevation.TidesAndCurrentsRecord()
-    annual = HouseElevation.get_annual(stn)
-    surge_ft = ustrip.(u"ft", annual.max_surge) # scalarize in ft
-
-    model = HouseElevation.StationaryGEV(surge_ft)
-
-    fits = get_posterior(
-        model, "surge_posterior", 10_000; n_chains=4, overwrite=false, drop_warmup=true
-    )
-    return fits
-end
-
 function plot_surge_posterior_chains()
     fits = get_norfolk_posterior()
     display(fits)
@@ -182,7 +169,7 @@ function plot_surge_posterior_chains()
     )
 
     p = plot(fits)
-    savefig(p, plots_dir("surge-prior-chains.png"))
+    savefig(p, plots_dir("surge-posterior-chains.png"))
     return p
 end
 

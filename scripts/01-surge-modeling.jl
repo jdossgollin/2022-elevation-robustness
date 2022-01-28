@@ -1,5 +1,3 @@
-using Revise
-using HouseElevation # package devloped for this project!
 using CSV
 using DataFrames
 using Distributions
@@ -310,7 +308,7 @@ function plot_surge_posterior_return()
     return p
 end
 
-function plot_fig1()
+function plot_surge_obs_return()
     p1 = plot_annmax_floods()
     xlabel!(p1, "Time [year]")
     p2 = plot_surge_posterior_return()
@@ -325,6 +323,6 @@ function plot_fig1()
         bottommargin=8mm,
         leftmargin=8mm,
     )
-    savefig(p, plots_dir("fig-1.pdf"))
+    savefig(p, plots_dir("surge-obs-return.pdf"))
     return p
 end

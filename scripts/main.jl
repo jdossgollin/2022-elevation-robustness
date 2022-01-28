@@ -7,6 +7,7 @@ using ColorSchemes
 colors = ColorSchemes.okabe_ito # colorblind friendly and consistent scheme
 
 include("01-surge-modeling.jl")
+include("02-mean-sea-level.jl")
 
 function supplemental()
 
@@ -22,7 +23,10 @@ function supplemental()
 end
 
 function main()
-    return plot_fig1()
+    plot_surge_obs_return()
+    plot_lsl_pdfs()
+    plot_lsl_boxplots_2100()
+    return nothing
 end
 
 main()

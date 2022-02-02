@@ -41,7 +41,7 @@ end
 start_year = 2022
 end_year = 2071
 s = HouseElevation.get_norfolk_brick(; syear=start_year, eyear=end_year)
-f = HouseElevation.get_system_model(sows)
+f = HouseElevation.get_system_model(s)
 x = collect(0:2:14)u"ft"
 si = first(sows)
 xj = rand(x)

@@ -1,3 +1,4 @@
+using JLD2
 using Unitful
 
 """
@@ -8,16 +9,13 @@ struct Outcome{T<:Real}
     led_usd::T
 end
 
-function total_cost_usd(u_ij::Outcome)
-    return u_ij.upfront_cost_usd + u_ij.led_usd
-end
-
 """
 Get all the inputs for the system model
 """
 function get_system_model(
-    sows::Vector{<:BRICKSimulation};
-    surges=get_norfolk_posterior(),
+    syear::Int,
+    eyear::Int;
+    fits=get_norfolk_posterior(),
     house_floor_area=1500u"ft^2",
     elevation_init=7u"ft",
     discount_rate=0.02,
@@ -29,12 +27,11 @@ function get_system_model(
     elevation_cost_fn = get_elevation_cost_function() # cost of elevating as a function of Δh and area
 
     # next, get some constants
-    s1 = first(sows) # the first SOW
-    start_year = minimum(s1.years) # we can ID this
-    N = length(s1.years) # only need to calculate this once
+    years = syear:eyear
+    N = length(years) # only need to calculate this once
 
     # weight applied to EAD each year -- compute this once (same for all SOWs)
-    Γ = (1 - discount_rate) .^ (s1.years .- start_year)
+    Γ = (1 - discount_rate) .^ (years .- syear)
 
     function f(si::BRICKSimulation, xj::T) where {T<:Unitful.Length}
 
@@ -78,4 +75,66 @@ function exhaustive_exploration(
     u = hcat([[f(s[i], x[j]) for i in 1:I] for j in 1:J]...)
 
     return u
+end
+
+function get_outcomes(
+    x::Vector{<:Unitful.Length};
+    syear::Int=2022,
+    eyear::Int=2072,
+    fits=get_norfolk_posterior(),
+    house_floor_area::A=1500u"ft^2",
+    elevation_init::L=7u"ft",
+    discount_rate::T=0.02,
+    house_value_usd::T=200_000.0,
+    overwrite::Bool=false,
+) where {T<:Real,L<:Unitful.Length,A<:Unitful.Area}
+    xmin = minimum(x)
+    xmax = maximum(x)
+    Nx = length(x)
+
+    # we'll return this
+    s = get_norfolk_brick(; syear=syear, eyear=eyear)
+
+    # define a file if we try to load it in
+    fname = data_dir(
+        "processed",
+        (
+            "syear_$syear" *
+            "eyear_$eyear" *
+            "house_floor_area_$house_floor_area" *
+            "elevation_init_$elevation_init" *
+            "discount_rate_$discount_rate" *
+            "house_value_usd_$house_value_usd" *
+            "xmin_$xmin" *
+            "xmax_$xmax" *
+            "Nx_$Nx" *
+            ".jld2"
+        ),
+    )
+
+    # if we to load from file and it works, just do that!
+    if !overwrite
+        try
+            u = JLD2.load(fname, "u")
+            return u, s, x # our work is done!
+        catch
+        end
+    end
+
+    # otherwise, need to build it out
+    f = get_system_model(
+        syear,
+        eyear;
+        fits=fits,
+        house_floor_area=house_floor_area,
+        elevation_init=elevation_init,
+        discount_rate=discount_rate,
+        house_value_usd=house_value_usd,
+    )
+    u = exhaustive_exploration(f, s, x)
+
+    # save for next time!
+    JLD2.save(fname, Dict("u" => u))
+
+    return u, s, x
 end

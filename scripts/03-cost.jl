@@ -50,8 +50,9 @@ function plot_cost_expected_damage()
         ylabel="Expected Annual Damage [% House Value]",
         leftmargin=5mm,
         label="HAZUS (Used)",
+        color=colors[1],
     )
-    plot!(p, ustrip.(u"ft", clearance), dmg_europa; linewidth=2, label="Europa (Not Used)")
+    plot!(p, ustrip.(u"ft", clearance), dmg_europa; linewidth=2, label="Europa (Not Used)", color=colors[2])
     savefig(p, plots_dir("cost-expected-damage-emulator.pdf"))
     return p
 end
@@ -59,18 +60,40 @@ end
 function plot_cost_upfront(
     house_floor_area::T1, house_value_usd::T2, Δh_consider::Vector{<:Unitful.Length}
 ) where {T1<:Unitful.Area,T2<:Real}
+
+    # get the function describing what it costs to elvate
     elevation_cost_fn = HouseElevation.get_elevation_cost_function()
-    cost = elevation_cost_fn.(Δh_consider, house_floor_area)
+
+    idx = findall(Δh_consider .> 0.0u"ft")
+    Δh = Δh_consider[idx]
+    cost = elevation_cost_fn.(Δh, house_floor_area)
+    cost_prop = cost ./ house_value_usd
+
     p = plot(
-        ustrip.(u"ft", Δh_consider),
-        cost ./ house_value_usd;
+        ustrip.(u"ft", Δh),
+        cost_prop;
         linewidth=2,
         xlabel=L"Height Increase $\Delta h$ [ft]",
         ylabel="Up-Front Cost [% House Value]",
         leftmargin=5mm,
         label=false,
         xticks=0:2:14,
+        color=colors[1],
     )
+    # add in-line label
+    annotate!(p, [8], [0.675], text("Cost of Elevating", :center, 10; color=colors[1]))
+
+    scatter!(
+        p,
+        [0],
+        [elevation_cost_fn(0.0u"ft", house_floor_area)];
+        color=colors[2],
+        label=false,
+    )
+    annotate!(
+        p, [2.5], [0.05], text(L"No Cost if $\Delta h = 0$", :center, 10; color=colors[2])
+    )
+
     savefig(p, plots_dir("cost-up-front.pdf"))
     return p
 end

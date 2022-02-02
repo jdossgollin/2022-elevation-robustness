@@ -14,7 +14,7 @@ function plot_surge_gev_priors()
     # first, set up the plot
     p = plot(;
         xlabel="Storm Surge [ft]",
-        ylabel="Prior Probability Density",
+        ylabel="Prior Predictive Density",
         leftmargin=5mm,
         legend=:topright,
         yticks=0:0.2:1,
@@ -22,7 +22,7 @@ function plot_surge_gev_priors()
     # loop through all the distributions
     for (prior, c) in zip(HouseElevation.gev_priors, colors)
         plot!(
-            p, 0:0.025:25, prior.dist; label="$(prior.rt) Year Surge", linewidth=2, color=c
+            p, 0:0.025:25, prior.dist; label="$(prior.rt) Year Surge", linewidth=3, color=c
         )
     end
     savefig(p, plots_dir("surge-gev-priors.pdf"))
@@ -52,7 +52,7 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
         surge_ft;
         label=false,
         markercolor=:gray,
-        ylabel="Annual-Maximum Storm Surge at $(annual.stn.gage_name) [ft]",
+        ylabel="Ann-Max Storm Surge at $(annual.stn.gage_name) [ft]",
         left_margin=5mm,
     )
 
@@ -113,9 +113,9 @@ function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord
     ]
 
     # set up the return period plot
-    rts = range(1.25, 600; length=250) # return periods
+    rts = range(1.25, 300; length=250) # return periods
     aeps = 1 .- 1 ./ rts # annual exceedance probability
-    xticks = [2, 5, 10, 25, 50, 100, 250, 500]
+    xticks = [2, 5, 10, 25, 50, 100, 250]
 
     ub1 = [quantile([quantile(d, xi) for d in post_gevs], 0.95) for xi in aeps]
     lb1 = [quantile([quantile(d, xi) for d in post_gevs], 0.05) for xi in aeps]
@@ -184,22 +184,31 @@ function plot_surge_posterior_teststats(
 ) where {T<:HouseElevation.MCMCChains.Chains}
 
     # function to plot a test statistics
-    function plot_test_stat(t, y, yhat; title="", xlabel=:"")
+    function plot_test_stat(t, y, yhat; title="", xlabel="", draw_label::Bool=false)
         t_posterior = [t(yi) for yi in yhat]
         observed = t(y)
-        bins = range(quantile(t_posterior, 0.002), quantile(t_posterior, 0.998); length=100)
-        p = histogram(
-            t_posterior;
-            bins=bins,
+        bins = range(quantile(t_posterior, 0.002), quantile(t_posterior, 0.998); length=50)
+        bin_label = draw_label ? L"PPD: $p(\tilde{y} | y)$" : false
+        line_label = draw_label ? L"Obs: $y$" : false
+        p = plot(;
+            title_align=:left,
+            yticks=:none,
+            yaxis=([], false),
             title=title,
             xlabel=xlabel,
-            label="PPD",
-            normalize=:pdf,
-            yticks=:none,
-            linealpha=0,
-            fillcolor=colors[1],
+            titlefontsize=12,
         )
-        vline!(p, [observed]; linewidth=4, label="obs", color=colors[2])
+        histogram!(
+            p,
+            t_posterior;
+            bins=bins,
+            label=bin_label,
+            normalize=:pdf,
+            fillcolor=false,
+            linecolor=:black,
+            linewidth=0.5,
+        )
+        vline!(p, [observed]; linewidth=4, label=line_label, color=colors[1])
         return p
     end
     function MannKendall(x::Vector{<:Real})
@@ -211,29 +220,29 @@ function plot_surge_posterior_teststats(
         )
     end
 
-    # get the data to plot
+    # get the data and the fake data
     surge_ft = ustrip.(u"ft", annual.max_surge) # scalarize in ft
     N = length(annual.t)
-
-    test_stats = [
-        ("Lag 1 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 1:1)[1]),
-        ("Lag 2 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 2:2)[1]),
-        ("Lag 3 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 3:3)[1]),
-        ("Lag 5 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 5:5)[1]),
-        ("Maximum Flood", "Surge [ft]", maximum),
-        ("Minimum Flood", "Surge [ft]", minimum),
-        ("Median Flood", "Surge [ft]", median),
-        ("Third Biggest Flood", "Surge [ft]", x -> reverse(x[sortperm(x)])[3]),
-        ("Mann-Kendall Test", "Test Statistic", MannKendall),
-    ]
     ŷ = sample_predictive(fits, N)
-    p = plot(
-        [
-            plot_test_stat(t, surge_ft, ŷ; title=title, xlabel=xlabel) for
-            (title, xlabel, t) in test_stats
-        ]...;
-        size=(1200, 900),
-    )
+
+    # what test stats will we plot?
+    test_stats = [
+        ("(a) Lag 1 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 1:1)[1]),
+        ("(b) Lag 2 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 2:2)[1]),
+        ("(c) Largest Flood (in $N Years)", "Surge [ft]", maximum),
+        ("(d) Smallest Flood (in $N Years)", "Surge [ft]", minimum),
+        ("(e) Median Flood", "Surge [ft]", median),
+        ("(f) Mann-Kendall Test", "Test Statistic", MannKendall),
+    ]
+
+    # make the plots
+    test_stat_plots = []
+    for (i, test_stat) in enumerate(test_stats)
+        title, xlabel, t = test_stat
+        pi = plot_test_stat(t, surge_ft, ŷ; title=title, xlabel=xlabel, draw_label=i == 1)
+        push!(test_stat_plots, pi)
+    end
+    p = plot(test_stat_plots...; size=(900, 600))
     savefig(p, plots_dir("surge-test-statistics.pdf"))
     return p
 end
@@ -253,9 +262,9 @@ function plot_surge_posterior_return(
         GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ]) for row in eachrow(posterior_df)
     ]
 
-    rts = range(1.25, 600; length=250) # return periods
+    rts = range(1.25, 275; length=250) # return periods
     aeps = 1 .- 1 ./ rts # annual exceedance probability
-    xticks = [2, 5, 10, 25, 50, 100, 250, 500]
+    xticks = [2, 5, 10, 25, 50, 100, 250]
 
     ub1 = [quantile([quantile(d, xi) for d in post_gevs], 0.95) for xi in aeps]
     lb1 = [quantile([quantile(d, xi) for d in post_gevs], 0.05) for xi in aeps]
@@ -268,7 +277,7 @@ function plot_surge_posterior_return(
         xlabel="Return Period [years]",
         ylabel="Return Level [ft]",
         xscale=:log,
-        legend=:topleft,
+        legend=:bottomright,
         xticks=(xticks, string.(xticks)),
     )
     plot!(
@@ -312,13 +321,15 @@ function plot_surge_obs_return(
     xlabel!(p1, "Time [year]")
     p2 = plot_surge_posterior_return(annual, fits)
     p2 = plot(p2; ylabel="")
+    add_panel_letters!([p1]; fontsize=14)
+    annotate!(p2, [1], [8.5], text("(B)", :left, 14))
     p = plot(
         p1,
         p2;
         link=:y,
-        ylims=(2, 10),
+        ylims=(2, 9),
         layout=grid(1, 2; widths=[0.6, 0.35]),
-        size=[1000, 350] .* 1.25,
+        size=[1000, 350] .* 1.35,
         bottommargin=8mm,
         leftmargin=8mm,
     )

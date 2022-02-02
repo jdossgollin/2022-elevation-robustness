@@ -13,6 +13,8 @@ export data_dir,
     get_annual_data,
     get_norfolk_brick,
     get_year_data,
-    get_norfolk_posterior
+    get_norfolk_posterior,
+    get_outcomes,
+    get_metrics
 
 end # module

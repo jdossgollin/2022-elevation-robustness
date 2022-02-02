@@ -34,8 +34,8 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
 
     # define some historic storms
     historic_norfolk_storms = [
-        (name="Chesapeake-Potomac", year=1933, is_tc=true, Δx=2.5, Δy=1.5),
-        (name="Outer Banks hurricane", year=1936, is_tc=true, Δx=10, Δy=1),
+        (name="Chesapeake-Potomac", year=1933, is_tc=true, Δx=7.5, Δy=0.75),
+        (name="Outer Banks hurricane", year=1936, is_tc=true, Δx=10, Δy=0.75),
         (name="Isabel", year=2003, is_tc=true, Δx=-7.5, Δy=0.5),
         (name="Irene", year=2015, is_tc=true, Δx=2.5, Δy=1),
         (name="Nor'Ida", year=2009, is_tc=false, Δx=0, Δy=1),
@@ -47,7 +47,7 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
     surge_ft = ustrip.(u"ft", annual.max_surge) # scalarize in ft
 
     # plot the historical storms
-    p = scatter!(
+    p = scatter(
         annual.t,
         surge_ft;
         label=false,
@@ -59,22 +59,15 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
     # show historic storms
     for storm in historic_norfolk_storms
         yobs = ustrip(surge_ft[findfirst(annual.t .== storm.year)])
-        x0 = storm.year + storm.Δx
-        x1 = x0 + 0.9 * (storm.year - x0)
-        y0 = yobs + storm.Δy
-        y1 = y0 + 0.9 * (yobs - y0)
+        x_text = storm.year + storm.Δx
+        y_text = yobs + storm.Δy
+        x0 = x_text + 0.2 * (storm.year - x_text)
+        x1 = x_text + 0.9 * (storm.year - x_text)
+        y0 = y_text + 0.2 * (yobs - y_text)
+        y1 = y_text + 0.9 * (yobs - y_text)
         color = storm.is_tc ? colors[5] : colors[6]
         plot!([x0, x1], [y0, y1]; color=color, linewidth=1.5, label="")
-        scatter!(
-            p,
-            [x0],
-            [y0];
-            markercolor=:white,
-            label=false,
-            markerstrokecolor=:white,
-            markersize=10,
-        )
-        annotate!(p, x0, y0, text(storm.name, :center, 7; color=color))
+        annotate!(p, x_text, y_text, text(storm.name, :center, 7; color=color))
     end
     return p
 end

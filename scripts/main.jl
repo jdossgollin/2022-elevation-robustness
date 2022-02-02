@@ -2,6 +2,7 @@ using Revise
 using HouseElevation
 
 using ColorSchemes
+using Unitful
 
 # HouseElevation.clear_cache() # to clean all the processed data and plots
 colors = ColorSchemes.okabe_ito # colorblind friendly and consistent scheme
@@ -34,5 +35,17 @@ function main()
     return nothing
 end
 
-main()
+#main()
 #supplemental()
+
+start_year = 2022
+end_year = 2071
+s = HouseElevation.get_norfolk_brick(; syear=start_year, eyear=end_year)
+f = HouseElevation.get_system_model(sows)
+x = collect(0:2:14)u"ft"
+si = first(sows)
+xj = rand(x)
+u_ij = f(si, xj)
+
+u = HouseElevation.exhaustive_exploration(f, s, x)
+u[1, 1]

@@ -62,14 +62,14 @@ function fit_expected_damage_emulator(key::Symbol=:hazus; N::Int=1_000_000)
     interp_fn = Interpolations.LinearInterpolation(
         x, y; extrapolation_bc=Interpolations.Flat()
     )
-    damage_fn = function (x::T) where {T<:Unitful.Length}
+    damage_fn = function (x::T) where {T<:Unitful.Length} # x is house above MSL
         return interp_fn(ustrip.(u"ft", x))
     end
     return damage_fn
 end
 
 """Get the expected damage emulator"""
-function get_expected_damage_emulator(key::Symbol; overwrite::Bool=false)
+function get_expected_annual_damage_emulator(key::Symbol; overwrite::Bool=false)
 
     # where to save the emulator
     fname = data_dir("processed", "expected_depth_damage_$key.jld2")
@@ -87,27 +87,34 @@ function get_expected_damage_emulator(key::Symbol; overwrite::Bool=false)
     return damage_fn
 end
 
+"""
+Get the function describing elevation cost as a function of house area and 
+"""
+function get_elevation_cost_function()
 
-# constants
-elevation_thresholds = [0 5.0 8.5 12.0 14.0][:] # piecewise linear
-elevation_rates = [80.36 82.5 86.25 103.75 113.75][:] # cost /ft / ft^2
+    # constants
+    elevation_thresholds = [0 5.0 8.5 12.0 14.0][:] # piecewise linear
+    elevation_rates = [80.36 82.5 86.25 103.75 113.75][:] # cost /ft / ft^2
 
-# interpolation
-elevation_itp = LinearInterpolation(elevation_thresholds, elevation_rates)
+    # interpolation
+    elevation_itp = LinearInterpolation(elevation_thresholds, elevation_rates)
 
-# user-facing function
-function elevation_cost(A::T2, Δh::T1) where {T1<:Unitful.Length, T2<:Unitful.Area}
-    area_ft2 = ustrip(u"ft^2", A)
-    base_cost = (10000 + 300 + 470 + 4300 + 2175 + 3500) # in USD
-    if Δh < 0.0u"ft"
-        throw(DomainError(Δh, "Cannot lower the house"))
-    elseif Δh ≈ 0.0u"ft"
-        cost = 0.0
-    elseif 0.0u"ft" < Δh <= 14.0u"ft"
-        rate = elevation_itp(ustrip(u"ft", Δh))
-        cost = base_cost + area_ft2 * rate
-    else
-        throw(DomainError(Δh, "Cannot elevate >14ft"))
+    # user-facing function
+    function elevation_cost(Δh::T1, A::T2) where {T1<:Unitful.Length,T2<:Unitful.Area}
+        area_ft2 = ustrip(u"ft^2", A)
+        base_cost = (10000 + 300 + 470 + 4300 + 2175 + 3500) # in USD
+        if Δh < 0.0u"ft"
+            throw(DomainError(Δh, "Cannot lower the house"))
+        elseif Δh ≈ 0.0u"ft"
+            cost = 0.0
+        elseif 0.0u"ft" < Δh <= 14.0u"ft"
+            rate = elevation_itp(ustrip(u"ft", Δh))
+            cost = base_cost + area_ft2 * rate
+        else
+            throw(DomainError(Δh, "Cannot elevate >14ft"))
+        end
+        return cost
     end
-    return cost
+
+    return elevation_cost
 end

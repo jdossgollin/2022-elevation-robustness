@@ -5,6 +5,7 @@ include("lsl.jl") # code to read the sea level data
 include("surge-bayes.jl") # code to model
 include("brick.jl")
 include("cost.jl")
+include("system.jl")
 
 export data_dir,
     plots_dir,

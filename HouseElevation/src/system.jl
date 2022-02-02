@@ -68,7 +68,9 @@ Calculate the outcomes for all SOW x Decision pairs
     - `x` is a discretized decision space
     - `s` is a vector of SOWs
 """
-function exhaustive_exploration(f, s, x)
+function exhaustive_exploration(
+    f, s::Vector{<:BRICKSimulation}, x::Vector{<:Unitful.Length}
+)
     I = length(s) # number of states of world
     J = length(x) # number of decisions
 

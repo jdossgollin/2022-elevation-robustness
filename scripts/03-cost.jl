@@ -38,9 +38,9 @@ end
 
 function plot_cost_expected_damage()
     clearance = range(0, 15; length=250)u"ft"
-    hazus = HouseElevation.get_expected_damage_emulator(:hazus; overwrite=false)
+    hazus = HouseElevation.get_expected_annual_damage_emulator(:hazus; overwrite=false)
     dmg_hazus = hazus.(clearance)
-    europa = HouseElevation.get_expected_damage_emulator(:europa; overwrite=false)
+    europa = HouseElevation.get_expected_annual_damage_emulator(:europa; overwrite=false)
     dmg_europa = europa.(clearance)
     p = plot(
         ustrip.(u"ft", clearance),
@@ -56,14 +56,14 @@ function plot_cost_expected_damage()
     return p
 end
 
-function plot_cost_upfront()
-    A = 1_000u"ft^2"
-    value = 185_000 # house value in dollars -- see Z21
-    Δhs = range(0, 14; length=100)u"ft"
-    cost = HouseElevation.elevation_cost.(A, Δhs)
+function plot_cost_upfront(
+    house_floor_area::T1, house_value_usd::T2, Δh_consider::Vector{<:Unitful.Length}
+) where {T1<:Unitful.Area,T2<:Real}
+    elevation_cost_fn = HouseElevation.get_elevation_cost_function()
+    cost = elevation_cost_fn.(Δh_consider, house_floor_area)
     p = plot(
-        ustrip.(u"ft", Δhs),
-        cost ./ value;
+        ustrip.(u"ft", Δh_consider),
+        cost ./ house_value_usd;
         linewidth=2,
         xlabel=L"Height Increase $\Delta h$ [ft]",
         ylabel="Up-Front Cost [% House Value]",
@@ -73,4 +73,13 @@ function plot_cost_upfront()
     )
     savefig(p, plots_dir("cost-up-front.pdf"))
     return p
+end
+
+function make_cost_plots(
+    house_floor_area::T1, house_value_usd::T2, Δh_consider::Vector{<:Unitful.Length}
+) where {T1<:Unitful.Area,T2<:Real}
+    plot_depth_damage()
+    plot_cost_expected_damage()
+    plot_cost_upfront(house_floor_area, house_value_usd, Δh_consider)
+    return nothing
 end

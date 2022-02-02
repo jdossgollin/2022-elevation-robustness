@@ -10,12 +10,9 @@ include("system.jl")
 export data_dir,
     plots_dir,
     TidesAndCurrentsRecord,
-    get_annual,
-    get_posterior,
-    StationaryGEV,
+    get_annual_data,
     get_norfolk_brick,
     get_year_data,
-    get_norfolk_posterior,
-    get_expected_damage_emulator
+    get_norfolk_posterior
 
 end # module

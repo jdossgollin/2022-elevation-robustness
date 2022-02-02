@@ -11,6 +11,7 @@ using Unitful
 
 # make a plot of all the GEV priors and save this plot
 function plot_surge_gev_priors()
+    # first, set up the plot
     p = plot(;
         xlabel="Storm Surge [ft]",
         ylabel="Prior Probability Density",
@@ -18,6 +19,7 @@ function plot_surge_gev_priors()
         legend=:topright,
         yticks=0:0.2:1,
     )
+    # loop through all the distributions
     for (prior, c) in zip(HouseElevation.gev_priors, colors)
         plot!(
             p, 0:0.025:25, prior.dist; label="$(prior.rt) Year Surge", linewidth=2, color=c
@@ -28,7 +30,9 @@ function plot_surge_gev_priors()
 end
 
 # plot the historic annual maximum floods
-function plot_annmax_floods()
+function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
+
+    # define some historic storms
     historic_norfolk_storms = [
         (name="Chesapeake-Potomac", year=1933, is_tc=true, Δx=2.5, Δy=1.5),
         (name="Outer Banks hurricane", year=1936, is_tc=true, Δx=10, Δy=1),
@@ -39,14 +43,20 @@ function plot_annmax_floods()
     ]
 
     # Sewells Point, VA is default
-    stn = HouseElevation.TidesAndCurrentsRecord()
-    annual = HouseElevation.get_annual(stn)
+
     surge_ft = ustrip.(u"ft", annual.max_surge) # scalarize in ft
 
-    # set up plot
-    p = plot(; ylabel="Annual-Maximum Storm Surge [ft", left_margin=5mm)
-    scatter!(p, annual.t, surge_ft; label=false, markercolor=:gray)
+    # plot the historical storms
+    p = scatter!(
+        annual.t,
+        surge_ft;
+        label=false,
+        markercolor=:gray,
+        ylabel="Annual-Maximum Storm Surge at $(annual.stn.gage_name) [ft]",
+        left_margin=5mm,
+    )
 
+    # show historic storms
     for storm in historic_norfolk_storms
         yobs = ustrip(surge_ft[findfirst(annual.t .== storm.year)])
         x0 = storm.year + storm.Δx
@@ -69,9 +79,10 @@ function plot_annmax_floods()
     return p
 end
 
+# plot the samples from the prior
 function plot_surge_prior_chains()
     prior_model = HouseElevation.StationaryGEV(missing)
-    prior_fits = get_posterior(
+    prior_fits = HouseElevation.get_posterior(
         prior_model, "prior_model", 100_000; n_chains=4, overwrite=false, drop_warmup=true
     )
     display(prior_fits)
@@ -85,17 +96,18 @@ function plot_surge_prior_chains()
     return p
 end
 
-function plot_surge_synthetic_experiment()
+# Plot the 
+function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord)
+
+    # create fake data
     function make_fake_data(dist, N)
         rng = Random.MersenneTwister(713)
         return rand(rng, dist, N)
     end
-    stn = HouseElevation.TidesAndCurrentsRecord()
-    annual = get_annual(stn)
     N = length(annual.t)
 
     # get fake data
-    dist = GeneralizedExtremeValue(4, 0.5, 0.15)
+    dist = Distributions.GeneralizedExtremeValue(4, 0.5, 0.15)
     fake_data = make_fake_data(dist, N)
 
     # fit the model
@@ -107,6 +119,7 @@ function plot_surge_synthetic_experiment()
         GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ]) for row in eachrow(posterior_df)
     ]
 
+    # set up the return period plot
     rts = range(1.25, 600; length=250) # return periods
     aeps = 1 .- 1 ./ rts # annual exceedance probability
     xticks = [2, 5, 10, 25, 50, 100, 250, 500]
@@ -160,8 +173,8 @@ function plot_surge_synthetic_experiment()
     return p
 end
 
-function plot_surge_posterior_chains()
-    fits = get_norfolk_posterior()
+# Plot the posterior draws!
+function plot_surge_posterior_chains(fits::T) where {T<:HouseElevation.MCMCChains.Chains}
     display(fits)
 
     HouseElevation.write_diagnostics(
@@ -173,7 +186,11 @@ function plot_surge_posterior_chains()
     return p
 end
 
-function plot_surge_posterior_teststats()
+function plot_surge_posterior_teststats(
+    annual::HouseElevation.AnnualGageRecord, fits::T
+) where {T<:HouseElevation.MCMCChains.Chains}
+
+    # function to plot a test statistics
     function plot_test_stat(t, y, yhat; title="", xlabel=:"")
         t_posterior = [t(yi) for yi in yhat]
         observed = t(y)
@@ -193,7 +210,7 @@ function plot_surge_posterior_teststats()
         return p
     end
     function MannKendall(x::Vector{<:Real})
-        return corkendall([1:length(x);], x)
+        return StatsBase.corkendall([1:length(x);], x)
     end
     function sample_predictive(fits, N)
         return rand.(
@@ -201,10 +218,8 @@ function plot_surge_posterior_teststats()
         )
     end
 
-    stn = HouseElevation.TidesAndCurrentsRecord()
-    annual = HouseElevation.get_annual(stn)
+    # get the data to plot
     surge_ft = ustrip.(u"ft", annual.max_surge) # scalarize in ft
-    fits = get_norfolk_posterior()
     N = length(annual.t)
 
     test_stats = [
@@ -212,10 +227,10 @@ function plot_surge_posterior_teststats()
         ("Lag 2 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 2:2)[1]),
         ("Lag 3 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 3:3)[1]),
         ("Lag 5 PACF", "Autocorrelation", x -> StatsBase.pacf(x, 5:5)[1]),
-        ("Maximum Flood", "Surge (ft)", maximum),
-        ("Minimum Flood", "Surge (ft)", minimum),
-        ("Median Flood", "Surge (ft)", median),
-        ("Third Biggest Flood", "Surge (ft)", x -> reverse(x[sortperm(x)])[3]),
+        ("Maximum Flood", "Surge [ft]", maximum),
+        ("Minimum Flood", "Surge [ft]", minimum),
+        ("Median Flood", "Surge [ft]", median),
+        ("Third Biggest Flood", "Surge [ft]", x -> reverse(x[sortperm(x)])[3]),
         ("Mann-Kendall Test", "Test Statistic", MannKendall),
     ]
     ŷ = sample_predictive(fits, N)
@@ -230,15 +245,17 @@ function plot_surge_posterior_teststats()
     return p
 end
 
-function plot_surge_posterior_return()
-    stn = HouseElevation.TidesAndCurrentsRecord()
-    annual = get_annual(stn)
+# make a plot of the return period
+function plot_surge_posterior_return(
+    annual::HouseElevation.AnnualGageRecord, fits::T
+) where {T<:HouseElevation.MCMCChains.Chains}
+
+    # get the raw data
     surge_ft = ustrip.(u"ft", annual.max_surge)
     N = length(surge_ft)
 
     # fit the model
-    posterior = get_norfolk_posterior()
-    posterior_df = DataFrames.DataFrame(posterior)
+    posterior_df = DataFrames.DataFrame(fits)
     post_gevs = [
         GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ]) for row in eachrow(posterior_df)
     ]
@@ -295,10 +312,12 @@ function plot_surge_posterior_return()
     return p
 end
 
-function plot_surge_obs_return()
-    p1 = plot_annmax_floods()
+function plot_surge_obs_return(
+    annual::HouseElevation.AnnualGageRecord, fits::T
+) where {T<:HouseElevation.MCMCChains.Chains}
+    p1 = plot_annmax_floods(annual)
     xlabel!(p1, "Time [year]")
-    p2 = plot_surge_posterior_return()
+    p2 = plot_surge_posterior_return(annual, fits)
     p2 = plot(p2; ylabel="")
     p = plot(
         p1,
@@ -312,4 +331,18 @@ function plot_surge_obs_return()
     )
     savefig(p, plots_dir("surge-obs-return.pdf"))
     return p
+end
+
+function make_surge_plots(
+    annual::HouseElevation.AnnualGageRecord, fits::T
+) where {T<:HouseElevation.MCMCChains.Chains}
+    plot_surge_gev_priors()
+    plot_annmax_floods(annual)
+    plot_surge_prior_chains()
+    plot_surge_synthetic_experiment(annual)
+    plot_surge_posterior_chains(fits)
+    plot_surge_posterior_teststats(annual, fits)
+    plot_surge_posterior_return(annual, fits)
+    plot_surge_obs_return(annual, fits)
+    return nothing
 end

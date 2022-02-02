@@ -1,5 +1,4 @@
 const surge_years = collect(1928:2021) # the years for which we will consider storm surge
-const lsl_years = collect(2022:2100)
 
 const home_dir = dirname(dirname(dirname(@__FILE__))) # the file
 

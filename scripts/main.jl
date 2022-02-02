@@ -11,41 +11,36 @@ include("01-surge-modeling.jl")
 include("02-mean-sea-level.jl")
 include("03-cost.jl")
 
-function supplemental()
-
-    # STORM SURGE MODELING
-    plot_surge_gev_priors()
-    plot_annmax_floods()
-    plot_surge_prior_chains()
-    plot_surge_synthetic_experiment()
-    plot_surge_posterior_chains()
-    plot_surge_posterior_teststats()
-    plot_surge_posterior_return()
-    # COSTS
-    plot_depth_damage()
-    plot_cost_expected_damage()
-    plot_cost_upfront()
-    return nothing
-end
-
 function main()
-    plot_surge_obs_return()
-    plot_lsl_pdfs()
-    plot_lsl_boxplots_2100()
+    start_year = 2022
+    end_year = 2071
+
+    # make plots of the annual surge data
+    stn = HouseElevation.TidesAndCurrentsRecord()
+    annual = HouseElevation.get_annual_data(stn)
+    fits = get_norfolk_posterior()
+    make_surge_plots(annual, fits)
+
+    # make some plots of the sea level (BRICK) data
+    all_trajs = HouseElevation.get_norfolk_brick(; syear=2022, eyear=2100)
+    make_lsl_plots(all_trajs)
+
+    # make some plots of the cost functions
+    house_floor_area = 1500u"ft^2"
+    house_value_usd = 200_000
+    elevation_init = 7u"ft"
+    discount_rate = 0.02
+    Δh_consider = collect(0:0.25:14)u"ft" # this is the decision space!
+    make_cost_plots(house_floor_area, house_value_usd, Δh_consider)
+
+    # almost done -- just need to clean this bit up
+    s = HouseElevation.get_norfolk_brick(; syear=start_year, eyear=end_year)
+    f = HouseElevation.get_system_model(s)
+    u = HouseElevation.exhaustive_exploration(f, s, x)
+    HouseElevation.total_cost_usd.(u)
+
     return nothing
 end
 
 #main()
 #supplemental()
-
-start_year = 2022
-end_year = 2071
-s = HouseElevation.get_norfolk_brick(; syear=start_year, eyear=end_year)
-f = HouseElevation.get_system_model(s)
-x = collect(0:2:14)u"ft"
-si = first(sows)
-xj = rand(x)
-u_ij = f(si, xj)
-
-u = HouseElevation.exhaustive_exploration(f, s, x)
-u[1, 1]

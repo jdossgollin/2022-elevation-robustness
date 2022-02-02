@@ -1,9 +1,12 @@
+using HouseElevation
 using Plots
 using Plots: mm
 using StatsPlots
 
 """Plot some time-varying PDFs"""
-function plot_lsl_pdfs(; ub=0.95, lb=0.05)
+function plot_lsl_pdfs(
+    all_trajs::Vector{<:HouseElevation.BRICKSimulation}; ub=0.95, lb=0.05
+)
     p = plot(;
         legend=:topleft,
         xlabel="Time [year]",
@@ -12,11 +15,6 @@ function plot_lsl_pdfs(; ub=0.95, lb=0.05)
 
     # which PDFs to plot?
     models = ((2.6, "slow"), (6.0, "fast"), (8.5, "fast"))
-
-    # all the data
-    all_trajs = HouseElevation.get_norfolk_brick(;
-        syear=minimum(HouseElevation.lsl_years), eyear=maximum(HouseElevation.lsl_years)
-    )
 
     for (model, color) in zip(models, colors)
         rcp, dyn = model
@@ -46,10 +44,8 @@ function plot_lsl_pdfs(; ub=0.95, lb=0.05)
     return p
 end
 
-function plot_lsl_boxplots_2100()
-    all_trajs = HouseElevation.get_norfolk_brick(;
-        syear=minimum(HouseElevation.lsl_years), eyear=maximum(HouseElevation.lsl_years)
-    )
+"""Plot some booxplots"""
+function plot_lsl_boxplots_2100(all_trajs::Vector{<:HouseElevation.BRICKSimulation})
     df = vcat(
         [
             DataFrame(
@@ -70,4 +66,11 @@ function plot_lsl_boxplots_2100()
     @df df violin!(p, :scenario, :msl_2100, xrotation=35, legend=false)
     savefig(p, plots_dir("lsl-boxplot-2100.pdf"))
     return p
+end
+
+"""Make all the LSL plots"""
+function make_lsl_plots(all_trajs::Vector{<:HouseElevation.BRICKSimulation})
+    plot_lsl_pdfs(all_trajs)
+    plot_lsl_boxplots_2100(all_trajs)
+    return nothing
 end

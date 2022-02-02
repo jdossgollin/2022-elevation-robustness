@@ -100,7 +100,7 @@ end
 """Get the posterior for Norfolk"""
 function get_norfolk_posterior()
     stn = TidesAndCurrentsRecord()
-    annual = HouseElevation.get_annual(stn)
+    annual = HouseElevation.get_annual_data(stn)
     surge_ft = Unitful.ustrip.(u"ft", annual.max_surge) # scalarize in ft
 
     model = StationaryGEV(surge_ft)

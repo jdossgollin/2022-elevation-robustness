@@ -114,7 +114,7 @@ function get_hourly(stn::TidesAndCurrentsRecord; years=surge_years)
 end
 
 """Get the annual data for all years"""
-function get_annual(stn::TidesAndCurrentsRecord; years=surge_years)
+function get_annual_data(stn::TidesAndCurrentsRecord; years=surge_years)
     hourly = [get_hourly(stn, year) for year in years]
     msl = [StatsBase.mean(dat.lsl) for dat in hourly]
     max_lsl = [maximum(dat.lsl) for dat in hourly]

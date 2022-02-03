@@ -1,3 +1,4 @@
+using ColorSchemes
 using LaTeXStrings
 using Plots
 using Plots: mm
@@ -14,6 +15,8 @@ function plot_scenario_map_slr_cost(;
     discount_rate::T,
     overwrite::Bool=false,
 ) where {L<:Unitful.Length,A<:Unitful.Area,T<:Real,C<:HouseElevation.MCMCChains.Chains}
+
+    # get the SLR
     s = HouseElevation.get_norfolk_brick(; syear=syear, eyear=eyear)
 
     # get the amount of SLR over the time domain
@@ -106,5 +109,74 @@ function plot_scenario_map_slr_cost(;
         link=:y,
     )
     savefig(p, plots_dir("scenario-map-slr-cost.png"))
+    return p
+end
+
+function plot_scenario_map_height_slr(;
+    x::Vector{<:Unitful.Length},
+    s::Vector{<:HouseElevation.BRICKSimulation},
+    u::Array{<:HouseElevation.Outcome},
+    house_value_usd,
+)
+
+    # get the sea level data
+    msl_rise = get_year_data(s, eyear) .- get_year_data(s, syear)
+    msl_rise_ft = ustrip.(u"ft", msl_rise)
+
+    function proportional_lifetime_cost(ui)
+        return (ui.led_usd + ui.upfront_cost_usd) / house_value_usd * 100
+    end
+    function proportional_led(ui)
+        return ui.led_usd / house_value_usd * 100
+    end
+
+    plots = []
+    for (fn, fn_name) in zip(
+        [proportional_lifetime_cost, proportional_led],
+        [
+            "Expected Total Cost [% House Value]",
+            "Lifetime Expected Damages [% House Value]",
+        ],
+    )
+        prop_cost = fn.(u)
+
+        # develop bins to use
+        ystep = 0.1
+        Δy = ystep / 2
+        msl_plot = collect(0.5:0.1:6.0)
+
+        # calculate the indices of the SLR values that go with each bin
+        indices = [findall((y .- Δy) .< msl_rise_ft .< (y .+ Δy)) for y in msl_plot]
+
+        # calcualte expected costs for all bins
+        expected_cost = collect(
+            hcat(
+                [
+                    [mean(prop_cost[idx, i]) for idx in indices] for (i, xi) in enumerate(x)
+                ]...,
+            ),
+        )
+
+        colors = cgrad(:inferno; scale=:exp)
+        x_ft = ustrip.(u"ft", x)
+        pi = heatmap(
+            x_ft,
+            msl_plot,
+            expected_cost;
+            ylabel="LSLR: $syear to $eyear [ft]",
+            colorbar_title="$fn_name",
+            c=colors,
+        )
+        contour!(
+            pi, x_ft, msl_plot, expected_cost; linewidth=0.75, color=:black, linestyle=:dash
+        )
+        push!(plots, pi)
+    end
+    xlabel!(last(plots), "Δh [ft]")
+
+    p = plot(
+        plots...; layout=(2, 1), size=(1000, 1000), link=:x, leftmargin=5mm, rightmargin=5mm
+    )
+    savefig(p, plots_dir("scenario-map-height-slr.pdf"))
     return p
 end

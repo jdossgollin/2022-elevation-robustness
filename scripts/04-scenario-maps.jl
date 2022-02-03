@@ -17,12 +17,12 @@ function plot_scenario_map_slr_cost(;
     s = HouseElevation.get_norfolk_brick(; syear=syear, eyear=eyear)
 
     # get the amount of SLR over the time domain
-    s1 = first(s_plot)
+    s1 = first(s)
     syear = minimum(s1.years)
     eyear = maximum(s1.years)
 
     # calc the base flood elevation
-    bfe = calc_bfe(fits, s, start_year) # has 1% chance of flood in 2022
+    bfe = calc_bfe(fits, s, syear) # has 1% chance of flood in 2022
 
     # on the x axis we will plot MSL from `syear`` to `eyear``
     msl_rise = get_year_data(s, eyear) .- get_year_data(s, syear)

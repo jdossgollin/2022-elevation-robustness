@@ -33,8 +33,8 @@ function main()
 
     # some more constants
     discount_rate = 0.015
-    start_year = 2022
-    end_year = start_year + 70
+    syear = 2022
+    eyear = syear + 70
 
     # make the scenario maps
     elevation_init_bfe = [-5, -2, 1]u"ft" # height relative to gauge

@@ -72,7 +72,7 @@ function main()
         house_value_usd=house_value_usd,
         overwrite=false,
     )
-    plot_scenario_map_height_slr(; x=x, s=s, u=u, house_value_usd=house_value_usd, leftmargin=5mm, rightmargin=5mm)
+    plot_scenario_map_height_slr(; x=x, s=s, u=u, house_value_usd=house_value_usd)
 
     return nothing
 end

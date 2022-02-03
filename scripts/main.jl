@@ -32,25 +32,24 @@ function main()
     make_cost_plots(house_floor_area, house_value_usd, Δh_consider)
 
     # some more constants
-    elevation_init = 7u"ft"
     discount_rate = 0.015
     start_year = 2022
     end_year = start_year + 70
 
     # make the scenario maps
-    u_plot, s_plot, x_plot = get_outcomes(
-        [0.0, 3, 6, 9]u"ft";
-        syear=start_year,
-        eyear=end_year,
+    elevation_init_bfe = [-5, -2, 1]u"ft" # height relative to gauge
+    x_plot = [0, 3, 6, 9]u"ft"
+
+    plot_scenario_map_slr_cost(;
+        x_plot=x_plot,
+        elevation_init_bfe=elevation_init_bfe,
         fits=fits,
-        house_floor_area=house_floor_area,
-        elevation_init=elevation_init,
-        discount_rate=discount_rate,
         house_value_usd=house_value_usd,
+        syear=syear,
+        eyear=eyear,
+        house_floor_area=house_floor_area,
+        discount_rate=discount_rate,
         overwrite=false,
-    )
-    make_scenario_maps(;
-        u_plot=u_plot, s_plot=s_plot, x_plot=x_plot, house_value_usd=house_value_usd
     )
 
     return nothing

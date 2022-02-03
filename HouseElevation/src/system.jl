@@ -116,7 +116,7 @@ function get_outcomes(
     if !overwrite
         try
             u = JLD2.load(fname, "u")
-            return u, s, x # our work is done!
+            return u # our work is done!
         catch
         end
     end
@@ -136,5 +136,5 @@ function get_outcomes(
     # save for next time!
     JLD2.save(fname, Dict("u" => u))
 
-    return u, s, x
+    return u
 end

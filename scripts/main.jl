@@ -5,44 +5,62 @@ using ColorSchemes
 using Unitful
 
 # HouseElevation.clear_cache() # to clean all the processed data and plots
-colors = ColorSchemes.okabe_ito # colorblind friendly and consistent scheme
+colors = ColorSchemes.seaborn_bright6 # colorblind friendly and consistent scheme
 
+# these files just provide functions that will make plots -- nothing happens except defining functions
 include("plotutils.jl")
 include("01-surge-modeling.jl")
 include("02-mean-sea-level.jl")
 include("03-cost.jl")
 include("04-scenario-maps.jl")
+include("05-tradeoffs-by-rcp.jl")
 
 function main()
 
-    # make plots of the annual surge data
+    # define some constants
+    house_floor_area = 1500u"ft^2"
+    house_value_usd = 200_000.0 # HOUSE NOT LAND VALUE
+    discount_rate = 0.03 # mortgages going for 3-5%
+    syear = 2022
+    eyear = syear + 70
+    # for a **VERY** vague idea of prices see
+    # https://www.zillow.com/homedetails/9638-Selby-Pl-Norfolk-VA-23503/79223088_zpid/
+
+    # get the storm surge posterior samples
     fits = get_norfolk_posterior()
+
+    # make plots of the annual surge data
     let
         stn = HouseElevation.TidesAndCurrentsRecord()
         annual = HouseElevation.get_annual_data(stn)
-        make_surge_plots(annual, fits)
+        plot_surge_gev_priors()
+        plot_annmax_floods(annual)
+        plot_surge_prior_chains()
+        plot_surge_synthetic_experiment(annual)
+        plot_surge_posterior_chains(fits)
+        plot_surge_posterior_teststats(annual, fits)
+        plot_surge_posterior_return(annual, fits)
+        plot_surge_obs_return(annual, fits)
     end
 
     # make some plots of the sea level (BRICK) data
+    # uses notation from paper: s = set of all scenarios
     let
-        lsl_100yrs = HouseElevation.get_norfolk_brick(; syear=2022, eyear=2122)
-        make_lsl_plots(lsl_100yrs)
+        s = HouseElevation.get_norfolk_brick(; syear=2022, eyear=2122)
+        plot_brick(s)
     end
 
     # make some plots of the cost functions
-    house_floor_area = 1500u"ft^2"
-    house_value_usd = 200_000.0
-    Δh_consider = collect(0:0.25:14)u"ft" # this is the decision space!
-    make_cost_plots(house_floor_area, house_value_usd, Δh_consider)
-
-    # some more constants
-    discount_rate = 0.015
-    syear = 2022
-    eyear = syear + 70
-
-    # first scenario map
     let
-        elevation_init_bfe = [-5, -2, 1]u"ft" # height relative to gauge
+        Δh_consider = collect(0:0.25:14)u"ft" # this is the decision space!
+        plot_depth_damage()
+        plot_cost_expected_damage()
+        plot_cost_upfront(house_floor_area, house_value_usd, Δh_consider)
+    end
+
+    # create scenario maps
+    let
+        elevation_init_bfe = [-2, -1, 0, 1]u"ft" # height relative to gauge
         x_plot = [0, 3, 6, 9]u"ft"
         plot_scenario_map_slr_cost(;
             x_plot=x_plot,
@@ -58,21 +76,29 @@ function main()
     end
 
     # second scenario map
-    s = HouseElevation.get_norfolk_brick(; syear=syear, eyear=eyear)
-    bfe = calc_bfe(fits, s, syear)
-    x = collect(0:0.25:14)u"ft"
-    u = get_outcomes(
-        x;
-        syear=syear,
-        eyear=eyear,
-        fits=fits,
-        house_floor_area=house_floor_area,
-        elevation_init=bfe,
-        discount_rate=discount_rate,
-        house_value_usd=house_value_usd,
-        overwrite=false,
-    )
-    plot_scenario_map_height_slr(; x=x, s=s, u=u, house_value_usd=house_value_usd)
+    let
+        s = HouseElevation.get_norfolk_brick(; syear=syear, eyear=eyear)
+        bfe = calc_bfe(fits, s, syear)
+        x = collect(0:0.25:14)u"ft"
+        elevation_init = bfe - 1u"ft"
+        u = get_outcomes(
+            x;
+            syear=syear,
+            eyear=eyear,
+            fits=fits,
+            house_floor_area=house_floor_area,
+            elevation_init=elevation_init,
+            discount_rate=discount_rate,
+            house_value_usd=house_value_usd,
+            overwrite=false,
+        )
+        plot_scenario_map_height_slr(; x=x, s=s, u=u, house_value_usd=house_value_usd)
+
+        # plot tradeoffs by RCP scenario
+        plot_tradeoffs(
+            u, s, x; house_value_usd=house_value_usd, house_floor_area=house_floor_area
+        )
+    end
 
     return nothing
 end

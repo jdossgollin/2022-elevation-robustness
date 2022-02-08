@@ -53,7 +53,7 @@ function plot_scenario_map_slr_cost(;
                 overwrite=overwrite,
             )
             total_cost_usd = [ui.led_usd + ui.upfront_cost_usd for ui in u][:, 1]
-            total_cost_prop = total_cost_usd ./ house_value_usd .* 100
+            total_cost_prop = total_cost_usd ./ house_value_usd
 
             # a way to add stuff based on where in the plot we are
             kwargs = Dict{Symbol,Any}(
@@ -77,10 +77,12 @@ function plot_scenario_map_slr_cost(;
 
             # left column has ylabel, right hgas h₀
             if col == 1 # LHS
-                push!(kwargs, :ylabel => "Total Cost [% House Value]", :leftmargin => 7.5mm)
-                # custom ticks
-                # y_ticks = [10, 25, 50, 100, 250, 500, 1000]
-                # kwargs[:yticks] = (y_ticks, string.(y_ticks))
+                push!(
+                    kwargs,
+                    :ylabel => "Total Cost [% House Value]",
+                    :leftmargin => 7.5mm,
+                    :yformatter => pct_formatter,
+                )
             elseif col == N_col # RHS
                 if h0_bfe > 0u"ft"
                     ylabel = "h₀ = $(round(ustrip(u"ft", h0_bfe), digits=1)) ft above BFE"
@@ -113,21 +115,25 @@ function plot_scenario_map_slr_cost(;
 end
 
 function plot_scenario_map_height_slr(;
-    x::Vector{<:Unitful.Length},
-    s::Vector{<:HouseElevation.BRICKSimulation},
     u::Array{<:HouseElevation.Outcome},
+    s::Vector{<:HouseElevation.BRICKSimulation},
+    x::Vector{<:Unitful.Length},
     house_value_usd,
 )
+    # calculate first and last years
+    s1 = first(s)
+    syear = minimum(s1.years)
+    eyear = maximum(s1.years)
 
     # get the sea level data
     msl_rise = get_year_data(s, eyear) .- get_year_data(s, syear)
     msl_rise_ft = ustrip.(u"ft", msl_rise)
 
     function proportional_lifetime_cost(ui)
-        return (ui.led_usd + ui.upfront_cost_usd) / house_value_usd * 100
+        return (ui.led_usd + ui.upfront_cost_usd) / house_value_usd
     end
     function proportional_led(ui)
-        return ui.led_usd / house_value_usd * 100
+        return ui.led_usd / house_value_usd
     end
 
     plots = []

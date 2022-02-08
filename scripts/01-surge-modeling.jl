@@ -65,7 +65,7 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
         x1 = x_text + 0.9 * (storm.year - x_text)
         y0 = y_text + 0.2 * (yobs - y_text)
         y1 = y_text + 0.9 * (yobs - y_text)
-        color = storm.is_tc ? colors[5] : colors[6]
+        color = storm.is_tc ? colors[2] : colors[3]
         plot!([x0, x1], [y0, y1]; color=color, linewidth=1.5, label="")
         annotate!(p, x_text, y_text, text(storm.name, :center, 7; color=color))
     end
@@ -335,18 +335,4 @@ function plot_surge_obs_return(
     )
     savefig(p, plots_dir("surge-obs-return.pdf"))
     return p
-end
-
-function make_surge_plots(
-    annual::HouseElevation.AnnualGageRecord, fits::T
-) where {T<:HouseElevation.MCMCChains.Chains}
-    plot_surge_gev_priors()
-    plot_annmax_floods(annual)
-    plot_surge_prior_chains()
-    plot_surge_synthetic_experiment(annual)
-    plot_surge_posterior_chains(fits)
-    plot_surge_posterior_teststats(annual, fits)
-    plot_surge_posterior_return(annual, fits)
-    plot_surge_obs_return(annual, fits)
-    return nothing
 end

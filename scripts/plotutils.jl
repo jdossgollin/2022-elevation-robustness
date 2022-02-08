@@ -1,4 +1,5 @@
 using Distributions
+using Plots
 
 function add_panel_letters!(panels; fontsize=9)
     letters = 'A':'Z'
@@ -16,3 +17,17 @@ function calc_bfe(fits, all_trajs, start_year)
     lsl_present = mean(get_year_data(all_trajs, start_year))
     return surge_100_year + lsl_present
 end
+
+# https://stackoverflow.com/questions/64176617/julia-two-x-axes-for-plot-of-same-data
+function twiny(sp::Plots.Subplot)
+    sp[:top_margin] = max(sp[:top_margin], 30Plots.px)
+    plot!(sp.plt; inset=(sp[:subplot_index], bbox(0, 0, 1, 1)))
+    twinsp = sp.plt.subplots[end]
+    twinsp[:xaxis][:mirror] = true
+    twinsp[:background_color_inside] = RGBA{Float64}(0, 0, 0, 0)
+    Plots.link_axes!(sp[:yaxis], twinsp[:yaxis])
+    return twinsp
+end
+twiny(plt::Plots.Plot=current()) = twiny(plt[1])
+
+pct_formatter(yi) = "$(Int.(round.(yi * 100)))%"

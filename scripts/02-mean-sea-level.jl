@@ -87,7 +87,7 @@ function plot_lsl_boxplots_2100(all_trajs::Vector{<:HouseElevation.BRICKSimulati
 end
 
 """Make all the LSL plots"""
-function make_lsl_plots(all_trajs::Vector{<:HouseElevation.BRICKSimulation})
+function plot_brick(all_trajs::Vector{<:HouseElevation.BRICKSimulation})
     p1 = plot_lsl_pdfs(all_trajs)
     p2 = plot_lsl_boxplots_2100(all_trajs)
     add_panel_letters!([p1, p2]; fontsize=14)

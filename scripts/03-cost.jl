@@ -52,7 +52,14 @@ function plot_cost_expected_damage()
         label="HAZUS (Used)",
         color=colors[1],
     )
-    plot!(p, ustrip.(u"ft", clearance), dmg_europa; linewidth=2, label="Europa (Not Used)", color=colors[2])
+    plot!(
+        p,
+        ustrip.(u"ft", clearance),
+        dmg_europa;
+        linewidth=2,
+        label="Europa (Not Used)",
+        color=colors[2],
+    )
     savefig(p, plots_dir("cost-expected-damage-emulator.pdf"))
     return p
 end
@@ -96,13 +103,4 @@ function plot_cost_upfront(
 
     savefig(p, plots_dir("cost-up-front.pdf"))
     return p
-end
-
-function make_cost_plots(
-    house_floor_area::T1, house_value_usd::T2, Δh_consider::Vector{<:Unitful.Length}
-) where {T1<:Unitful.Area,T2<:Real}
-    plot_depth_damage()
-    plot_cost_expected_damage()
-    plot_cost_upfront(house_floor_area, house_value_usd, Δh_consider)
-    return nothing
 end

@@ -14,6 +14,7 @@ include("02-mean-sea-level.jl")
 include("03-cost.jl")
 include("04-scenario-maps.jl")
 include("05-tradeoffs-by-rcp.jl")
+include("06-combining.jl")
 
 function main()
 
@@ -99,6 +100,8 @@ function main()
             u, s, x; house_value_usd=house_value_usd, house_floor_area=house_floor_area
         )
     end
+
+    plot_grid_scheme()
 
     return nothing
 end

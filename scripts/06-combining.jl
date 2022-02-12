@@ -1,4 +1,5 @@
 using LaTeXStrings
+using Plots
 
 function plot_grid_scheme()
     dist = Distributions.Normal()
@@ -18,13 +19,13 @@ function plot_grid_scheme()
         label="True Distribution",
         xlims=xlimits,
         ylabel="CDF",
-        xlabel="Data (x)",
+        xlabel="Mean Sea Level in 2100 [ft]",
         legend=:right,
         bottom_margin=5Plots.mm,
         left_margin=5Plots.mm,
-        size=(800, 400),
+        size=(800, 350),
     )
-    scatter!(p, ψ, zeros(size(ψ)); label="Samples", color=colors[2], markersize=5)
+    scatter!(p, ψ, zeros(size(ψ)); label="Observations", color=colors[2], markersize=5)
 
     ymax_prev = 0.0
     x_arrow = range(minimum(xlimits), 0; length=length(ψ) + 2)[2:(end - 1)]
@@ -41,20 +42,15 @@ function plot_grid_scheme()
             [minimum(xlimits), xmax],
             [ymax, ymax];
             label=false,
-            color=colors[3],
-            linestyle=:dash,
+            color=colors[6],
+            linestyle=:dot,
         )
         plot!(p, [xmax, xmax], [0, ymax]; label=false, color=colors[3], linestyle=:dash)
-        if i < length(ψ)
-            plot!(
-                p2, [xmax, xmax], [0, ymax]; color=colors[2], label=false, linestyle=:dash
-            )
-        end
         plot!(
             p,
             [x_arrow[i], x_arrow[i]],
             [ymax_prev, ymax];
-            color=colors[4],
+            color=colors[5],
             linewidth=3,
             label=false,
         )
@@ -62,10 +58,135 @@ function plot_grid_scheme()
             p,
             [x_arrow[i] + 0.2],
             [(ymax_prev + ymax) / 2],
-            text(L"$w_%$i$", :center, 10; color=colors[4]),
+            text(L"$w_%$i$", :center, 10; color=colors[5]),
         )
         ymax_prev = ymax
     end
     savefig(p, plots_dir("grid-sketch.pdf"))
+    return p
+end
+
+function get_priors()
+    priors = [
+        (name="Slow SLR", dist=Gamma(2, 0.5)),
+        (name="Intermediate", dist=Gamma(1.5, 1.5)),
+        (name="Fast SLR", dist=Gamma(4.5, 1.25)),
+    ]
+    return priors
+end
+
+function plot_priors()
+    priors = get_priors()
+    p = plot(;
+        xlabel="Sea Level Rise, 2022-2100, at Sewells Point, VA [ft]",
+        ylabel="Probability Density",
+    )
+    for (prior, color) in zip(priors, colors)
+        plot!(p, prior.dist, 0, 12.5; label=prior.name, color=color, linewidth=3)
+    end
+    p
+    savefig(p, plots_dir("lsl-priors.pdf"))
+    return p
+end
+
+function plot_prior_tradeoffs(
+    u::Matrix{<:HouseElevation.Outcome},
+    s::Vector{<:HouseElevation.LSLSim},
+    x::Vector{<:Unitful.Length};
+    house_value_usd::T,
+    house_floor_area::A,
+) where {T<:Real,A<:Unitful.Area}
+
+    # define priors over SLR in 2100, in ft
+    priors = get_priors()
+
+    total_cost = map(ui -> (ui.led_usd + ui.upfront_cost_usd) / house_value_usd, u)
+    Δh_ft = ustrip.(u"ft", x)
+    led = map(ui -> ui.led_usd / house_value_usd, u)
+
+    # we need ticks to plot
+    x_ticks = 0:2:14 # in feet
+    cost_fn = HouseElevation.get_elevation_cost_function()
+    prop_cost = cost_fn.(x_ticks .* 1u"ft", house_floor_area) ./ house_value_usd
+
+    # what we're going to save
+    p_archive = []
+
+    for (var, varname) in zip(
+        [total_cost, led],
+        [
+            "Expected Lifetime Cost [% House Value]",
+            "Lifetime Expected Damages [% House Value]",
+        ],
+    )
+        p = plot(;
+            xlabel=L"Height Increase $\Delta h$ [ft]",
+            ylabel=varname,
+            linewidth=2,
+            xticks=(x_ticks, string.(x_ticks)),
+            yformatter=y -> pct_formatter(y),
+            top_margin=12.5Plots.mm,
+            left_margin=7.5Plots.mm,
+            bottom_margin=7.5Plots.mm,
+            legend=:bottomright,
+        )
+        for (prior, color) in zip(priors, colors)
+            w = HouseElevation.make_weights(s, prior.dist)
+            cond = vec(mean(var, w; dims=1))
+            plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=3)
+            idx = argmin(cond)
+            scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
+        end
+
+        # add the cost on upper x axis
+        p = plot!(
+            twiny(p),
+            Δh_ft,
+            [mean(var[:, i]) for (i, _) in enumerate(Δh_ft)];
+            xticks=(x_ticks, string.(round.(prop_cost, digits=2))),
+            xlabel="Up-Front Cost [% House Value]",
+            linewidth=0,
+            alpha=0,
+            label=false,
+            yticks=false,
+        )
+
+        # add to our plots
+        push!(p_archive, p)
+    end
+    add_panel_letters!(p_archive; fontsize=12)
+    p = plot(p_archive...; layout=(1, 2), link=:x, size=(1200, 600))
+
+    savefig(plots_dir("tradeoffs-by-prior.pdf"))
+    return p
+end
+
+"""
+Plot the weights
+"""
+function plot_weight(s::Vector{<:HouseElevation.LSLSim})
+    # define priors over SLR in 2100, in ft
+    priors = get_priors()
+    p = plot()
+    df = DataFrame(:model => ["RCP $(si.rcp), $(si.model)" for si in s])
+    for prior in priors
+        w = HouseElevation.make_weights(s, prior.dist)
+        df[!, prior.name] = w
+    end
+    df2 = stack(df, Not([:model]); variable_name=:prior, value_name=:weight)
+    w_avg = combine(groupby(df2, [:model, :prior]), :weight => mean => :weight)
+    p = @df w_avg groupedbar(
+        :model,
+        :weight,
+        group=:prior,
+        palette=colors,
+        legend=:topright,
+        legendtitle="Prior",
+        yformatter=blank_formatter,
+        ylabel="Average Weight Applied",
+        xrotation=30,
+        bottom_margin=10Plots.mm,
+        left_margin=10Plots.mm,
+    )
     return p
 end

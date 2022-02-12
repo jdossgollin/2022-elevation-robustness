@@ -17,23 +17,21 @@ function plot_scenario_map_slr_cost(;
 ) where {L<:Unitful.Length,A<:Unitful.Area,T<:Real,C<:HouseElevation.MCMCChains.Chains}
 
     # get the SLR
-    s = HouseElevation.get_norfolk_brick(; syear=syear, eyear=eyear)
-
-    # get the amount of SLR over the time domain
-    s1 = first(s)
-    syear = minimum(s1.years)
-    eyear = maximum(s1.years)
+    s = HouseElevation.get_lsl(; syear=syear, eyear=eyear)
 
     # calc the base flood elevation
     bfe = calc_bfe(fits, s, syear) # has 1% chance of flood in 2022
 
     # on the x axis we will plot MSL from `syear`` to `eyear``
-    msl_rise = get_year_data(s, eyear) .- get_year_data(s, syear)
+    msl_rise = get_year_data(s, eyear)
     msl_rise_ft = ustrip.(u"ft", msl_rise)
 
     N_row = length(elevation_init_bfe)
     N_col = length(x_plot)
     plots = hcat([[plot() for row in 1:N_row] for col in 1:N_col]...)
+
+    clims = (0, 8_000)
+    cmap = cgrad(:plasma; scale=exp, rev=true)
 
     for row in 1:N_row
         h0_bfe = elevation_init_bfe[row]
@@ -58,15 +56,20 @@ function plot_scenario_map_slr_cost(;
             # a way to add stuff based on where in the plot we are
             kwargs = Dict{Symbol,Any}(
                 :label => false,
-                :markercolor => :black,
-                :markersize => 0.5,
                 :xformatter => x -> "",
+                :bins => (LinRange(0, maximum(msl_rise_ft), 60), LinRange(0, 4.5, 60)),
+                :c => cmap,
+                :clims => clims,
+                :colorbar => false,
             )
 
             # top row has the titles and the bottom has xlabels
             if row == 1
                 push!(
-                    kwargs, :title => "Δh = $Δh", :topmargin => 5mm, :title_align => :center
+                    kwargs,
+                    :title => L"$\Delta h$ = %$Δh",
+                    :topmargin => 5mm,
+                    :title_align => :center,
                 )
             elseif row == N_row
                 push!(
@@ -84,10 +87,11 @@ function plot_scenario_map_slr_cost(;
                     :yformatter => pct_formatter,
                 )
             elseif col == N_col # RHS
+                ft = u"ft"
                 if h0_bfe > 0u"ft"
-                    ylabel = "h₀ = $(round(ustrip(u"ft", h0_bfe), digits=1)) ft above BFE"
+                    ylabel = L"$h_0$ = %$(round(ustrip(ft, h0_bfe), digits=1)) ft above BFE"
                 else
-                    ylabel = "h₀ = $(round(ustrip(u"ft", -h0_bfe), digits=1)) ft below BFE"
+                    ylabel = L"$h_0$ = %$(round(ustrip(ft, -h0_bfe), digits=1)) ft below BFE"
                 end
                 push!(
                     kwargs,
@@ -101,22 +105,45 @@ function plot_scenario_map_slr_cost(;
                 push!(kwargs, :yformatter => y -> "")
             end
 
-            scatter!(p, msl_rise_ft, total_cost_prop; kwargs...)
+            #scatter!(p, msl_rise_ft, total_cost_prop; kwargs...)
+            histogram2d!(p, msl_rise_ft, total_cost_prop; kwargs...)
         end
     end
+
+    fake_plot = scatter(
+        [0, 0],
+        [0, 1];
+        zcolor=[0, 3],
+        xlims=(1, 1.1),
+        xshowaxis=false,
+        yshowaxis=false,
+        colorbar_title="Density of SOWs",
+        grid=false,
+        clims=clims,
+        c=cmap,
+        label=false,
+        xticks=[],
+        yticks=[],
+    )
+
+    @show fake_plot[1][:xaxis][:showaxis]
+    @show fake_plot[1][:yaxis][:showaxis]
+    l = @layout [grid(N_row, N_col) a{0.1w}]
+
     p = plot(
-        [plots[row, col] for row in 1:N_row for col in 1:N_col]...;
-        layout=(N_row, N_col),
+        vcat([plots[row, col] for row in 1:N_row for col in 1:N_col], fake_plot)...;
+        layout=l,
         size=(1500, 1000),
+        dpi=250,
         link=:y,
     )
-    savefig(p, plots_dir("scenario-map-slr-cost.png"))
+    savefig(p, plots_dir("scenario-map-slr-cost.pdf"))
     return p
 end
 
 function plot_scenario_map_height_slr(;
     u::Array{<:HouseElevation.Outcome},
-    s::Vector{<:HouseElevation.BRICKSimulation},
+    s::Vector{<:HouseElevation.LSLSim},
     x::Vector{<:Unitful.Length},
     house_value_usd,
 )
@@ -126,7 +153,7 @@ function plot_scenario_map_height_slr(;
     eyear = maximum(s1.years)
 
     # get the sea level data
-    msl_rise = get_year_data(s, eyear) .- get_year_data(s, syear)
+    msl_rise = get_year_data(s, eyear)
     msl_rise_ft = ustrip.(u"ft", msl_rise)
 
     function proportional_lifetime_cost(ui)
@@ -163,25 +190,23 @@ function plot_scenario_map_height_slr(;
             ),
         )
 
-        colors = cgrad(:inferno; scale=:exp)
         x_ft = ustrip.(u"ft", x)
-        pi = heatmap(
+        pi = contourf(
             x_ft,
             msl_plot,
             expected_cost;
             ylabel="LSLR: $syear to $eyear [ft]",
             colorbar_title="$fn_name",
-            c=colors,
-        )
-        contour!(
-            pi, x_ft, msl_plot, expected_cost; linewidth=0.75, color=:black, linestyle=:dash
+            c=cgrad(:plasma; rev=true),
+            linewidth=0,
+            levels=30,
         )
         push!(plots, pi)
     end
-    xlabel!(last(plots), "Δh [ft]")
+    xlabel!(last(plots), L"Height Increase $\Delta h$ [ft]")
 
     p = plot(
-        plots...; layout=(2, 1), size=(1000, 1000), link=:x, leftmargin=5mm, rightmargin=5mm
+        plots...; layout=(2, 1), size=(850, 850), link=:x, leftmargin=5mm, rightmargin=5mm
     )
     savefig(p, plots_dir("scenario-map-height-slr.pdf"))
     return p

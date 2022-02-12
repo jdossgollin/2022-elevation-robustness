@@ -51,7 +51,7 @@ end
 """Fit the expected damage emulator"""
 function fit_expected_damage_emulator(key::Symbol=:hazus; N::Int=1_000_000)
     clearances = collect(-30:0.5:30)u"ft" # house above MSL
-    surge_fits = get_norfolk_posterior()
+    surge_fits = get_surge_posterior()
     surges = sample_predictive_GEV(surge_fits, N)u"ft"
 
     dmg_fn = get_depth_damage(key)
@@ -77,6 +77,7 @@ function get_expected_annual_damage_emulator(key::Symbol; overwrite::Bool=false)
     if !overwrite
         try
             damage_fn = load(fname, "damage_fn")
+            test_val = damage_fn(2u"ft")
             return damage_fn
         catch
         end

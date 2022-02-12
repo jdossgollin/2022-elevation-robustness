@@ -5,7 +5,8 @@ using ColorSchemes
 using Unitful
 
 # HouseElevation.clear_cache() # to clean all the processed data and plots
-colors = ColorSchemes.seaborn_bright6 # colorblind friendly and consistent scheme
+#colors = ColorSchemes.seaborn_bright6 # colorblind friendly and consistent scheme
+colors = ColorSchemes.okabe_ito
 
 # these files just provide functions that will make plots -- nothing happens except defining functions
 include("plotutils.jl")
@@ -23,12 +24,12 @@ function main()
     house_value_usd = 200_000.0 # HOUSE NOT LAND VALUE
     discount_rate = 0.03 # mortgages going for 3-5%
     syear = 2022
-    eyear = syear + 70
+    eyear = 2100
     # for a **VERY** vague idea of prices see
     # https://www.zillow.com/homedetails/9638-Selby-Pl-Norfolk-VA-23503/79223088_zpid/
 
     # get the storm surge posterior samples
-    fits = get_norfolk_posterior()
+    fits = get_surge_posterior()
 
     # make plots of the annual surge data
     let
@@ -47,8 +48,8 @@ function main()
     # make some plots of the sea level (BRICK) data
     # uses notation from paper: s = set of all scenarios
     let
-        s = HouseElevation.get_norfolk_brick(; syear=2022, eyear=2122)
-        plot_brick(s)
+        s = HouseElevation.get_lsl(; syear=syear, eyear=2125)
+        plot_lsl_evolution(s)
     end
 
     # make some plots of the cost functions
@@ -78,7 +79,7 @@ function main()
 
     # second scenario map
     let
-        s = HouseElevation.get_norfolk_brick(; syear=syear, eyear=eyear)
+        s = HouseElevation.get_lsl(; syear=syear, eyear=eyear)
         bfe = calc_bfe(fits, s, syear)
         x = collect(0:0.25:14)u"ft"
         elevation_init = bfe - 1u"ft"
@@ -96,9 +97,20 @@ function main()
         plot_scenario_map_height_slr(; x=x, s=s, u=u, house_value_usd=house_value_usd)
 
         # plot tradeoffs by RCP scenario
-        plot_tradeoffs(
+        plot_rcp_tradeoffs(
             u, s, x; house_value_usd=house_value_usd, house_floor_area=house_floor_area
         )
+
+        # plot the priors
+        plot_priors()
+
+        # plot tradeoffs by prior
+        plot_prior_tradeoffs(
+            u, s, x; house_value_usd=house_value_usd, house_floor_area=house_floor_area
+        )
+
+        # plot the implicit weight
+        plot_weight(s)
     end
 
     plot_grid_scheme()

@@ -1,16 +1,21 @@
 using LaTeXStrings
 using StatsBase
 
-function plot_tradeoffs(
+function plot_rcp_tradeoffs(
     u::Matrix{<:HouseElevation.Outcome},
-    s::Vector{<:HouseElevation.BRICKSimulation},
+    s::Vector{<:HouseElevation.LSLSim},
     x::Vector{<:Unitful.Length};
     house_value_usd::T,
     house_floor_area::A,
 ) where {T<:Real,A<:Unitful.Area}
 
     # define constant
-    models = ((2.6, "slow"), (4.5, "fast"), (8.5, "fast"))
+    models = (
+        (rcp=2.6, model="BRICK Slow"),
+        (rcp=4.5, model="BRICK Fast"),
+        (rcp=6.0, model="K14"),
+        (rcp=8.5, model="DP16"),
+    )
 
     total_cost = map(ui -> (ui.led_usd + ui.upfront_cost_usd) / house_value_usd, u)
     Δh_ft = ustrip.(u"ft", x)
@@ -27,7 +32,7 @@ function plot_tradeoffs(
     for (var, varname) in zip(
         [total_cost, led],
         [
-            "Total Lifetime Cost [% House Value]",
+            "Expected Lifetime Cost [% House Value]",
             "Lifetime Expected Damages [% House Value]",
         ],
     )
@@ -40,13 +45,19 @@ function plot_tradeoffs(
             top_margin=12.5Plots.mm,
             left_margin=7.5Plots.mm,
             bottom_margin=7.5Plots.mm,
-            legend=:right,
+            legend=:bottomright,
         )
         for (model, color) in zip(models, colors)
-            (rcp, dyn) = model
-            w = weights([(si.rcp == rcp) & (si.dynamics == dyn) for si in s])
+            w = weights([(si.rcp == model.rcp) & (si.model == model.model) for si in s])
             cond = vec(mean(var, w; dims=1))
-            plot!(p, Δh_ft, cond; label="RCP $rcp, $dyn BRICK", color=color, linewidth=3)
+            plot!(
+                p,
+                Δh_ft,
+                cond;
+                label="RCP $(model.rcp), $(model.model)",
+                color=color,
+                linewidth=3,
+            )
             idx = argmin(cond)
             scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
         end

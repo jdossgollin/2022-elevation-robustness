@@ -31,3 +31,4 @@ end
 twiny(plt::Plots.Plot=current()) = twiny(plt[1])
 
 pct_formatter(yi) = "$(Int.(round.(yi * 100)))%"
+blank_formatter(yi) = ""

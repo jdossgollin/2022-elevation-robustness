@@ -1,26 +1,30 @@
 using HouseElevation
+using ColorSchemes
+using DataFrames
 using Plots
 using Plots: mm
 using StatsPlots
 
 """Plot some time-varying PDFs"""
-function plot_lsl_pdfs(
-    all_trajs::Vector{<:HouseElevation.BRICKSimulation}; ub=0.95, lb=0.05
-)
+function plot_lsl_pdfs(all_trajs::Vector{<:HouseElevation.LSLSim}; ub=0.95, lb=0.05)
     width = ub - lb
     p = plot(;
-        legend=:left,
         xlabel="Time [year]",
         ylabel="Mean Sea Level at Sewells Point, VA [ft]",
         legendtitle="$(Int(ceil(width * 100)))% Interval:",
+        legend=(0.2, 0.8),
     )
 
     # which PDFs to plot?
-    models = ((2.6, "slow"), (4.5, "fast"), (8.5, "fast"))
+    models = (
+        (rcp=2.6, model="BRICK Slow"), (rcp=4.5, model="K14"), (rcp=8.5, model="DP16")
+    )
 
-    for (model, color) in zip(models, colors[3:(length(models) + 2)])
-        (rcp, dyn) = model
-        trajs = [traj for traj in all_trajs if (traj.rcp == rcp) & (traj.dynamics == dyn)]
+    for (model, color) in zip(models, ColorSchemes.seaborn_bright6)
+        (rcp, modelname) = model
+        trajs = [
+            traj for traj in all_trajs if (traj.rcp == rcp) & (traj.model == modelname)
+        ]
 
         years = first(trajs).years
 
@@ -35,7 +39,7 @@ function plot_lsl_pdfs(
             upper;
             fillrange=lower,
             fillalpha=0.5,
-            label="RCP $rcp / $dyn BRICK",
+            label="RCP $rcp, $modelname",
             color=color,
             linewidth=0,
             leftmargin=5mm,
@@ -46,48 +50,32 @@ function plot_lsl_pdfs(
 end
 
 """Plot some booxplots"""
-function plot_lsl_boxplots_2100(all_trajs::Vector{<:HouseElevation.BRICKSimulation})
-    all_rcp = unique([traj.rcp for traj in all_trajs])
-
-    p = plot(; xticks=(1:length(all_rcp), "RCP " .* string.(all_rcp)), legend=:bottomright)
-    for (rcp_idx, rcp) in enumerate(all_rcp)
-        msl_slow = [
-            get_year_data(traj, 2100) for
-            traj in all_trajs if (traj.rcp == rcp) & (traj.dynamics == "slow")
-        ]
-        msl_fast = [
-            get_year_data(traj, 2100) for
-            traj in all_trajs if (traj.rcp == rcp) & (traj.dynamics == "fast")
-        ]
-        if rcp_idx == 1
-            slow_label = "Slow BRICK Dynamics"
-            fast_label = "Fast BRICK Dynamics"
-        else
-            slow_label = false
-            fast_label = false
-        end
-        violin!(
-            p,
-            [rcp_idx],
-            ustrip.(u"ft", msl_slow);
-            color=colors[1],
-            side=:left,
-            label=slow_label,
-        )
-        violin!(
-            p,
-            [rcp_idx],
-            ustrip.(u"ft", msl_fast);
-            color=colors[2],
-            side=:right,
-            label=fast_label,
-        )
-    end
+function plot_lsl_boxplots_2100(all_trajs::Vector{<:HouseElevation.LSLSim})
+    msl_2100 = vcat(
+        [
+            DataFrame(
+                "RCP" => traj.rcp,
+                "Model" => traj.model,
+                "msl_2100_ft" => ustrip(u"ft", get_year_data(traj, 2100)),
+            ) for traj in all_trajs
+        ]...,
+    )
+    p = @df msl_2100 groupedviolin(
+        :Model,
+        :msl_2100_ft,
+        group=:RCP,
+        palette=colors,
+        legend=(0.15, 0.8),
+        legendtitle="  RCP  ",
+        yformatter=blank_formatter,
+        ylabel="Mean Sea Level in 2100",
+        xrotation=30,
+    )
     return p
 end
 
 """Make all the LSL plots"""
-function plot_brick(all_trajs::Vector{<:HouseElevation.BRICKSimulation})
+function plot_lsl_evolution(all_trajs::Vector{<:HouseElevation.LSLSim})
     p1 = plot_lsl_pdfs(all_trajs)
     p2 = plot_lsl_boxplots_2100(all_trajs)
     add_panel_letters!([p1, p2]; fontsize=14)
@@ -95,13 +83,12 @@ function plot_brick(all_trajs::Vector{<:HouseElevation.BRICKSimulation})
         p1,
         p2;
         link=:y,
-        ylims=(0, 6.5),
-        layout=grid(1, 2; widths=[0.7, 0.3]),
+        ylims=(-0.5, 12),
+        layout=grid(1, 2; widths=[0.6, 0.4]),
         size=[1000, 400] .* 1.125,
         xtickfontsize=9,
         ylabelfontsize=9,
-        bottom_margin=5mm,
-        leftmargin=5mm,
+        bottom_margin=7.5mm,
     )
     savefig(p, plots_dir("lsl-evolution.pdf"))
     return p

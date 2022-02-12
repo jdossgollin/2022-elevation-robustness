@@ -15,7 +15,7 @@ Get all the inputs for the system model
 function get_system_model(
     syear::Int,
     eyear::Int;
-    fits=get_norfolk_posterior(),
+    fits=get_surge_posterior(),
     house_floor_area=1500u"ft^2",
     elevation_init=7u"ft",
     discount_rate=0.02,
@@ -33,7 +33,7 @@ function get_system_model(
     # weight applied to EAD each year -- compute this once (same for all SOWs)
     Γ = (1 - discount_rate) .^ (years .- syear)
 
-    function f(si::BRICKSimulation, xj::T) where {T<:Unitful.Length}
+    function f(si::LSLSim, xj::T) where {T<:Unitful.Length}
 
         # get the house height
         house_elevation = elevation_init + xj # house relative to gauge (zero)
@@ -65,9 +65,7 @@ Calculate the outcomes for all SOW x Decision pairs
     - `x` is a discretized decision space
     - `s` is a vector of SOWs
 """
-function exhaustive_exploration(
-    f, s::Vector{<:BRICKSimulation}, x::Vector{<:Unitful.Length}
-)
+function exhaustive_exploration(f, s::Vector{<:LSLSim}, x::Vector{<:Unitful.Length})
     I = length(s) # number of states of world
     J = length(x) # number of decisions
 
@@ -81,7 +79,7 @@ function get_outcomes(
     x::Vector{<:Unitful.Length};
     syear::Int=2022,
     eyear::Int=2072,
-    fits=get_norfolk_posterior(),
+    fits=get_surge_posterior(),
     house_floor_area::A=1500u"ft^2",
     elevation_init::L=7u"ft",
     discount_rate::T=0.02,
@@ -93,7 +91,7 @@ function get_outcomes(
     Nx = length(x)
 
     # we'll return this
-    s = get_norfolk_brick(; syear=syear, eyear=eyear)
+    s = get_lsl(; syear=syear, eyear=eyear)
 
     # define a file if we try to load it in
     fname = data_dir(

@@ -98,7 +98,7 @@ function sample_predictive_GEV(fit, N)
 end
 
 """Get the posterior for Norfolk"""
-function get_norfolk_posterior()
+function get_surge_posterior()
     stn = TidesAndCurrentsRecord()
     annual = HouseElevation.get_annual_data(stn)
     surge_ft = Unitful.ustrip.(u"ft", annual.max_surge) # scalarize in ft

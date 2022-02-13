@@ -130,6 +130,8 @@ function plot_scenario_map_slr_cost(;
     fake_plot[1][:yaxis][:showaxis]
     l = @layout [grid(N_row, N_col) a{0.1w}]
 
+    add_panel_letters!(plots)
+
     p = plot(
         vcat([plots[row, col] for row in 1:N_row for col in 1:N_col], fake_plot)...;
         layout=l,

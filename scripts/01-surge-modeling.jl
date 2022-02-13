@@ -81,7 +81,7 @@ function plot_surge_prior_chains()
     display(prior_fits)
 
     HouseElevation.write_diagnostics(
-        prior_fits, plots_dir("surge-prior-mcmc-diagnostics.csv")
+        prior_fits, plots_dir("surge-prior-mcmc-diagnostics.tex")
     )
 
     p = plot(prior_fits)
@@ -171,7 +171,7 @@ function plot_surge_posterior_chains(fits::T) where {T<:HouseElevation.MCMCChain
     display(fits)
 
     HouseElevation.write_diagnostics(
-        fits, plots_dir("surge-posterior-mcmc-diagnostics.csv")
+        fits, plots_dir("surge-posterior-mcmc-diagnostics.tex")
     )
 
     p = plot(fits)
@@ -310,7 +310,6 @@ function plot_surge_posterior_return(
 
     xp, ys = HouseElevation.weibull_plot_pos(surge_ft)
     scatter!(p, 1 ./ xp, ys; label="Obs (Weibull Plot Pos.)", color=colors[1], alpha=1)
-    savefig(p, plots_dir("surge-synthetic-data-experiment.pdf"))
     return p
 end
 

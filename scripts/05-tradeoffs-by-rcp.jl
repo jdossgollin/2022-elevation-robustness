@@ -10,12 +10,14 @@ function plot_rcp_tradeoffs(
 ) where {T<:Real,A<:Unitful.Area}
 
     # define constant
-    models = (
+    model_rcp_plot = (
         (rcp=2.6, model="BRICK Slow"),
-        (rcp=4.5, model="BRICK Fast"),
         (rcp=6.0, model="K14"),
         (rcp=8.5, model="DP16"),
     )
+
+    all_rcp = unique([si.rcp for si in s])
+    all_models = unique([si.model for si in s])
 
     total_cost = map(ui -> (ui.led_usd + ui.upfront_cost_usd) / house_value_usd, u)
     Δh_ft = ustrip.(u"ft", x)
@@ -28,13 +30,15 @@ function plot_rcp_tradeoffs(
 
     # what we're going to save
     p_archive = []
+    varnames = [
+        "Expected Lifetime Cost [% House Value]",
+        "Lifetime Expected Damages [% House Value]",
+    ]
+    vars = [total_cost, led]
 
     for (var, varname) in zip(
-        [total_cost, led],
-        [
-            "Expected Lifetime Cost [% House Value]",
-            "Lifetime Expected Damages [% House Value]",
-        ],
+        vars,
+        varnames,
     )
         p = plot(;
             xlabel=L"Height Increase $\Delta h$ [ft]",
@@ -45,26 +49,26 @@ function plot_rcp_tradeoffs(
             top_margin=12.5Plots.mm,
             left_margin=7.5Plots.mm,
             bottom_margin=7.5Plots.mm,
-            legend=:topright,
+            legend=ifelse(var == first(vars), :topright, false),
         )
-        for (model, color) in zip(models, colors)
-            w = weights([(si.rcp == model.rcp) & (si.model == model.model) for si in s])
-            cond = vec(mean(var, w; dims=1))
-            plot!(
-                p,
-                Δh_ft,
-                cond;
-                label="RCP $(model.rcp), $(model.model)",
-                color=color,
-                linewidth=3,
-            )
-        end
-        if var == total_cost
-            for (model, color) in zip(models, colors)
-                w = weights([(si.rcp == model.rcp) & (si.model == model.model) for si in s])
+
+        i = 1 # counter for colors
+        for rcp in all_rcp
+            for model in all_models
+                plot_in_color = (rcp=rcp, model=model) in model_rcp_plot
+                w = weights([(si.rcp == rcp) & (si.model == model) for si in s])
                 cond = vec(mean(var, w; dims=1))
-                idx = argmin(cond)
-                scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
+                plot!(
+                    p,
+                    Δh_ft,
+                    cond;
+                    label=ifelse(plot_in_color, "RCP $(rcp), $(model)", ""),
+                    color=ifelse(plot_in_color, colors[i], :gray),
+                    linewidth=ifelse(plot_in_color, 3.5, 0.5),
+                )
+                if plot_in_color
+                    i += 1
+                end
             end
         end
 
@@ -84,7 +88,7 @@ function plot_rcp_tradeoffs(
         # add to our plots
         push!(p_archive, p)
     end
-    add_panel_letters!(p_archive; fontsize=12)
+    add_panel_letters!(p_archive; fontsize=12, loc=(0.1, 0.95))
     p = plot(p_archive...; layout=(1, 2), link=:x, size=(1200, 600))
 
     savefig(plots_dir("tradeoffs-by-rcp.pdf"))

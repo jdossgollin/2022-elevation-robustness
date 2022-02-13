@@ -306,7 +306,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
 
 \subsection{Lifetime expected damages}\label{sec:led}
 
-The second component of the system model converts a time series of annual expected damages (\cref{sec:ead}) into lifetime expected damages, which we define as the upfront cost plus the discounted sum of expected annual damages
+The second component of the system model converts a time series of annual expected damages (\cref{sec:ead}) into lifetime expected damages, which we define as the up-front cost plus the discounted sum of expected annual damages
 \begin{equation}\label{eq:led}
     \textrm{LED} = \sum_{t=1}^T \gamma^{t-1} \mathbb{E}[d_t | \Delta h],
 \end{equation}
@@ -319,9 +319,9 @@ We calculate lifetime expected damages \emph{for each \gls{sow} separately}.
 
 To assess the performance of a given decision for a specific \gls{sow}, we calculate the following metrics \emph{for each decision-\gls{sow} combination}.
 \begin{description}
-    \item[upfront cost] reflects the cost of elevating a house. Following \citet{zarekarizi_suboptimal:2020}, we use estimates of construction cost from the Coastal Louisiana Risk Assessment \citep{fischbach_clara:2012}. We normalize this cost by house value.\james{Normalize!}
+    \item[up-front cost] reflects the cost of elevating a house. Following \citet{zarekarizi_suboptimal:2020}, we use estimates of construction cost from the Coastal Louisiana Risk Assessment \citep{fischbach_clara:2012}. We normalize this cost by house value.\james{Normalize!}
     \item[lifetime expected damages] is discussed in \cref{sec:led}
-    \item[lifetime expected costs] is the sum of lifetime expected damages and upfront costs
+    \item[lifetime expected costs] is the sum of lifetime expected damages and up-front costs
     \item[the expected benefit-to-cost ratio] is defined as the ratio of construction cost to damages averted, relative to not elevating at all:
         \begin{equation}
             \mathrm{BCR}(\Delta h) = \begin{cases} \Delta h = 0 & 1 \\ \Delta h \neq 0 & \frac{\mathbb{E}[d_t | \Delta h = 0] - \mathbb{E}[d_t | \Delta h = \Delta h]}{C(\Delta h)}\end{cases}
@@ -682,7 +682,7 @@ See journal requirements and format\james{Keep an eye on this}
 \setcounter{equation}{0}
 
 \newpage
-\section{Supplemental Figures}
+\section{Supplemental figures}
 \begin{figure}
     \centering
     \includegraphics[width=4in]{cost-depth-damage}
@@ -750,7 +750,7 @@ See journal requirements and format\james{Keep an eye on this}
     \centering
     \includegraphics[width=\textwidth]{scenario-map-height-slr}
     \caption{
-        Expected lifetime total cost (eq.XXX) as a function of height increase $\Delta h$ and sea level rise over the house lifetime. % TODO: reference equation
+        Expected total lifetime cost (damages plus up-front cost; eq.XXX) as a function of height increase $\Delta h$ and sea level rise over the house lifetime. % TODO: reference equation
         The best outcomes (yellow) arise when the house is not elevated and sea level rise is minimal (bottom left corner).
         The worst outcomes (blue) arise when the house is elevated only slightly and sea level rise is rapid.
         In general, a height increase of $<\SI{3}{ft}$ can be considered unrealistic \citep{zarekarizi_suboptimal:2020}.
@@ -761,55 +761,109 @@ See journal requirements and format\james{Keep an eye on this}
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{scenario-map-slr-cost}
-    \caption{scenario-map-slr-cost}\label{fig:scenario-map-slr-cost}
+    \caption{
+        Scenario maps showing the dependence of expected lifetime cost (damages plus up-front cost; eq.XXX) as a function of \gls{slr} in 2100 for several values of $\Delta h$ and $h_0$.
+        Colors indicate the density of \glspl{sow}; this data is often presented as a scatterplot (CITE) but we bin to a 2D histogram. % TODO: cite scenario maps
+        The lowest-cost outcomes occur when $h_0$ is large, the house is not elevated (no up-front cost), and sea level rise is minimal.
+        The highest-cost outcomes arise when the house is not elevated (no up-front cost) and sea level rise is rapid.
+        In all cases, elevating the house reduces the variance in total lifetime cost.
+        Values are sensitive to model constants; see \cref{tab:uncertainties}.
+    }\label{fig:scenario-map-slr-cost}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=4in]{surge-gev-priors}
-    \caption{surge-gev-priors}\label{fig:surge-gev-priors}
+    \caption{
+        Prior distributions for annual maximum storm surge.
+        Rather than apply a prior over model parameters directly, we apply a weakly informative prior over quantiles of the resulting distribution (that is, over a function of the model parameters) following REFERENCE. % TODO: cite
+        See ex.~XYQ for details. % TODO: cross-ref equation
+        We apply priors over the 2, 10, 100, and 500 year events.
+    }\label{fig:surge-gev-priors}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{surge-obs-return}
-    \caption{surge-obs-return}\label{fig:surge-obs-return}
+    \caption{
+        Annual maximum storm surges (after subtracting mean sea level) at Sewells Point, VA (CITE SOURCE). % TODO: cite source
+        (A):
+        Time series of historic storms.
+        Blue (green) arrows denote notable tropical cyclones (nor'easters).
+        (B):
+        Return periods.
+        Dots indicate observed values; their $x$-value (``plotting position'') is calculated using the Weibull formula (eq.~\cref{eq:plot-pos}).
+        Gray lines show the 50, 80, and 95\% posterior confidence intervals from the Bayesian GEV fit.
+    }\label{fig:surge-obs-return}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{surge-posterior-chains}
-    \caption{surge-posterior-chains}\label{fig:surge-posterior-chains}
+    \caption{
+        \Gls{mcmc} plots for posterior draws from the storm surge model.
+        We draw \num{10000} samples by running four chains of \num{3500} iterations each and discarding the first \num{1000}.
+        The mixing of the chains is consistent with, though does not guarantee, convergence.
+    }\label{fig:surge-posterior-chains}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{surge-prior-chains}
-    \caption{surge-prior-chains}\label{fig:surge-prior-chains}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=4in]{surge-synthetic-data-experiment}
-    \caption{surge-synthetic-data-experiment}\label{fig:surge-synthetic-data-experiment}
+    \caption{
+        As \cref{fig:surge-posterior-chains} but for draws from the prior distribution.
+    }\label{fig:surge-prior-chains}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{surge-test-statistics}
-    \caption{surge-test-statistics}\label{fig:surge-test-statistics}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{tradeoffs-by-prior}
-    \caption{tradeoffs-by-prior}\label{fig:tradeoffs-by-prior}
+    \caption{
+        Posterior predictive checks for the stationary GEV storm surge model (section XXX). % TODO: reference section
+        Each panel shows a different test statistic: partial autocorrelation at lags 1 and 2; sample maximum; sample minimum; sample median; and Mann-Kendall trend test statistic.
+        The histograms show the distribution of each test statistic from the posterior predictive distribution.
+        Orange lines show the test statistic's value in the observed data.
+        Observed values near the mode of the posterior predictive distribution are consistent with, but do not guarantee, a good fit.
+        For further discussion of posterior predictive checks, see Chapter 6 of \citet{Gelman:2014tc}.
+    }\label{fig:surge-test-statistics}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{tradeoffs-by-rcp}
-    \caption{tradeoffs-by-rcp}\label{fig:tradeoffs-by-rcp}
+    \caption{
+        Each probabilistic model or scenario leads to a different estimate of the Pareto frontier.
+        (A): trade-off between up-front cost (which is a monotonic function of height increase) and expected lifetime costs (eq.~XX). % TODO: ref equation
+        (B): trade-off between up-front cost and lifetime expected damages (eq.~\ref{eq:led}).
+        Light gray lines show estimates for all 16 models (four \gls{rcp} scenarios times four physical parameterizations) considered.
+        Colored lines highlight three representative models for emphasis.
+    }\label{fig:tradeoffs-by-rcp}
 \end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tradeoffs-by-prior}
+    \caption{
+        As \cref{fig:tradeoffs-by-rcp}, but Pareto frontiers are shown for the synthesizing Bayesian models.
+    }\label{fig:tradeoffs-by-prior}
+\end{figure}
+
+\section{Supplemental tables}
+
+\begin{table}[h]
+    \centering
+    \caption{
+        Diagnostic statistics for the \gls{mcmc} sampling for the storm surge posterior draws.
+        Statistics include the mean and standard deviation of each parameter, the naive standard error and Monte Carlo standard error (which measure uncertainty in the mean), the effective sample size, $\hat{R}$ diagnostic, and effective samples per second, which describes sampling speed.
+        In general, a $\hat{R}$ value close to one is consistent with, though does not guarantee, convergence.
+    }\label{tab:surge-posterior-mcmc-diagnostics}
+    \input{../../plots/surge-posterior-mcmc-diagnostics.tex}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \caption{As \cref{tab:surge-posterior-mcmc-diagnostics} but for draws from the prior distribution.}\label{tab:surge-prior-mcmc-diagnostics}
+    \input{../../plots/surge-prior-mcmc-diagnostics.tex}
+\end{table}
 
 \end{document}

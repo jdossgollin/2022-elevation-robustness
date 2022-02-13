@@ -1,7 +1,9 @@
 using Distributions
 using DynamicPPL
-using Optim
+using Latexify
+using LaTeXStrings
 using MCMCChains
+using Optim
 using StatsBase
 using Turing
 
@@ -85,7 +87,22 @@ end
 """Save your diagnostics to file"""
 function write_diagnostics(fit, fname::String)
     df = DataFrame(MCMCChains.summarize(fit))
-    return CSV.write(fname, df)
+    rename!(
+        df,
+        "parameters" => L"\textrm{Parameters}",
+        "mean" => L"\textrm{Mean}",
+        "std" => L"\textrm{Stdev.}",
+        "naive_se" => L"\textrm{Naive SE}",
+        "mcse" => L"\textrm{MCSE}",
+        "ess" => L"\textrm{ESS}",
+        "rhat" => L"$\hat{R}$",
+        "ess_per_sec" => L"\textrm{ESS per second}",
+    )
+    tex_str = latexify(df; env=:table, fmt="%.2f")
+    open(fname, "w") do io
+        write(io, tex_str)
+    end
+    return true
 end
 
 """Sample from the posterior predictive of the GEV"""

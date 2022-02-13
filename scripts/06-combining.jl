@@ -148,13 +148,13 @@ function plot_prior_tradeoffs(
     # what we're going to save
     p_archive = []
 
-    for (var, varname) in zip(
-        [total_cost, led],
-        [
-            "Expected Lifetime Cost [% House Value]",
-            "Lifetime Expected Damages [% House Value]",
-        ],
-    )
+    # to plot
+    vars = [total_cost, led]
+    varnames = [
+        "Expected Lifetime Cost [% House Value]",
+        "Lifetime Expected Damages [% House Value]",
+    ]
+    for (var, varname) in zip(vars, varnames)
         p = plot(;
             xlabel=L"Height Increase $\Delta h$ [ft]",
             ylabel=varname,
@@ -164,21 +164,12 @@ function plot_prior_tradeoffs(
             top_margin=12.5Plots.mm,
             left_margin=7.5Plots.mm,
             bottom_margin=7.5Plots.mm,
-            legend=:topright,
+            legend=ifelse(var == first(vars), :topright, false),
         )
         for (prior, color) in zip(priors, colors)
             w = HouseElevation.make_weights(prior.dist)
             cond = vec(mean(var, w; dims=1))
             plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=3)
-        end
-
-        if var == total_cost
-            for (prior, color) in zip(priors, colors)
-                w = HouseElevation.make_weights(prior.dist)
-                cond = vec(mean(var, w; dims=1))
-                idx = argmin(cond)
-                scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
-            end
         end
 
         # add the cost on upper x axis

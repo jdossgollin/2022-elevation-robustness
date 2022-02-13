@@ -45,7 +45,7 @@ function plot_rcp_tradeoffs(
             top_margin=12.5Plots.mm,
             left_margin=7.5Plots.mm,
             bottom_margin=7.5Plots.mm,
-            legend=:bottomright,
+            legend=:topright,
         )
         for (model, color) in zip(models, colors)
             w = weights([(si.rcp == model.rcp) & (si.model == model.model) for si in s])
@@ -58,10 +58,15 @@ function plot_rcp_tradeoffs(
                 color=color,
                 linewidth=3,
             )
-            idx = argmin(cond)
-            scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
         end
-        p
+        if var == total_cost
+            for (model, color) in zip(models, colors)
+                w = weights([(si.rcp == model.rcp) & (si.model == model.model) for si in s])
+                cond = vec(mean(var, w; dims=1))
+                idx = argmin(cond)
+                scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
+            end
+        end
 
         # add the cost on upper x axis
         p = plot!(

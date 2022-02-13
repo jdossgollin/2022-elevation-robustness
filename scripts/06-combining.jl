@@ -68,9 +68,9 @@ end
 
 function get_priors()
     priors = [
-        (name="Slow SLR", dist=Gamma(2, 0.5)),
-        (name="Intermediate", dist=Gamma(1.5, 1.5)),
-        (name="Fast SLR", dist=Gamma(4.5, 1.25)),
+        (name="Slow SLR", dist=Gamma(1.75, 0.5)),
+        (name="Intermediate SLR", dist=Gamma(1.75, 1.25)),
+        (name="Fast SLR", dist=Gamma(3.5, 1.25)),
     ]
     return priors
 end
@@ -85,7 +85,43 @@ function plot_priors()
         plot!(p, prior.dist, 0, 12.5; label=prior.name, color=color, linewidth=3)
     end
     p
-    savefig(p, plots_dir("lsl-priors.pdf"))
+    #savefig(p, plots_dir("lsl-priors.pdf"))
+    return p
+end
+
+function plot_weight(s::Vector{<:HouseElevation.LSLSim})
+    # define priors over SLR in 2100, in ft
+    priors = get_priors()
+    df = DataFrame(:model => [si.model for si in s], :rcp => [si.rcp for si in s])
+
+    function plot_weight_prior(i, prior)
+        w = HouseElevation.make_weights(prior.dist)
+        is_last = i == length(priors)
+        df[!, prior.name] = w
+        w_avg = combine(groupby(df, [:model, :rcp]), prior.name => sum => :weight)
+        @assert sum(w_avg[!, :weight]) ≈ 1
+        p = @df w_avg groupedbar(
+            :model,
+            :weight,
+            group=:rcp,
+            palette=colors,
+            legendtitle="RCP",
+            legend=i == 1 ? :topright : false,
+            ylabel="Implicit Weights: $(prior.name)",
+            xrotation=30,
+        )
+        return p
+    end
+
+    plots = [plot_weight_prior(i, prior) for (i, prior) in enumerate(priors)]
+    return plots
+end
+
+function plot_priors_weights(s::Vector{<:HouseElevation.LSLSim})
+    plots = vcat(plot_priors(), plot_weight(s)...)
+    add_panel_letters!(plots; loc=(0.5, 0.975), fontsize=11)
+    p = plot(plots...; layout=(2, 2), size=(1000, 750), left_margin=5Plots.mm)
+    savefig(p, plots_dir("lsl-priors-weights.pdf"))
     return p
 end
 
@@ -128,14 +164,21 @@ function plot_prior_tradeoffs(
             top_margin=12.5Plots.mm,
             left_margin=7.5Plots.mm,
             bottom_margin=7.5Plots.mm,
-            legend=:bottomright,
+            legend=:topright,
         )
         for (prior, color) in zip(priors, colors)
-            w = HouseElevation.make_weights(s, prior.dist)
+            w = HouseElevation.make_weights(prior.dist)
             cond = vec(mean(var, w; dims=1))
             plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=3)
-            idx = argmin(cond)
-            scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
+        end
+
+        if var == total_cost
+            for (prior, color) in zip(priors, colors)
+                w = HouseElevation.make_weights(prior.dist)
+                cond = vec(mean(var, w; dims=1))
+                idx = argmin(cond)
+                scatter!(p, [Δh_ft[idx]], [cond[idx]]; label=false, color=color)
+            end
         end
 
         # add the cost on upper x axis
@@ -158,35 +201,5 @@ function plot_prior_tradeoffs(
     p = plot(p_archive...; layout=(1, 2), link=:x, size=(1200, 600))
 
     savefig(plots_dir("tradeoffs-by-prior.pdf"))
-    return p
-end
-
-"""
-Plot the weights
-"""
-function plot_weight(s::Vector{<:HouseElevation.LSLSim})
-    # define priors over SLR in 2100, in ft
-    priors = get_priors()
-    p = plot()
-    df = DataFrame(:model => ["RCP $(si.rcp), $(si.model)" for si in s])
-    for prior in priors
-        w = HouseElevation.make_weights(s, prior.dist)
-        df[!, prior.name] = w
-    end
-    df2 = stack(df, Not([:model]); variable_name=:prior, value_name=:weight)
-    w_avg = combine(groupby(df2, [:model, :prior]), :weight => mean => :weight)
-    p = @df w_avg groupedbar(
-        :model,
-        :weight,
-        group=:prior,
-        palette=colors,
-        legend=:topright,
-        legendtitle="Prior",
-        yformatter=blank_formatter,
-        ylabel="Average Weight Applied",
-        xrotation=30,
-        bottom_margin=10Plots.mm,
-        left_margin=10Plots.mm,
-    )
     return p
 end

@@ -126,8 +126,8 @@ function plot_scenario_map_slr_cost(;
         yticks=[],
     )
 
-    @show fake_plot[1][:xaxis][:showaxis]
-    @show fake_plot[1][:yaxis][:showaxis]
+    fake_plot[1][:xaxis][:showaxis]
+    fake_plot[1][:yaxis][:showaxis]
     l = @layout [grid(N_row, N_col) a{0.1w}]
 
     p = plot(
@@ -159,55 +159,41 @@ function plot_scenario_map_height_slr(;
     function proportional_lifetime_cost(ui)
         return (ui.led_usd + ui.upfront_cost_usd) / house_value_usd
     end
-    function proportional_led(ui)
-        return ui.led_usd / house_value_usd
-    end
 
-    plots = []
-    for (fn, fn_name) in zip(
-        [proportional_lifetime_cost, proportional_led],
-        [
-            "Expected Total Cost [% House Value]",
-            "Lifetime Expected Damages [% House Value]",
-        ],
+    x_ticks = 0:2:10 # in feet
+
+    prop_cost = proportional_lifetime_cost.(u)
+
+    # develop bins to use
+    ystep = 0.1
+    Δy = ystep / 2
+    msl_plot = collect(0.5:0.1:9.5)
+
+    # calculate the indices of the SLR values that go with each bin
+    indices = [findall((y .- Δy) .< msl_rise_ft .< (y .+ Δy)) for y in msl_plot]
+
+    # calcualte expected costs for all bins
+    expected_cost = collect(
+        hcat([[mean(prop_cost[idx, i]) for idx in indices] for (i, xi) in enumerate(x)]...)
     )
-        prop_cost = fn.(u)
 
-        # develop bins to use
-        ystep = 0.1
-        Δy = ystep / 2
-        msl_plot = collect(0.5:0.1:6.0)
-
-        # calculate the indices of the SLR values that go with each bin
-        indices = [findall((y .- Δy) .< msl_rise_ft .< (y .+ Δy)) for y in msl_plot]
-
-        # calcualte expected costs for all bins
-        expected_cost = collect(
-            hcat(
-                [
-                    [mean(prop_cost[idx, i]) for idx in indices] for (i, xi) in enumerate(x)
-                ]...,
-            ),
-        )
-
-        x_ft = ustrip.(u"ft", x)
-        pi = contourf(
-            x_ft,
-            msl_plot,
-            expected_cost;
-            ylabel="LSLR: $syear to $eyear [ft]",
-            colorbar_title="$fn_name",
-            c=cgrad(:plasma; rev=true),
-            linewidth=0,
-            levels=30,
-        )
-        push!(plots, pi)
-    end
-    xlabel!(last(plots), L"Height Increase $\Delta h$ [ft]")
-
-    p = plot(
-        plots...; layout=(2, 1), size=(850, 850), link=:x, leftmargin=5mm, rightmargin=5mm
+    x_ft = ustrip.(u"ft", x)
+    p = heatmap(
+        x_ft,
+        msl_plot,
+        expected_cost;
+        ylabel="LSLR: $syear to $eyear [ft]",
+        colorbar_title="Expected Total Costs [% House Value]",
+        c=cgrad(:plasma; rev=true),
+        linewidth=0,
+        levels=30,
+        xticks=(x_ticks, string.(x_ticks)),
+        xlabel=L"Height Increase $\Delta h$ [ft]",
+        size=(900, 500),
+        bottom_margin=5mm,
+        left_margin=5mm,
     )
+    contour!(p, x_ft, msl_plot, expected_cost; linewidth=0.5, levels=25)
     savefig(p, plots_dir("scenario-map-height-slr.pdf"))
     return p
 end

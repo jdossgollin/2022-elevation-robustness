@@ -24,7 +24,7 @@ function main()
     house_value_usd = 200_000.0 # HOUSE NOT LAND VALUE
     discount_rate = 0.03 # mortgages going for 3-5%
     syear = 2022
-    eyear = 2100
+    eyear = 2092
     # for a **VERY** vague idea of prices see
     # https://www.zillow.com/homedetails/9638-Selby-Pl-Norfolk-VA-23503/79223088_zpid/
 
@@ -81,7 +81,7 @@ function main()
     let
         s = HouseElevation.get_lsl(; syear=syear, eyear=eyear)
         bfe = calc_bfe(fits, s, syear)
-        x = collect(0:0.25:14)u"ft"
+        x = collect(0:0.25:10)u"ft"
         elevation_init = bfe - 1u"ft"
         u = get_outcomes(
             x;
@@ -101,16 +101,13 @@ function main()
             u, s, x; house_value_usd=house_value_usd, house_floor_area=house_floor_area
         )
 
-        # plot the priors
-        plot_priors()
+        # plot the implicit weight
+        plot_priors_weights(s)
 
         # plot tradeoffs by prior
         plot_prior_tradeoffs(
             u, s, x; house_value_usd=house_value_usd, house_floor_area=house_floor_area
         )
-
-        # plot the implicit weight
-        plot_weight(s)
     end
 
     plot_grid_scheme()

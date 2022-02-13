@@ -16,7 +16,7 @@ function plot_grid_scheme()
         xticks=(vcat(ψ, grids), vcat(ψ_labels, grid_labels)),
         linewidth=3,
         color=colors[1],
-        label="True Distribution",
+        label="Target Distribution",
         xlims=xlimits,
         ylabel="CDF",
         xlabel="Mean Sea Level in 2100 [ft]",

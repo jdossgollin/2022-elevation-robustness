@@ -53,7 +53,7 @@
 
 % authors
 \usepackage{authblk}
-\title{Which Scenario Should We Design For? Insights from House Elevation for the Multiple PDF Problem}
+\title{Mainstreaming Climate Adaptation Requires Subjective Integration of Deep Uncertainties}
 \author[1]{James Doss-Gollin}
 \author[2]{Klaus Keller}
 \affil[1]{Department of Civil and Environmental Engineering, Rice University}
@@ -64,6 +64,7 @@
 \usepackage[acronym,nopostdot,nonumberlist,shortcuts,]{glossaries}
 \newacronym{bdt}{BDT}{Bayesian decision theory}
 \newacronym{bfe}{BFE}{base flood elevation}
+\newacronym[]{cdf}{CDF}{cumulative distribution function}
 \newacronym{fema}{FEMA}{the Federal Emergency Management Agency}
 \newacronym{gcm}{GCM}{general circulation model}
 \newacronym[]{gev}{GEV}{generalized extreme value}
@@ -178,14 +179,17 @@ In the remainder of this section we discuss data sources and the system model.
     \caption{Summary of uncertainties modeled and their treatment.}\label{tab:uncertainties}
     \begin{tabular}{l l p{3in} l}
         \toprule
-        Name           & Symbol           & Conceptual framework                                                                 & Section               \\
+        Name             & Symbol           & Conceptual framework                                                                 & Section               \\
         \midrule
-        \Gls{slr}      & $\overline{y}_t$ & Deeply uncertain: multiple methods considered                                        & \ref{sec:sea-level}   \\
-        Storm surge    & $y'_t$           & Probabilistic: a single stationary \acrshort{gev} model                              & \ref{sec:storm-surge} \\
-        Discount rate  & $1-\gamma$       & Fixed at 2\%                                                                         & \ref{sec:ead}         \\
-        Depth-damage   & $D(h-y_t)$       & Deterministic: based on HAZUS model                                                  & \ref{sec:ead}         \\
-        Elevation cost & $C(\Delta h)$    & Deterministic: a piecewise linear model following \citet{zarekarizi_suboptimal:2020} & \ref{sec:sow-metrics} \\
-        Initial height & $h_0$            & Deterministic: \SI{0.5}{ft} above \gls{bfe} unless otherwise noted                   & TBD                   \\
+        \Gls{slr}        & $\overline{y}_t$ & Deeply uncertain: multiple methods considered                                        & \ref{sec:sea-level}   \\
+        Storm surge      & $y'_t$           & Probabilistic: a single stationary \acrshort{gev} model                              & \ref{sec:storm-surge} \\
+        Discount rate    & $1-\gamma$       & Fixed at 3\%                                                                         & \ref{sec:ead}         \\
+        Depth-damage     & $D(h-y_t)$       & Deterministic: based on HAZUS model                                                  & \ref{sec:ead}         \\
+        Elevation cost   & $C(\Delta h)$    & Deterministic: a piecewise linear model following \citet{zarekarizi_suboptimal:2020} & \ref{sec:sow-metrics} \\
+        Initial height   & $h_0$            & Deterministic: \SI{1}{ft} below the \gls{bfe} unless otherwise noted                 & TBD                   \\
+        House floor area &                  & Deterministic: \SI{1500}{ft^2} unless otherwise noted                                & TBD                   \\
+        Structural value &                  & Deterministic: \usd{200000} unless otherwise noted                                   & TBD                   \\
+        House lifetime   &                  & Deterministic: 70 years unless otherwise noted                                       & TBD                   \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -212,7 +216,7 @@ Variation between different \glspl{pdf} is dominated by the \gls{rcp} 8.5 scenar
 This is also the \gls{pdf} with the greatest within-model variance.
 \begin{figure}
     \centering
-    \includegraphics[width=5in]{msl_boxplots.pdf}
+    %\includegraphics[width=5in]{msl_boxplots.pdf}
     \caption{
         Sea level rise projections use the BRICK model \citep{wong_brick0.2:2017,ruckert_coastal:2019}.
         We consider \emph{eight time-dependent PDFs of sea level rise}: four \gls{rcp} scenarios $\times$ two parameterizations of ice sheet processes.
@@ -237,8 +241,8 @@ where $N$ is the sample size and $r$ is the order of the $N$ observations ($r=1$
 
 \begin{figure}
     \centering
-    \includegraphics[height=1.5in]{historic_surge.pdf}%
-    \includegraphics[height=1.5in]{surge_return_period.png}
+    %\includegraphics[height=1.5in]{historic_surge.pdf}%
+    %\includegraphics[height=1.5in]{surge_return_period.png}
     \caption{
         Annual maximum storm surges (after subtracting mean sea level) at Sewells Point, VA (CITE SOURCE).
         (a):
@@ -358,7 +362,7 @@ On the $x$ axis is mean sea level in 2100, which is an interpretable 1-dimension
 Although our model for expected discounted total costs is deterministic, points with similar $x$-values may have different $y$-values because their sea levels before 2100 can differ (\ie, the 1-dimensional projection of the \glspl{sow} does not represent all variance between them).
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{scenario_maps.png}
+    %\includegraphics[width=\textwidth]{scenario_maps.png}
     \caption{
         Scenario maps showing the dependence of average lifetime cost as a function of \gls{slr} in 2100 for several values of $\Delta h$.
         One dot represents one \gls{sow}.
@@ -386,8 +390,8 @@ We can then use this conditional distribution over outcomes to create metrics th
 
 \begin{figure}
     \centering
-    \includegraphics[width=2.5in]{tradeoffs_height_totalcost_byscenario.pdf}~
-    \includegraphics[width=2.5in]{tradeoffs_height_iqr_byscenario.pdf}
+    %\includegraphics[width=2.5in]{tradeoffs_height_totalcost_byscenario.pdf}~
+    %\includegraphics[width=2.5in]{tradeoffs_height_iqr_byscenario.pdf}
     \caption{
         Need a summary sentence.
         %TODO
@@ -469,8 +473,8 @@ Thus, exploring performance under alternative priors is computationally cheap an
 
 \begin{figure}
     \centering
-    \includegraphics[width=3in]{lsl_priors.pdf}~
-    \includegraphics[width=3in]{tradeoffs_height_totalcost_byprior.pdf}
+    %\includegraphics[width=3in]{lsl_priors.pdf}~
+    %\includegraphics[width=3in]{tradeoffs_height_totalcost_byprior.pdf}
     \caption{
         The prior model averaging approach (\cref{fig:flowchart}), uses a probability distribution representing subjective belief to average insights across each PDF available.
         Alternative priors can provide robustness checks.
@@ -484,7 +488,7 @@ In \cref{fig:model-average-weights}, we can see that the ``Pessimistic'' (``Opti
 
 \begin{figure}
     \centering
-    \includegraphics[width=6in]{inference_weights.pdf}
+    %\includegraphics[width=6in]{inference_weights.pdf}
     \caption{
         The average weight assigned to \glspl{sow} from each model (\gls{rcp} scenario and ice sheet parameterization) for both priors considered.
         If the sampling distribution (green line) is used, then the weight assigned to each \gls{sow} is the same, regardless of whether it is over- or under-sampled.
@@ -667,4 +671,145 @@ These challenges also affect other adaptation plans and engineering designs (\cr
 See journal requirements and format\james{Keep an eye on this}
 
 \printbibliography
+
+\appendix
+\newcommand{\hbAppendixPrefix}{S}
+\renewcommand{\thefigure}{\hbAppendixPrefix\arabic{figure}}
+\setcounter{figure}{0}
+\renewcommand{\thetable}{\hbAppendixPrefix\arabic{table}}
+\setcounter{table}{0}
+\renewcommand{\theequation}{\hbAppendixPrefix\arabic{equation}}
+\setcounter{equation}{0}
+
+\newpage
+\section{Supplemental Figures}
+\begin{figure}
+    \centering
+    \includegraphics[width=4in]{cost-depth-damage}
+    \caption{
+        Depth-damage relationship.
+        Following \citet{zarekarizi_suboptimal:2020}, we use the Hazard U.S. (HAZUS) depth-damage curves provided by FEMA.
+        Since results are sensitive to choice of depth-damage equation, we illustrate (for comparison only) the ``Europa'' depth-damage relationship developed by the Joint Research Center (JRC) of the European Commission's science and knowledge service \citep{huizinga_depthdamage:2016}.
+    }\label{fig:cost-depth-damage}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=4in]{cost-expected-damage-emulator}
+    \caption{
+        As discussed in XXX, we model expected annual damages as a function of the house's elevation relative to \gls{lsl}. % TODO: ref equation
+    }\label{fig:cost-expected-damage-emulator}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=4in]{cost-up-front}
+    \caption{
+        Following \citet{zarekarizi_suboptimal:2020}, we model the cost of elevating a single-family house by interpolating estimates from the Coastal Louisiana Risk Assessment Model \citep{johnson_clara:2013}.
+        According to this model, the unit cost of elevating a house by 3-7, 7-10, and 10-14 feet is \usd{82.50}, \usd{86.25}, and \usd{103.75} per square foot, respectively, with a \usd{20745} initial fee.
+        Values are sensitive to house floor area and structural value; see \cref{tab:uncertainties}.
+    }\label{fig:cost-up-front}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=4in]{grid-sketch}
+    \caption{
+        Schematic of equation XXX used to calculate weights for each sample. % TODO: reference equation
+        This method is illustrated for a hypothetical target distribution (orange line) and four samples $\psi_1, \psi_2, \psi_3, \psi_4$ (blue dots).
+        As discussed in section XXX, the weights (vertical blue lines) are calculated based on the \gls{cdf} of the target distribution  (horizontal dotted lines) at the halfway points $\frac{1}{2}\qty[\psi_i+\psi_{i+1}]$ (vertical dashed lines). % TODO: reference section
+    }\label{fig:grid-sketch}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{lsl-evolution}
+    \caption{
+        Projections of future mean sea level depend strongly on the model (\gls{rcp} scenario and physical representation) used.
+        (A): 90\% intervals for mean sea level at Sewells Point, VA as a function of time for three probabilistic models.
+        (B): probability distribution of mean sea level at Sewells Point, VA in the year 2100 for all probabilistic models considered.
+    }\label{fig:lsl-evolution}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{lsl-priors-weights}
+    \caption{
+        Subjective priors for local sea level.
+        We develop three distributions (``subjective priors'') representing plausible probabilistic beliefs about \gls{lsl} at Sewells Point, VA in 2100, relative to the present.
+        The \glspl{pdf} of these subjective priors are shown in panel (A).
+        In panels (B)-(D), we show the relationship between these subjective priors and the 16 probabilistic models (four \gls{rcp} scenarios and four physical representations) available.
+        Specifically, (B)-(D) show the average weight given to each model by each of the three subjective priors.
+        The ``Slow SLR'' prior places large weight on BRICK model \citep{wong_brick0.2:2017}, particularly the scenarios with no fast ice sheet dynamics and on low-emissions scenarios.
+        The ``Fast SLR'' prior places most of its weight on the \citet{deconto_antarctica:2016} model, and in particular on high-emissions scenarios.
+        The ``Intermediate SLR'' scenario places approximately equal weight on all models.
+    }\label{fig:lsl-priors-weights}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{scenario-map-height-slr}
+    \caption{
+        Expected lifetime total cost (eq.XXX) as a function of height increase $\Delta h$ and sea level rise over the house lifetime. % TODO: reference equation
+        The best outcomes (yellow) arise when the house is not elevated and sea level rise is minimal (bottom left corner).
+        The worst outcomes (blue) arise when the house is elevated only slightly and sea level rise is rapid.
+        In general, a height increase of $<\SI{3}{ft}$ can be considered unrealistic \citep{zarekarizi_suboptimal:2020}.
+        Values are sensitive to model constants; see \cref{tab:uncertainties}.
+    }\label{fig:scenario-map-height-slr}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{scenario-map-slr-cost}
+    \caption{scenario-map-slr-cost}\label{fig:scenario-map-slr-cost}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=4in]{surge-gev-priors}
+    \caption{surge-gev-priors}\label{fig:surge-gev-priors}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{surge-obs-return}
+    \caption{surge-obs-return}\label{fig:surge-obs-return}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{surge-posterior-chains}
+    \caption{surge-posterior-chains}\label{fig:surge-posterior-chains}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{surge-prior-chains}
+    \caption{surge-prior-chains}\label{fig:surge-prior-chains}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=4in]{surge-synthetic-data-experiment}
+    \caption{surge-synthetic-data-experiment}\label{fig:surge-synthetic-data-experiment}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{surge-test-statistics}
+    \caption{surge-test-statistics}\label{fig:surge-test-statistics}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tradeoffs-by-prior}
+    \caption{tradeoffs-by-prior}\label{fig:tradeoffs-by-prior}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tradeoffs-by-rcp}
+    \caption{tradeoffs-by-rcp}\label{fig:tradeoffs-by-rcp}
+\end{figure}
+
 \end{document}

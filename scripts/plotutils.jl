@@ -1,3 +1,4 @@
+using Colors
 using Distributions
 using Plots
 
@@ -32,3 +33,13 @@ twiny(plt::Plots.Plot=current()) = twiny(plt[1])
 
 pct_formatter(yi) = "$(Int.(round.(yi * 100)))%"
 blank_formatter(yi) = ""
+
+function get_colormap()
+    giallo = colorant"#F0BC42"
+    rosso = colorant"#8E1F2F"
+    grigio = colorant"#CACACC"
+    nero = colorant"#000000"
+    thirds = colorant"#31467A"
+    orange = colorant"#F18101"
+    return [rosso, giallo, thirds, grigio, orange, nero]
+end

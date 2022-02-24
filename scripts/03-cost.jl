@@ -14,6 +14,7 @@ function plot_depth_damage()
         legend=:topleft,
         xlabel="Flood Depth [ft relative to bottom of house]",
         ylabel="Damage [% House Value]",
+        yformatter=pct_formatter,
     )
     plot!(
         p,
@@ -51,6 +52,7 @@ function plot_cost_expected_damage()
         leftmargin=5mm,
         label="HAZUS (Used)",
         color=colors[1],
+        yformatter=pct_formatter,
     )
     plot!(
         p,

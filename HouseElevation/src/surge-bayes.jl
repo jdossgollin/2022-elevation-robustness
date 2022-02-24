@@ -98,7 +98,7 @@ function write_diagnostics(fit, fname::String)
         "rhat" => L"$\hat{R}$",
         "ess_per_sec" => L"\textrm{ESS per second}",
     )
-    tex_str = latexify(df; env=:table, fmt="%.2f")
+    tex_str = Latexify.latexify(df; env=:table, fmt="%.3f")
     open(fname, "w") do io
         write(io, tex_str)
     end

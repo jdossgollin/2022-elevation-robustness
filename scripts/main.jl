@@ -5,11 +5,10 @@ using ColorSchemes
 using Unitful
 
 # HouseElevation.clear_cache() # to clean all the processed data and plots
-#colors = ColorSchemes.seaborn_bright6 # colorblind friendly and consistent scheme
-colors = ColorSchemes.okabe_ito
+include("plotutils.jl")
+colors = get_colormap()
 
 # these files just provide functions that will make plots -- nothing happens except defining functions
-include("plotutils.jl")
 include("01-surge-modeling.jl")
 include("02-mean-sea-level.jl")
 include("03-cost.jl")
@@ -22,10 +21,10 @@ function main()
     # define some constants
     house_floor_area = 1500u"ft^2"
     house_value_usd = 200_000.0 # HOUSE NOT LAND VALUE
-    discount_rate = 0.03 # mortgages going for 3-5%
+    discount_rate = 0.03 # mortgages going for 3-4.5% at the moment
     syear = 2022
     eyear = 2092
-    # for a **VERY** vague idea of prices see
+    # for a **VERY** rough idea of prices see
     # https://www.zillow.com/homedetails/9638-Selby-Pl-Norfolk-VA-23503/79223088_zpid/
 
     # get the storm surge posterior samples

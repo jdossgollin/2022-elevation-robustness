@@ -5,47 +5,53 @@
 \usepackage{physics}
 
 \usepackage{xcolor}
-\definecolor{TurquoiseGreen}{HTML}{B8D5B8}
-\definecolor{TealBlue}{HTML}{598392}
-\definecolor{YellowOrange}{HTML}{FFB140}
-\definecolor{RichBlack}{HTML}{011627}
+\definecolor{giallo}{HTML}{F0BC42}
+\definecolor{rosso}{HTML}{8E1F2F}
+\definecolor{grigio}{HTML}{CACACC}
+\definecolor{nero}{HTML}{000000}
+\definecolor{thirds}{HTML}{31467A}
+\definecolor{orange}{HTML}{F18101}
+\definecolor{deepblue}{HTML}{CA3CFF}
 
 \usetikzlibrary{shapes,arrows,positioning,calc,decorations.text}
 \begin{document}
 \pagestyle{empty}
 
 
-\tikzstyle{uncertainty} = [rectangle, draw, fill=red!30, text=RichBlack, text width=6.5em, text centered]
-\tikzstyle{lever} = [rectangle, draw, fill=yellow!20, text=RichBlack, text width=6.5em, text centered]
-\tikzstyle{relation} = [rectangle, draw, fill=gray!20, text=RichBlack, text width=6.5em, text centered]
-\tikzstyle{metric} = [rectangle, draw, fill=blue!20, text=RichBlack, text width=6.5em, text centered]
+\tikzstyle{uncertainty} = [rectangle, draw, fill=rosso, text=grigio, text width=6.5em, text centered]
+\tikzstyle{lever} = [rectangle, draw, fill=giallo, text=nero, text width=6.5em, text centered]
+\tikzstyle{relation} = [rectangle, draw, fill=thirds, text=grigio, text width=6.5em, text centered]
+\tikzstyle{metric} = [rectangle, draw, fill=orange, text=nero, text width=6.5em, text centered]
 
-\tikzstyle{line} = [draw, very thick, color=RichBlack, ->]
+\tikzstyle{line} = [draw, very thick, color=nero, ->]
 \tikzset{>=latex}
 
 \def\myshift#1{\raisebox{-2.5ex}}
 
 \begin{tikzpicture}[auto]
 
-    \node [relation] (relationships) at (0, 0) {System\\Relationships\\(R)};
-    \node [uncertainty] (surge) at (-3.5, 2.5) {Storm Surge\\{\footnotesize ($J$ draws from 1 posterior)}};
+    \node [font=\color{rosso}\selectfont] at (-4.5, 3.5) {\Large Uncertainties};
+    \node [relation] (relationships) at (0, -0.5) {Cost and damage models};
+    \node [uncertainty] (surge) at (-3.25, 2.5) {Storm surge\\{\footnotesize (draws from 1 posterior)}};
     \path [line] (surge) to (relationships);
-    \node [uncertainty] (slr) at (-3.5, -1) {Sea Level Rise\\{\footnotesize ($J$ Simulations)}};
+
+    \node [font=\color{thirds}\selectfont] at (0, -1.75) {\Large Relationships};
+    \node [uncertainty] (slr) at (-3.5, -1) {Sea level rise\\{\footnotesize (16 PDFs)}};
     \path [line] (slr) to (relationships);
-    \node [lever] (elevate) at (0, 2.5) {How high to elevate?};
+
+
+    \node [font=\color{giallo}\selectfont] at (0, 3) {\Large Levers};
+    \node [lever] (elevate) at (0, 2) {How high to elevate?};
     \path [line] (elevate) to (relationships);
 
-    \node [metric] (ccost) at (3.5, 2.25) {Construction cost};
+    \node [font=\color{giallo}\selectfont] at (3.5, 2.25) {\Large Metrics};
+    \node [metric] (ccost) at (3.5, 1) {Up-front\\(construction)\\cost};
     \path [line] (relationships) to (ccost);
-    \node [metric] (fcost) at (3.5, 0.75) {NPV expected flood damages};
+    \node [metric] (fcost) at (3.5, -1) {Lifetime expected damages};
     \path [line] (relationships) to (fcost);
-    \node [metric] (bcr) at (3.5, -0.75) {Fraction of SOWs with $\text{BCR} > 1$};
-    \path [line] (relationships) to (bcr);
-    \node [metric] (q95) at (3.5, -2.25) {95th percentile of total costs};
-    \path [line] (relationships) to (q95);
 
-    \node[uncertainty] (rcp) at (-4.5, -2.5) {RCP Scenario\\{\footnotesize (4 Scenarios)}};
-    \node[uncertainty] (ice) at (-4.5, 0.75) {Ice Sheet Dynamics\\{\footnotesize (3 Models)}};
+    \node[uncertainty] (rcp) at (-4.5, -2.5) {RCP scenario\\{\footnotesize (4 Scenarios)}};
+    \node[uncertainty] (ice) at (-4.5, 0.75) {Ice sheet dynamics\\{\footnotesize (4 Models)}};
     \path [line] (rcp) to (slr);
     \path [line] (ice) to (slr);
 

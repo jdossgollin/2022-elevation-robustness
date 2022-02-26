@@ -37,7 +37,6 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
         (name="Chesapeake-Potomac", year=1933, is_tc=true, Δx=7.5, Δy=0.75),
         (name="Outer Banks hurricane", year=1936, is_tc=true, Δx=10, Δy=0.75),
         (name="Isabel", year=2003, is_tc=true, Δx=-7.5, Δy=0.5),
-        (name="Irene", year=2015, is_tc=true, Δx=2.5, Δy=1),
         (name="Nor'Ida", year=2009, is_tc=false, Δx=0, Δy=1),
         (name="Ash Wednesday", year=1962, is_tc=false, Δx=10, Δy=0.75),
     ]
@@ -65,7 +64,7 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
         x1 = x_text + 0.9 * (storm.year - x_text)
         y0 = y_text + 0.2 * (yobs - y_text)
         y1 = y_text + 0.9 * (yobs - y_text)
-        color = storm.is_tc ? colors[2] : colors[3]
+        color = storm.is_tc ? colors[1] : colors[2]
         plot!([x0, x1], [y0, y1]; color=color, linewidth=1.5, label="")
         annotate!(p, x_text, y_text, text(storm.name, :center, 7; color=color))
     end
@@ -328,7 +327,7 @@ function plot_surge_obs_return(
         link=:y,
         ylims=(2, 9),
         layout=grid(1, 2; widths=[0.6, 0.35]),
-        size=[1000, 350] .* 1.35,
+        size=[1000, 350] .* 1.15,
         bottommargin=8mm,
         leftmargin=8mm,
     )

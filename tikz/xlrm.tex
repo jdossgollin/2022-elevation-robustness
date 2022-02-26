@@ -11,7 +11,6 @@
 \definecolor{nero}{HTML}{000000}
 \definecolor{thirds}{HTML}{31467A}
 \definecolor{orange}{HTML}{F18101}
-\definecolor{deepblue}{HTML}{CA3CFF}
 
 \usetikzlibrary{shapes,arrows,positioning,calc,decorations.text}
 \begin{document}
@@ -31,12 +30,12 @@
 \begin{tikzpicture}[auto]
 
     \node [font=\color{rosso}\selectfont] at (-4.5, 3.5) {\Large Uncertainties};
-    \node [relation] (relationships) at (0, -0.5) {Cost and damage models};
+    \node [relation] (relationships) at (0, -0.5) {Engineering and economic models};
     \node [uncertainty] (surge) at (-3.25, 2.5) {Storm surge\\{\footnotesize (draws from 1 posterior)}};
     \path [line] (surge) to (relationships);
 
     \node [font=\color{thirds}\selectfont] at (0, -1.75) {\Large Relationships};
-    \node [uncertainty] (slr) at (-3.5, -1) {Sea level rise\\{\footnotesize (16 PDFs)}};
+    \node [uncertainty] (slr) at (-3.5, -1) {Sea level\\{\footnotesize (16 PDFs)}};
     \path [line] (slr) to (relationships);
 
 

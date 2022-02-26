@@ -81,7 +81,7 @@ function plot_priors()
         xlabel="Sea Level Rise, 2022-2100, at Sewells Point, VA [ft]",
         ylabel="Probability Density",
     )
-    for (prior, color) in zip(priors, colors)
+    for (prior, color) in zip(priors, [:red, :blue, :green])
         plot!(p, prior.dist, 0, 12.5; label=prior.name, color=color, linewidth=3)
     end
     p

@@ -89,7 +89,7 @@ function plot_rcp_tradeoffs(
         push!(p_archive, p)
     end
     add_panel_letters!(p_archive; fontsize=12, loc=(0.1, 0.95))
-    p = plot(p_archive...; layout=(1, 2), link=:x, size=(1200, 600))
+    p = plot(p_archive...; layout=(1, 2), link=:x, size=(1100, 550))
 
     savefig(plots_dir("tradeoffs-by-rcp.pdf"))
     return p

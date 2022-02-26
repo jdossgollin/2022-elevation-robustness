@@ -34,7 +34,7 @@ twiny(plt::Plots.Plot=current()) = twiny(plt[1])
 pct_formatter(yi) = "$(Int.(round.(yi * 100)))%"
 blank_formatter(yi) = ""
 
-function get_colormap()
+function get_roma_colormap()
     giallo = colorant"#F0BC42"
     rosso = colorant"#8E1F2F"
     grigio = colorant"#CACACC"
@@ -43,3 +43,5 @@ function get_colormap()
     orange = colorant"#F18101"
     return [rosso, giallo, thirds, grigio, orange, nero]
 end
+
+get_colormap() = get_roma_colormap()

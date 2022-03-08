@@ -1,34 +1,37 @@
 using Distributions
+using DynamicHMC
 using DynamicPPL
+using HDF5
 using Latexify
 using LaTeXStrings
 using MCMCChains
+using MCMCChainsStorage
 using Optim
 using StatsBase
 using Turing
 
 # stationary GEV model
 gev_priors = [
-    (rt=2, dist=Distributions.TruncatedNormal(4, 1.5, 0, Inf)),
-    (rt=10, dist=Distributions.TruncatedNormal(6, 1.75, 0, Inf)),
-    (rt=100, dist=Distributions.TruncatedNormal(10, 2.25, 0, Inf)),
-    (rt=500, dist=Distributions.TruncatedNormal(15, 2.75, 0, Inf)),
+    (rt=2, dist=Distributions.TruncatedNormal(6, 3, 0, Inf)),
+    (rt=10, dist=Distributions.TruncatedNormal(8, 4, 0, Inf)),
+    (rt=100, dist=Distributions.TruncatedNormal(12, 6, 0, Inf)),
+    (rt=500, dist=Distributions.TruncatedNormal(16, 8, 0, Inf)),
 ]
 
 @model function StationaryGEV(y)
 
     # have to put a prior to define parameters in Turing
-    ξ ~ Distributions.TruncatedNormal(0, 0.5, 0, Inf) # surge has lower bound => ξ>0
-    μ ~ Distributions.TruncatedNormal(0, 10, 0, Inf) # lower bound should not be negative
-    σ ~ Distributions.TruncatedNormal(0, 4, 0, Inf) # σ > 0 by definition
+    μ ~ Distributions.TruncatedNormal(0, 25, 0, Inf) # lower bound should not be negative
+    σ ~ Distributions.TruncatedNormal(0, 10, 0.01, Inf) # σ > 0 by definition
+    ξ ~ Distributions.TruncatedNormal(0, 2.5, 0, Inf) # surge has lower bound => ξ>0
 
-    dist = Distributions.GeneralizedExtremeValue(μ, σ, ξ)
+    dist = GeneralizedExtremeValue(μ, σ, ξ)
 
     # implement the prior on quantile levels
     for prior in gev_priors
         xp = 1.0 - 1.0 / prior.rt
         rl = quantile(dist, xp)
-        #Turing.@addlogprob!(logpdf(prior.dist, rl))
+        Turing.@addlogprob!(loglikelihood(prior.dist, rl))
     end
 
     # data model
@@ -37,6 +40,21 @@ gev_priors = [
     end
 
     return nothing
+end
+
+"""Write a chain to file"""
+function write_chain(chain::T, fname::String) where {T<:MCMCChains.Chains}
+    mkpath(dirname(fname))
+    HDF5.h5open(fname, "w") do f
+        write(f, chain)
+    end
+end
+
+"""Read a chain from file"""
+function read_chain(fname::String)
+    HDF5.h5open(fname, "r") do f
+        read(f, MCMCChains.Chains)
+    end
 end
 
 """
@@ -53,25 +71,30 @@ function get_posterior(
     fname = data_dir(
         "processed",
         "surge_models",
-        "$(model_name)" * "-$(n_samples)" * "-$(n_chains)" * "-$(drop_warmup)" * ".jls",
+        "$(model_name)" * "-$(n_samples)" * "-$(n_chains)" * "-$(drop_warmup)" * ".h5",
     )
-    samples_per_chain = Int(ceil(n_samples / n_chains))
 
     # unless we're overwriting, try to load from file
     if !overwrite
         try
-            samples = read(fname, MCMCChains.Chains)
+            samples = read_chain(fname)
             return samples
         catch
         end
     end
 
     # if we're overwriting or reading from file was unsuccessful, sample the model
-    samples = sample(
-        model, NUTS(), MCMCThreads(), samples_per_chain, n_chains; drop_warmup=drop_warmup
+    sampler = DynamicNUTS() # sampler to use
+    x0 = [1.0, 1.0, 1.0] # initial guess
+    n_samples = Int(ceil(n_samples / n_chains))
+
+    # get the samples -- no need to thread, it's fast
+    samples = mapreduce(
+        c -> sample(model, sampler, n_samples; drop_warmup=drop_warmup, init_params=x0),
+        chainscat,
+        1:n_chains,
     )
-    mkpath(dirname(fname))
-    write(fname, samples)
+    write_chain(samples, fname)
     return samples
 end
 
@@ -96,7 +119,6 @@ function write_diagnostics(fit, fname::String)
         "mcse" => L"\textrm{MCSE}",
         "ess" => L"\textrm{ESS}",
         "rhat" => L"$\hat{R}$",
-        "ess_per_sec" => L"\textrm{ESS per second}",
     )
     tex_str = Latexify.latexify(df; env=:table, fmt="%.3f")
     open(fname, "w") do io

@@ -101,6 +101,7 @@ function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord
     # get fake data
     dist = Distributions.GeneralizedExtremeValue(4, 0.5, 0.15)
     fake_data = make_fake_data(dist, N)
+    rts = 1 ./ (1 .- cdf.(dist, fake_data))
 
     # fit the model
     posterior = HouseElevation.get_posterior(
@@ -111,56 +112,13 @@ function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord
         GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ]) for row in eachrow(posterior_df)
     ]
 
-    # set up the return period plot
-    rts = range(1.25, 300; length=250) # return periods
-    aeps = 1 .- 1 ./ rts # annual exceedance probability
-    xticks = [2, 5, 10, 25, 50, 100, 250]
+    # plot the quantiles in gray
+    p = plot_return_period(post_gevs)
 
-    ub1 = [quantile([quantile(d, xi) for d in post_gevs], 0.95) for xi in aeps]
-    lb1 = [quantile([quantile(d, xi) for d in post_gevs], 0.05) for xi in aeps]
-    ub2 = [quantile([quantile(d, xi) for d in post_gevs], 0.9) for xi in aeps]
-    lb2 = [quantile([quantile(d, xi) for d in post_gevs], 0.1) for xi in aeps]
-    ub3 = [quantile([quantile(d, xi) for d in post_gevs], 0.75) for xi in aeps]
-    lb3 = [quantile([quantile(d, xi) for d in post_gevs], 0.25) for xi in aeps]
+    # add true line
+    scatter!(p, rts, fake_data; label="Obs (Known Return Period)", color=colors[1], alpha=1)
 
-    p = plot(;
-        xlabel="Return Period [years]",
-        ylabel="Return Level [ft]",
-        xscale=:log,
-        legend=:topleft,
-        xticks=(xticks, string.(xticks)),
-        dpi=250, # for saving
-        size=(500, 500),
-        title="Fake Data Experiment: N=$N",
-    )
-    plot!(
-        rts,
-        ub1;
-        fillbetween=lb1,
-        fillcolor=:gray,
-        fillalpha=0.35,
-        linecolor=false,
-        label="95% Posterior CI",
-    )
-    plot!(
-        rts,
-        ub2;
-        fillbetween=lb2,
-        fillcolor=:gray,
-        fillalpha=0.35,
-        linecolor=false,
-        label="80% Posterior CI",
-    )
-    plot!(
-        rts,
-        ub3;
-        fillbetween=lb3,
-        fillcolor=:gray,
-        fillalpha=0.35,
-        linecolor=false,
-        label="50% Posterior CI",
-    )
-    plot!(p, rts, quantile.(dist, aeps); linewidth=2, color=:blue, label="True")
+    # save
     savefig(p, plots_dir("surge-synthetic-data-experiment.pdf"))
     return p
 end
@@ -261,54 +219,28 @@ function plot_surge_posterior_return(
         GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ]) for row in eachrow(posterior_df)
     ]
 
-    rts = range(1.25, 275; length=250) # return periods
-    aeps = 1 .- 1 ./ rts # annual exceedance probability
-    xticks = [2, 5, 10, 25, 50, 100, 250]
+    # add gray lines
+    p = plot_return_period(post_gevs)
 
-    ub1 = [quantile([quantile(d, xi) for d in post_gevs], 0.95) for xi in aeps]
-    lb1 = [quantile([quantile(d, xi) for d in post_gevs], 0.05) for xi in aeps]
-    ub2 = [quantile([quantile(d, xi) for d in post_gevs], 0.9) for xi in aeps]
-    lb2 = [quantile([quantile(d, xi) for d in post_gevs], 0.1) for xi in aeps]
-    ub3 = [quantile([quantile(d, xi) for d in post_gevs], 0.75) for xi in aeps]
-    lb3 = [quantile([quantile(d, xi) for d in post_gevs], 0.25) for xi in aeps]
-
-    p = plot(;
-        xlabel="Return Period [years]",
-        ylabel="Return Level [ft]",
-        xscale=:log,
-        legend=:bottomright,
-        xticks=(xticks, string.(xticks)),
-    )
-    plot!(
-        rts,
-        ub1;
-        fillbetween=lb1,
-        fillcolor=:gray,
-        fillalpha=0.35,
-        linecolor=false,
-        label="95% Posterior CI",
-    )
-    plot!(
-        rts,
-        ub2;
-        fillbetween=lb2,
-        fillcolor=:gray,
-        fillalpha=0.35,
-        linecolor=false,
-        label="80% Posterior CI",
-    )
-    plot!(
-        rts,
-        ub3;
-        fillbetween=lb3,
-        fillcolor=:gray,
-        fillalpha=0.35,
-        linecolor=false,
-        label="50% Posterior CI",
-    )
-
+    # add weibul plot pls
     xp, ys = HouseElevation.weibull_plot_pos(surge_ft)
     scatter!(p, 1 ./ xp, ys; label="Obs (Weibull Plot Pos.)", color=colors[1], alpha=1)
+    return p
+end
+
+# make a plot of the return period
+function plot_surge_prior_return() where {T<:HouseElevation.MCMCChains.Chains}
+    prior_model = HouseElevation.StationaryGEV(missing)
+    prior_fits = HouseElevation.get_posterior(
+        prior_model, "prior_model", 100_000; n_chains=4, overwrite=false, drop_warmup=true
+    )
+
+    # fit the model
+    df = DataFrames.DataFrame(prior_fits)
+    gevs = [GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ]) for row in eachrow(df)]
+
+    p = plot_return_period(gevs)
+    savefig(p, plots_dir("surge-prior-return.pdf"))
     return p
 end
 

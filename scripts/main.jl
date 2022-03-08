@@ -42,6 +42,7 @@ function main()
         plot_surge_posterior_teststats(annual, fits)
         plot_surge_posterior_return(annual, fits)
         plot_surge_obs_return(annual, fits)
+        plot_surge_prior_return()
     end
 
     # make some plots of the sea level (BRICK) data
@@ -80,7 +81,7 @@ function main()
     let
         s = HouseElevation.get_lsl(; syear=syear, eyear=eyear)
         bfe = calc_bfe(fits, s, syear)
-        x = collect(0:0.25:10)u"ft"
+        x = collect(0:0.25:12)u"ft"
         elevation_init = bfe - 1u"ft"
         u = get_outcomes(
             x;

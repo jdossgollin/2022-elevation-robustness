@@ -45,3 +45,53 @@ function get_roma_colormap()
 end
 
 get_colormap() = get_roma_colormap()
+
+function plot_return_period(gevs::Vector{<:Distributions.GeneralizedExtremeValue}) where {T<:HouseElevation.MCMCChains.Chains}
+    
+        rts = range(1.25, 275; length=250) # return periods
+        aeps = 1 .- 1 ./ rts # annual exceedance probability
+        xticks = [2, 5, 10, 25, 50, 100, 250]
+    
+        ub1 = [quantile([quantile(d, xi) for d in gevs], 0.95) for xi in aeps]
+        lb1 = [quantile([quantile(d, xi) for d in gevs], 0.05) for xi in aeps]
+        ub2 = [quantile([quantile(d, xi) for d in gevs], 0.9) for xi in aeps]
+        lb2 = [quantile([quantile(d, xi) for d in gevs], 0.1) for xi in aeps]
+        ub3 = [quantile([quantile(d, xi) for d in gevs], 0.75) for xi in aeps]
+        lb3 = [quantile([quantile(d, xi) for d in gevs], 0.25) for xi in aeps]
+    
+        p = plot(;
+            xlabel="Return Period [years]",
+            ylabel="Return Level [ft]",
+            xscale=:log,
+            legend=:bottomright,
+            xticks=(xticks, string.(xticks)),
+        )
+        plot!(
+            rts,
+            ub1;
+            fillbetween=lb1,
+            fillcolor=:gray,
+            fillalpha=0.35,
+            linecolor=false,
+            label="95% Posterior CI",
+        )
+        plot!(
+            rts,
+            ub2;
+            fillbetween=lb2,
+            fillcolor=:gray,
+            fillalpha=0.35,
+            linecolor=false,
+            label="80% Posterior CI",
+        )
+        plot!(
+            rts,
+            ub3;
+            fillbetween=lb3,
+            fillcolor=:gray,
+            fillalpha=0.35,
+            linecolor=false,
+            label="50% Posterior CI",
+        )
+        return p
+    end

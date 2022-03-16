@@ -77,7 +77,6 @@ function main()
         )
     end
 
-    # second scenario map
     let
         s = HouseElevation.get_lsl(; syear=syear, eyear=eyear)
         bfe = calc_bfe(fits, s, syear)

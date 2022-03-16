@@ -22,7 +22,7 @@ function plot_surge_gev_priors()
     # loop through all the distributions
     for (prior, c) in zip(HouseElevation.gev_priors, colors)
         plot!(
-            p, 0:0.025:25, prior.dist; label="$(prior.rt) Year Surge", linewidth=3, color=c
+            p, 0:0.05:30, prior.dist; label="$(prior.rt) Year Surge", linewidth=3, color=c
         )
     end
     savefig(p, plots_dir("surge-gev-priors.pdf"))
@@ -101,7 +101,6 @@ function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord
     # get fake data
     dist = Distributions.GeneralizedExtremeValue(4, 0.5, 0.15)
     fake_data = make_fake_data(dist, N)
-    rts = 1 ./ (1 .- cdf.(dist, fake_data))
 
     # fit the model
     posterior = HouseElevation.get_posterior(
@@ -116,7 +115,15 @@ function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord
     p = plot_return_period(post_gevs)
 
     # add true line
-    scatter!(p, rts, fake_data; label="Obs (Known Return Period)", color=colors[1], alpha=1)
+    rts = range(1.25, 275; length=250) # return periods
+    aeps = 1 .- 1 ./ rts # annual exceedance probability
+    plot!(p, rts, quantile.(dist, aeps); linewidth=2, color=:blue, label="True")
+
+    # add data
+    xp, ys = HouseElevation.weibull_plot_pos(fake_data)
+    scatter!(p, 1 ./ xp, ys; label="Obs (Weibull Plot Pos.)", color=colors[1], alpha=1)
+
+    plot!(p, legend=:topleft)
 
     # save
     savefig(p, plots_dir("surge-synthetic-data-experiment.pdf"))

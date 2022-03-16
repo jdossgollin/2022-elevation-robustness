@@ -1,5 +1,7 @@
+using Distributions
 using LaTeXStrings
 using Plots
+using Unitful
 
 function plot_grid_scheme()
     dist = Distributions.Normal()
@@ -67,22 +69,41 @@ function plot_grid_scheme()
 end
 
 function get_priors()
-    priors = [
-        (name="Slow SLR", dist=Gamma(1.75, 0.5)),
-        (name="Intermediate SLR", dist=Gamma(1.75, 1.25)),
-        (name="Fast SLR", dist=Gamma(3.5, 1.25)),
-    ]
+    all_ssp = let
+        lb = Unitful.ustrip(u"ft", 0.6u"m") # Table 2.5
+        ub = Unitful.ustrip(u"ft", 2.1u"m") # Table 2.5
+        μ = (ub + lb) / 2
+        σ = (ub - lb) / 4
+        (name="All SSPs", dist=Normal(μ, σ))
+    end
+    intermediate_ssp = let
+        lb = Unitful.ustrip(u"ft", 0.40u"m") # Table 2.4
+        ub = Unitful.ustrip(u"ft", 0.92u"m") # Table 2.4
+        μ = (ub + lb) / 2
+        σ = (ub - lb) / 4
+        (name="Likely SSPs", dist=Normal(μ, σ))
+    end
+
+    priors = [all_ssp, intermediate_ssp]
     return priors
 end
 
 function plot_priors()
     priors = get_priors()
     p = plot(;
-        xlabel="Sea Level Rise, 2022-2100, at Sewells Point, VA [ft]",
-        ylabel="Probability Density",
+        xlabel="SLR 2022-2100, at Sewells Point, VA [ft]", ylabel="Probability Density"
     )
     for (prior, color) in zip(priors, [:red, :blue, :green])
-        plot!(p, prior.dist, 0, 12.5; label=prior.name, color=color, linewidth=3)
+        plot!(
+            p,
+            prior.dist,
+            0,
+            9;
+            label=prior.name,
+            color=color,
+            linewidth=5,
+            legend=:topright,
+        )
     end
     p
     #savefig(p, plots_dir("lsl-priors.pdf"))
@@ -105,9 +126,9 @@ function plot_weight(s::Vector{<:HouseElevation.LSLSim})
             :weight,
             group=:rcp,
             palette=colors,
-            legendtitle="RCP",
-            legend=i == 1 ? :topright : false,
-            ylabel="Implicit Weights: $(prior.name)",
+            legendtitle="  RCP",
+            legend=i == 1 ? :left : false,
+            ylabel="$(prior.name)",
             xrotation=30,
         )
         return p
@@ -119,8 +140,14 @@ end
 
 function plot_priors_weights(s::Vector{<:HouseElevation.LSLSim})
     plots = vcat(plot_priors(), plot_weight(s)...)
-    add_panel_letters!(plots; loc=(0.5, 0.975), fontsize=11)
-    p = plot(plots...; layout=(2, 2), size=(1000, 750), left_margin=5Plots.mm)
+    add_panel_letters!(plots; fontsize=11)
+    p = plot(
+        plots...;
+        layout=(1, 3),
+        size=(1200, 400),
+        left_margin=5Plots.mm,
+        bottom_margin=6Plots.mm,
+    )
     savefig(p, plots_dir("lsl-priors-weights.pdf"))
     return p
 end
@@ -141,7 +168,7 @@ function plot_prior_tradeoffs(
     led = map(ui -> ui.led_usd / house_value_usd, u)
 
     # we need ticks to plot
-    x_ticks = 0:2:14 # in feet
+    x_ticks = 0:2:12 # in feet
     cost_fn = HouseElevation.get_elevation_cost_function()
     prop_cost = cost_fn.(x_ticks .* 1u"ft", house_floor_area) ./ house_value_usd
 
@@ -154,6 +181,10 @@ function plot_prior_tradeoffs(
         "Expected Lifetime Cost [% House Value]",
         "Lifetime Expected Damages [% House Value]",
     ]
+
+    all_rcp = unique([si.rcp for si in s])
+    all_models = unique([si.model for si in s])
+
     for (var, varname) in zip(vars, varnames)
         p = plot(;
             xlabel=L"Height Increase $\Delta h$ [ft]",
@@ -166,12 +197,33 @@ function plot_prior_tradeoffs(
             bottom_margin=7.5Plots.mm,
             legend=ifelse(var == first(vars), :topright, false),
         )
+
+        # plot all trade-off lines in light gray
+    for rcp in all_rcp
+        for model in all_models
+            w = weights([(si.rcp == rcp) & (si.model == model) for si in s])
+            cond = vec(mean(var, w; dims=1))
+            plot!(
+                p,
+                Δh_ft,
+                cond;
+                label="",
+                color=:gray,
+                linewidth=0.5,
+                alpha=0.5,
+            )
+        end
+    end
+
+    # plot the conditional beliefs
+
+        # plot the trade-off for the priors
         for (prior, color) in zip(priors, colors)
             w = HouseElevation.make_weights(prior.dist)
             cond = vec(mean(var, w; dims=1))
             plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=3)
         end
-
+        
         # add the cost on upper x axis
         p = plot!(
             twiny(p),
@@ -189,7 +241,7 @@ function plot_prior_tradeoffs(
         push!(p_archive, p)
     end
     add_panel_letters!(p_archive; fontsize=12)
-    p = plot(p_archive...; layout=(1, 2), link=:x, size=(1200, 600))
+    p = plot(p_archive...; layout=(1, 2), link=:x, size=(1000, 500))
 
     savefig(plots_dir("tradeoffs-by-prior.pdf"))
     return p

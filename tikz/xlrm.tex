@@ -29,28 +29,28 @@
 
 \begin{tikzpicture}[auto]
 
-    \node [font=\color{rosso}\selectfont] at (-4.5, 3.5) {\Large Uncertainties};
+    \node [font=\color{rosso}\selectfont] at (-6, 2.5) {\Large Uncertainties};
     \node [relation] (relationships) at (0, -0.5) {Engineering and economic models};
-    \node [uncertainty] (surge) at (-3.25, 2.5) {Storm surge\\{\footnotesize (draws from 1 posterior)}};
+    \node [uncertainty] (surge) at (-3, 1.5) {Storm surge};
     \path [line] (surge) to (relationships);
 
-    \node [font=\color{thirds}\selectfont] at (0, -1.75) {\Large Relationships};
-    \node [uncertainty] (slr) at (-3.5, -1) {Sea level\\{\footnotesize (16 PDFs)}};
+    \node [font=\color{thirds}\selectfont] at (0, -2) {\Large Relationships};
+    \node [uncertainty] (slr) at (-3.5, -0.5) {Sea level};
     \path [line] (slr) to (relationships);
 
 
-    \node [font=\color{giallo}\selectfont] at (0, 3) {\Large Levers};
-    \node [lever] (elevate) at (0, 2) {How high to elevate?};
+    \node [font=\color{giallo}\selectfont] at (0, 2.5) {\Large Levers};
+    \node [lever] (elevate) at (0, 1.5) {How high to elevate?};
     \path [line] (elevate) to (relationships);
 
-    \node [font=\color{giallo}\selectfont] at (3.5, 2.25) {\Large Metrics};
+    \node [font=\color{giallo}\selectfont] at (3.5, 2.5) {\Large Metrics};
     \node [metric] (ccost) at (3.5, 1) {Up-front\\(construction)\\cost};
     \path [line] (relationships) to (ccost);
     \node [metric] (fcost) at (3.5, -1) {Lifetime expected damages};
     \path [line] (relationships) to (fcost);
 
-    \node[uncertainty] (rcp) at (-4.5, -2.5) {RCP scenario\\{\footnotesize (4 Scenarios)}};
-    \node[uncertainty] (ice) at (-4.5, 0.75) {Ice sheet dynamics\\{\footnotesize (4 Models)}};
+    \node[uncertainty] (rcp) at (-6, -1.5) {RCP scenario\\{\footnotesize (4 Scenarios)}};
+    \node[uncertainty] (ice) at (-6, 0.75) {Ice sheet dynamics\\{\footnotesize (4 Models)}};
     \path [line] (rcp) to (slr);
     \path [line] (ice) to (slr);
 

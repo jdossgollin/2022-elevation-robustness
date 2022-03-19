@@ -24,7 +24,7 @@ function plot_rcp_tradeoffs(
     led = map(ui -> ui.led_usd / house_value_usd, u)
 
     # we need ticks to plot
-    x_ticks = 0:2:14 # in feet
+    x_ticks = 0:2:12 # in feet
     cost_fn = HouseElevation.get_elevation_cost_function()
     prop_cost = cost_fn.(x_ticks .* 1u"ft", house_floor_area) ./ house_value_usd
 

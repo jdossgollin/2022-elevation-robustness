@@ -67,7 +67,6 @@ function plot_lsl_boxplots_2100(all_trajs::Vector{<:HouseElevation.LSLSim})
         palette=colors,
         legend=(0.15, 0.8),
         legendtitle="  RCP  ",
-        yformatter=blank_formatter,
         ylabel="Mean Sea Level in 2100",
         xrotation=30,
     )

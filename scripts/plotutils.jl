@@ -51,14 +51,8 @@ function plot_return_period(gevs::Vector{<:Distributions.GeneralizedExtremeValue
         rts = range(1.25, 275; length=250) # return periods
         aeps = 1 .- 1 ./ rts # annual exceedance probability
         xticks = [2, 5, 10, 25, 50, 100, 250]
-    
-        ub1 = [quantile([quantile(d, xi) for d in gevs], 0.95) for xi in aeps]
-        lb1 = [quantile([quantile(d, xi) for d in gevs], 0.05) for xi in aeps]
-        ub2 = [quantile([quantile(d, xi) for d in gevs], 0.9) for xi in aeps]
-        lb2 = [quantile([quantile(d, xi) for d in gevs], 0.1) for xi in aeps]
-        ub3 = [quantile([quantile(d, xi) for d in gevs], 0.75) for xi in aeps]
-        lb3 = [quantile([quantile(d, xi) for d in gevs], 0.25) for xi in aeps]
-    
+        ranges = [0.95, 0.80, 0.5]
+
         p = plot(;
             xlabel="Return Period [years]",
             ylabel="Return Level [ft]",
@@ -66,32 +60,26 @@ function plot_return_period(gevs::Vector{<:Distributions.GeneralizedExtremeValue
             legend=:bottomright,
             xticks=(xticks, string.(xticks)),
         )
-        plot!(
-            rts,
-            ub1;
-            fillbetween=lb1,
-            fillcolor=:gray,
-            fillalpha=0.35,
-            linecolor=false,
-            label="95% Posterior CI",
-        )
-        plot!(
-            rts,
-            ub2;
-            fillbetween=lb2,
-            fillcolor=:gray,
-            fillalpha=0.35,
-            linecolor=false,
-            label="80% Posterior CI",
-        )
-        plot!(
-            rts,
-            ub3;
-            fillbetween=lb3,
-            fillcolor=:gray,
-            fillalpha=0.35,
-            linecolor=false,
-            label="50% Posterior CI",
-        )
+
+        for range in ranges
+            qup = 1 - (1 - range) / 2
+            qlow = (1 - range) / 2
+            ub = [quantile([quantile(d, xi) for d in gevs], qup) for xi in aeps]
+            lb = [quantile([quantile(d, xi) for d in gevs], qlow) for xi in aeps]
+            range_pct = Int(range * 100)
+            plot!(p,
+                rts,
+                ub;
+                fillbetween=lb,
+                fillcolor=:gray,
+                fillalpha=0.35,
+                linecolor=false,
+                label="$(range_pct)% Credible Interval",
+            )
+        end
+        
+        median = [quantile([quantile(d, xi) for d in gevs], 0.50) for xi in aeps]
+        plot!(p, rts, median, label="Posterior Median")
+
         return p
     end

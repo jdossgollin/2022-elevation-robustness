@@ -51,8 +51,9 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
         surge_ft;
         label=false,
         markercolor=:gray,
-        ylabel="Ann-Max Storm Surge at $(annual.stn.gage_name) [ft]",
+        ylabel="Ann-Max Storm Surge [ft]",
         left_margin=5mm,
+        markerstrokewidth=0,
     )
 
     # show historic storms
@@ -65,7 +66,7 @@ function plot_annmax_floods(annual::HouseElevation.AnnualGageRecord)
         y0 = y_text + 0.2 * (yobs - y_text)
         y1 = y_text + 0.9 * (yobs - y_text)
         color = storm.is_tc ? colors[1] : colors[2]
-        plot!([x0, x1], [y0, y1]; color=color, linewidth=1.5, label="")
+        plot!([x0, x1], [y0, y1]; color=color, linewidth=1.5, label="", markerstrokewidth=0)
         annotate!(p, x_text, y_text, text(storm.name, :center, 7; color=color))
     end
     return p
@@ -123,7 +124,7 @@ function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord
     xp, ys = HouseElevation.weibull_plot_pos(fake_data)
     scatter!(p, 1 ./ xp, ys; label="Obs (Weibull Plot Pos.)", color=colors[1], alpha=1)
 
-    plot!(p, legend=:topleft)
+    plot!(p; legend=:topleft)
 
     # save
     savefig(p, plots_dir("surge-synthetic-data-experiment.pdf"))
@@ -258,7 +259,7 @@ function plot_surge_obs_return(
     xlabel!(p1, "Time [year]")
     p2 = plot_surge_posterior_return(annual, fits)
     p2 = plot(p2; ylabel="")
-    add_panel_letters!([p1]; fontsize=14)
+    add_panel_letters!([p1]; fontsize=12)
     annotate!(p2, [1], [8.5], text("(B)", :left, 14))
     p = plot(
         p1,
@@ -266,7 +267,7 @@ function plot_surge_obs_return(
         link=:y,
         ylims=(2, 9),
         layout=grid(1, 2; widths=[0.6, 0.35]),
-        size=[1000, 350] .* 1.15,
+        size=[1000, 350],
         bottommargin=8mm,
         leftmargin=8mm,
     )

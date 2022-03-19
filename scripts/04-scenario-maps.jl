@@ -82,7 +82,7 @@ function plot_scenario_map_slr_cost(;
             if col == 1 # LHS
                 push!(
                     kwargs,
-                    :ylabel => "Total Cost [% House Value]",
+                    :ylabel => "Total Cost\n[% House Value]",
                     :leftmargin => 7.5mm,
                     :yformatter => pct_formatter,
                 )
@@ -110,7 +110,7 @@ function plot_scenario_map_slr_cost(;
         end
     end
 
-    fake_plot = scatter(
+    cbar_fake_plot = scatter(
         [0, 0],
         [0, 1];
         zcolor=[0, 3],
@@ -118,6 +118,7 @@ function plot_scenario_map_slr_cost(;
         xshowaxis=false,
         yshowaxis=false,
         colorbar_title="Density of SOWs",
+        colorbar_titlefontrotation=90,
         grid=false,
         clims=clims,
         c=cmap,
@@ -126,14 +127,55 @@ function plot_scenario_map_slr_cost(;
         yticks=[],
     )
 
-    fake_plot[1][:xaxis][:showaxis]
-    fake_plot[1][:yaxis][:showaxis]
-    l = @layout [grid(N_row, N_col) a{0.1w}]
+    cbar_fake_plot[1][:xaxis][:showaxis]
+    cbar_fake_plot[1][:yaxis][:showaxis]
+
+    harrow = plot(
+        [0.2, 0.9],
+        [0, 0];
+        axis=false,
+        ticks=false,
+        legend=false,
+        arrow=:closed,
+        color=:black,
+        xlims=(0, 1),
+        ylims=(-0.05, 0.25),
+    )
+    annotate!(
+        harrow, [0.5], [0.1], text(L"Increasing House Elevation ($\Delta h$)", :center, 14)
+    )
+
+    varrow = plot(
+        [0, 0],
+        [0.1, 0.9];
+        axis=false,
+        ticks=false,
+        legend=false,
+        arrow=:closed,
+        color=:black,
+        xlims=(-0.25, 0.05),
+        ylims=(0, 1),
+    )
+    annotate!(
+        varrow,
+        [-0.1],
+        [0.5],
+        text(L"Increasing Initial Exposure ($h_0$)", :center, 14; rotation=90),
+    )
+
+    l = @layout [
+        a{0.075h}
+        [b{0.05w} grid(N_row, N_col) c{0.125w}]
+    ]
 
     add_panel_letters!(plots)
-
     p = plot(
-        vcat([plots[row, col] for row in 1:N_row for col in 1:N_col], fake_plot)...;
+        vcat(
+            harrow,
+            varrow,
+            [plots[row, col] for row in 1:N_row for col in 1:N_col],
+            cbar_fake_plot,
+        )...;
         layout=l,
         size=(1500, 1000),
         dpi=250,
@@ -185,7 +227,7 @@ function plot_scenario_map_height_slr(;
         msl_plot,
         expected_cost;
         ylabel="LSLR: $syear to $eyear [ft]",
-        colorbar_title="Expected Total Costs [% House Value]",
+        colorbar_title="Expected Total Costs\n[% House Value]",
         c=cgrad(:plasma; rev=true),
         linewidth=0,
         levels=30,

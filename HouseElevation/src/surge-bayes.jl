@@ -120,7 +120,7 @@ function write_diagnostics(fit, fname::String)
         "ess" => L"\textrm{ESS}",
         "rhat" => L"$\hat{R}$",
     )
-    tex_str = Latexify.latexify(df; env=:table, fmt="%.3f")
+    tex_str = Latexify.latexify(df; env=:table, fmt="%.3f", booktabs=true, index=:subscript)
     open(fname, "w") do io
         write(io, tex_str)
     end

@@ -21,7 +21,7 @@ function main()
     # define some constants
     house_floor_area = 1500u"ft^2"
     house_value_usd = 200_000.0 # HOUSE NOT LAND VALUE
-    discount_rate = 0.03 # mortgages going for 3-4.5% at the moment
+    discount_rate = 0.025 # mortgages going for 3-4.5% at the moment
     syear = 2022
     eyear = 2092
     # for a **VERY** rough idea of prices see
@@ -98,6 +98,9 @@ function main()
         plot_rcp_tradeoffs(
             u, s, x; house_value_usd=house_value_usd, house_floor_area=house_floor_area
         )
+
+        # write the priors to a table
+        HouseElevation.write_priors(plots_dir("lsl_priors.tex"))
 
         # plot the implicit weight
         plot_priors_weights(s)

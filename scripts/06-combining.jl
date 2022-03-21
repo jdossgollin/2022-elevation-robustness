@@ -1,3 +1,4 @@
+using DataFrames
 using Distributions
 using LaTeXStrings
 using Plots
@@ -68,26 +69,6 @@ function plot_grid_scheme()
     return p
 end
 
-function get_priors()
-    all_ssp = let
-        lb = Unitful.ustrip(u"ft", 0.6u"m") # Table 2.5
-        ub = Unitful.ustrip(u"ft", 2.1u"m") # Table 2.5
-        μ = (ub + lb) / 2
-        σ = (ub - lb) / 4
-        (name="All SSPs", dist=Normal(μ, σ))
-    end
-    intermediate_ssp = let
-        lb = Unitful.ustrip(u"ft", 0.40u"m") # Table 2.4
-        ub = Unitful.ustrip(u"ft", 0.92u"m") # Table 2.4
-        μ = (ub + lb) / 2
-        σ = (ub - lb) / 4
-        (name="Likely SSPs", dist=Normal(μ, σ))
-    end
-
-    priors = [all_ssp, intermediate_ssp]
-    return priors
-end
-
 function plot_priors()
     priors = get_priors()
     p = plot(;
@@ -98,7 +79,7 @@ function plot_priors()
             p,
             prior.dist,
             0,
-            9;
+            10;
             label=prior.name,
             color=color,
             linewidth=5,
@@ -127,7 +108,7 @@ function plot_weight(s::Vector{<:HouseElevation.LSLSim})
             group=:rcp,
             palette=colors,
             legendtitle="  RCP",
-            legend=i == 1 ? :left : false,
+            legend=i == 1 ? :topright : false,
             ylabel="$(prior.name)",
             xrotation=30,
         )
@@ -140,11 +121,11 @@ end
 
 function plot_priors_weights(s::Vector{<:HouseElevation.LSLSim})
     plots = vcat(plot_priors(), plot_weight(s)...)
-    add_panel_letters!(plots; fontsize=11)
+    add_panel_letters!(plots; loc=(0.15, 0.99), fontsize=11)
     p = plot(
         plots...;
-        layout=(1, 3),
-        size=(1200, 400),
+        layout=(2, 2),
+        size=(1000, 750),
         left_margin=5Plots.mm,
         bottom_margin=6Plots.mm,
     )

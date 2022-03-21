@@ -49,12 +49,11 @@
         };
     \node [block, label={[]135:{\footnotesize (a)}}] (decisions) at (0, 3) {
             Candidate decisions\\
-            $\qty{x_1, x_2, \ldots, x_I}$
+            $\vb{x} = \qty{x_1, x_2, \ldots, x_I}$
         };
     \node [block, label={[]135:{\footnotesize (b)}}] at (-4, 0) (simulations) {
-            Many\\
-            Simulated futures\\
-            $\qty{s_1, \ldots, s_J} \in \Omega$
+            Many possible futures\\
+            $\vb{s} \in \Omega = \qty{s_1, \ldots, s_J}$
         };
     \path [line] (models) -- (simulations);
     \node [function, label={[]45:{\footnotesize (c)}}] (model) at (0, 0) {
@@ -66,7 +65,7 @@
 
     \node [derived, label={[]90:{\footnotesize (f)}}] (weights) at (0, -3) {
             Weights\\
-            $w_1, \ldots, w_J$
+            $\vb{w} = \qty{w_1, \ldots, w_J}$
         };
     \path [line] (simulations) -- (weights);
 
@@ -74,7 +73,7 @@
             Conditional\\
             distribution\\
             over outcomes\\
-            $\hat{p}(u | x_i, M_k)$
+            $p(u | x_i, M_k)$
         };
     \path [line] (model) -- (combined);
     \path [line] (weights) -- (combined);

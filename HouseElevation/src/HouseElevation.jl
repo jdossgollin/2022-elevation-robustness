@@ -7,6 +7,7 @@ include("io_lsl.jl") # read in the raw data
 include("cost.jl")
 include("system.jl")
 include("aggregate.jl")
+include("priors.jl")
 
 export data_dir,
     plots_dir,
@@ -17,6 +18,7 @@ export data_dir,
     get_surge_posterior,
     get_outcomes,
     get_metrics,
-    make_weights
+    make_weights,
+    get_priors
 
 end # module

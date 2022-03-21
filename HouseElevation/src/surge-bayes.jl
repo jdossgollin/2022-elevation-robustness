@@ -110,9 +110,8 @@ end
 """Save your diagnostics to file"""
 function write_diagnostics(fit, fname::String)
     df = DataFrame(MCMCChains.summarize(fit))
-    rename!(
-        df,
-        "parameters" => L"\textrm{Parameters}",
+    name_replacement = Dict(
+        "parameters" => L"\textrm{Parameter}",
         "mean" => L"\textrm{Mean}",
         "std" => L"\textrm{Stdev.}",
         "naive_se" => L"\textrm{Naive SE}",
@@ -120,6 +119,7 @@ function write_diagnostics(fit, fname::String)
         "ess" => L"\textrm{ESS}",
         "rhat" => L"$\hat{R}$",
     )
+    rename!(df, name_replacement...)
     tex_str = Latexify.latexify(df; env=:table, fmt="%.3f", booktabs=true, index=:subscript)
     open(fname, "w") do io
         write(io, tex_str)

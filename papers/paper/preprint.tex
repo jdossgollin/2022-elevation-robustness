@@ -27,6 +27,7 @@
 \fancyhead[R]{\DTMnow}
 \fancyfoot[R]{page~\thepage~of~\pageref{LastPage}}
 \pagestyle{fancy}
+\setlength{\headheight}{15pt}
 
 % TO DO NOTES
 \usepackage{xcolor} % list of colors at https://en.wikibooks.org/wiki/LaTeX/Colors
@@ -61,26 +62,20 @@
 \renewcommand*{\Affilfont}{\normalsize\normalfont}
 
 % ACRONYMS
-\usepackage[acronym,nopostdot,nonumberlist,shortcuts,]{glossaries}
-\newacronym{abc}{ABC}{approximate Bayesian computation}
-\newacronym{bdt}{BDT}{Bayesian decision theory}
+\usepackage[acronym, nopostdot, nonumberlist, shortcuts, numberedsection, nogroupskip,]{glossaries}
 \newacronym{bfe}{BFE}{base flood elevation}
-\newacronym[]{cdf}{CDF}{cumulative distribution function}
 \newacronym{fema}{FEMA}{the Federal Emergency Management Agency}
-\newacronym{gcm}{GCM}{general circulation model}
-\newacronym[]{gev}{GEV}{generalized extreme value}
+\newacronym{gev}{GEV}{generalized extreme value}
 \newacronym{iid}{IID}{independent and identically distributed}
 \newacronym{ipcc}{IPCC}{International Panel on Climate Change}
-\newacronym{mcmc}{MCMC}{Markov Chain Monte Carlo}
 \newacronym{msl}{MSL}{mean relative sea level}
 \newacronym{noaa}{NOAA}{the National Oceanic and Atmospheric Administration}
 \newacronym{pdf}{PDF}{probability density function}
 \newacronym{rcp}{RCP}{representative concentration pathway}
-\newacronym{rdm}{RDM}{robust decision making}
 \newacronym{slr}{SLR}{sea level rise}
 \newacronym{ssp}{SSP}{shared socio-economic pathway}
 \newacronym[plural=SOWs,descriptionplural=states of the world]{sow}{SOW}{state of the world}
-\newacronym{tc}{TC}{tropical cyclone}
+\makeglossaries % required to make the list of acronyms
 
 \usepackage{xspace}
 \makeatletter
@@ -145,7 +140,7 @@ Flood risk management relies on probabilistic estimates of flood hazard:
     \item Formal flood risk management in the United States is implemented through a mix of floodplain management policies, design standards, and insurance programs.
     \item Local governments can build infrastructure to reduce flood risk; they often prioritize these by considering a reduction in damages from a design storm (\eg, the 100 year storm) \citep{hcfcd_prioritization:2019}
     \item There is a role for industry organizations that set standards (\eg, reliability) that local governments often incorporate into building codes \citep{asce_infrastructure_climate:2021}
-    \item The National Flood Insurance Program was designed as a partnership between the federal government and local communities; communities can voluntarily join the program by adopting a floodplain ordinance based on the most up-to-date flood hazard maps provided by FEMA. At a minimum, communities that choose to join must require that new development and substantially improved or damaged properties in high hazard areas be built at or above the level of a flood with a return period of one in 100 years (i.e., the 100-year flood). \citep{kousky_voucher:2014}
+    \item The National Flood Insurance Program was designed as a partnership between the federal government and local communities; communities can voluntarily join the program by adopting a floodplain ordinance based on the most up-to-date flood hazard maps provided by \gls{fema}. At a minimum, communities that choose to join must require that new development and substantially improved or damaged properties in high hazard areas be built at or above the level of a flood with a return period of one in 100 years (i.e., the 100-year flood). \citep{kousky_voucher:2014}
     \item Beyond flood insurance and disaster recovery there has been a federal retreat from flood risk management leaving local governments and individuals with most of the responsibility for flood risk management: ``the federal government recognizes its risks as a major owner and operator of infrastructure, facilities, \ldots, and insurer of properties and crops \ldots leaving states, localities, and individual agencies to make their own plans'' \citep{shi_transformative:2021}
 \end{enumerate}
 Future flood hazard is deeply uncertain
@@ -183,7 +178,7 @@ The question of whether probability is a useful tool for decision making under d
 \begin{enumerate}
     \item We are inspired by methods and philosophy of Bayesian model choice in the ``$\mathcal{M}$-open'' case where there is no true model to identify
     \item Many modern discussions of Bayesian philosophy \citep{jaynes_probability:2003,McElreath:2016vu,Gelman:2014tc,bernardo_bayesian:1994} also emphasize a philosophical view of probability as a language with which to reason about the unknown rather than a statement of objective truth \citep[see][for a thorough discussion of Bayesian philosophy]{gelman_philosophy:2013}. This is in many ways closer to the exploratory modeling proposed by \citet{bankes:1993} than the top-down, deterministic, fragile central planning approaches that it (and \cite{rittel:1973} and others) critiqued
-    \item \gls{bdt} was conceived as a calculus for reasoning rather than for identifying objective truth; \citeauthor{definetti_probability:1972} often said that ``probability does not exist'' \citeyear{definetti_probability:1972}. \citet{savage:1954} and \citet{ramsey_probability:2016}, among others, also viewed probability as ``subjective,'' representing the state of belief of the decision-maker.
+    \item Bayesian decision theory was conceived as a calculus for reasoning rather than for identifying objective truth; \citeauthor{definetti_probability:1972} often said that ``probability does not exist'' \citeyear{definetti_probability:1972}. \citet{savage:1954} and \citet{ramsey_probability:2016}, among others, also viewed probability as ``subjective,'' representing the state of belief of the decision-maker.
     \item We know that choosing a single ``best'' model under-estimates uncertainty so inferences need to be combined across models \citep[\eg, as in stacking;][]{Yao:2018bu}
     \item In the absence of data that would tell us how accurate each model is via some likelihood function, we have to use the prior.
     \item The famous phrase ``all models are wrong, but some are useful'' \citep[generally attributed to][]{box:1976} also suggests that probability distributions and predictions ought to be viewed subjectively.
@@ -299,7 +294,7 @@ From a practical perspective, many simulation models round outputs, meaning that
     \caption{
         Schematic of \gls{sow} weighting scheme defined in \cref{eq:weights} for $J=4$.
         This method is illustrated for a hypothetical target distribution (orange line) and four samples $\psi_1, \psi_2, \psi_3, \psi_4$ (blue dots).
-        As shown in \cref{eq:weights}, the weights $w_j$ (vertical blue lines) are calculated based on the \gls{cdf} of the target distribution at the halfway points $\frac{1}{2}\qty[\psi_i+\psi_{i+1}]$ (vertical dashed lines).
+        As shown in \cref{eq:weights}, the weights $w_j$ (vertical blue lines) are calculated based on the cumulative distribution function of the target distribution at the halfway points $\frac{1}{2}\qty[\psi_i+\psi_{i+1}]$ (vertical dashed lines).
     }\label{fig:grid-sketch}
 \end{figure}
 
@@ -406,7 +401,7 @@ The largest recorded surge was the Chesapeake-Potomac hurricane of 1933, which c
         (B):
         return periods.
         Dots indicate observed values; their $x$-value is their plotting position using the Weibull formula $\nicefrac{r}{N+1}$.
-        Gray lines show the 50, 80, and 95\% posterior confidence intervals from the Bayesian \gls{gev} fit (\cref{sec:storm-surge}).
+        Gray lines show the 50, 80, and 95\% posterior confidence intervals from the Bayesian \gls{gev} fit (\cref{sec:case-surge}).
     }\label{fig:surge-obs-return}
 \end{figure}
 
@@ -464,7 +459,7 @@ The expected annual damage is thus
     \textrm{EAD}(t) = \mathbb{E}[D \qty(h-\overline{y}(t))] = \int_{y'} p(y') D \qty(h - \qty(\overline{y}(t) + y')) \dd{y'}
 \end{equation}
 where $D(h-y)$ is a deterministic function specifying damage as a function of flood depth (relative to the house).
-Following \citet{zarekarizi_suboptimal:2020} we use the we use the Hazard U.S. (HAZUS) depth-damage curves provided by FEMA; this depth-damage relationship is shown in \cref{fig:cost-depth-damage}.
+Following \citet{zarekarizi_suboptimal:2020} we use the we use the Hazard U.S. (HAZUS) depth-damage curves provided by \gls{fema}; this depth-damage relationship is shown in \cref{fig:cost-depth-damage}.
 For comparison, \cref{fig:cost-depth-damage} also shows the ``Europa'' depth-damage relationship developed by the Joint Research Center of the European Commission's science and knowledge service \citep{huizinga_depthdamage:2016}.
 Although \citet{zarekarizi_suboptimal:2020} demonstrate that the choice of fragility function is important for informing house elevation, we use only the HAZUS model for simplicity.
 
@@ -704,23 +699,27 @@ JDG and KK revised the manuscript.
 \setcounter{equation}{0}
 
 \newpage
+
+\printglossary[type=\acronymtype,title=List of Abbreviations]
+
 \section{Supplemental methods}
 
 \subsection{Algorithm to estimate expected damages}\label{sec:alg-ead}
 
+We use a Monte Carlo integration to estimate expected damages as a function of house elevation and \gls{msl}, $D(h-y(t))$.
 \begin{enumerate}
-    \item For $k=1, \ldots, K$:
+    \item For $m=1, \ldots, M$:
           \begin{enumerate}
-              \item sample a draw from the posterior distribution of flood hazard to get $\qty{ \mu_k, \sigma_k, \xi_k }$
-              \item simulate a single storm surge from the stationary distribution (\cref{eq:surge-model}) and add the mean sea level to get total flood depth $y^\mathrm{sim}_k$
-              \item calculate the flood damages for this draw by plugging the annual maximum flood depth ($h - y_k$) into  the deterministic HAZUS depth-damage relationship, storing this as the $k$th damage.
+              \item draw a sample from the posterior distribution of storm surge (see \cref{eq:surge-model})  $\qty{ \mu_m, \sigma_n, \xi_m}$
+              \item simulate a single storm surge from this stationary \gls{gev} distribution and add the mean sea level to get total flood depth $y^\mathrm{sim}_m$
+              \item calculate the flood damages for this draw by plugging the annual maximum flood depth ($h - y_k$) into  the deterministic HAZUS depth-damage relationship, storing this as the $m$th damage.
           \end{enumerate}
-    \item Estimate expected annual damages as the sample mean of the $K$ estimates
+    \item Estimate expected annual damages as the sample mean of the $M$ estimates
 \end{enumerate}
 
 \subsection{Surrogate model for expected annual damages}\label{sec:surrogate-ead}
-Evaluating expected annual damages for each of $N$ simulations of \gls{slr}, each of $J$ draw from the posterior distribution of storm surge, and each of $T$ time steps requires $N \times J \times T \times K$ simulations.
-Since $K$ must be large in order to accurately approximate the integral, this requires incurring a heavy computational cost.
+Evaluating expected annual damages for each of $N$ simulations of \gls{slr}, each of $J$ draws from the posterior distribution of storm surge, and each of $T$ time steps for $K$ models requires $N \times J \times T \times K$ simulations.
+In our model, we have $T=71$, $J=\num{10000}$, $N=\num{179232}$, and in general .
 However, noticing that this function depends only on the elevation of the house relative to \gls{msl}, we develop a simple emulator for expected annual damages given this difference: $\hat{D}(h - \overline{y})$.
 To do this, we  precompute expected annual damage for all height differences in \SI{0.25}{ft} increments from \SIrange{-30}{30}{ft} and fit a piecewise linear interpolation to this data.
 We use $K=\num{1e6}$ samples to fit this emulator for each of the 241 increments.
@@ -734,7 +733,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \includegraphics[width=4in]{cost-depth-damage}
     \caption{
         Depth-damage relationship.
-        Following \citet{zarekarizi_suboptimal:2020}, we use the Hazard U.S. (HAZUS) depth-damage curves provided by FEMA.
+        Following \citet{zarekarizi_suboptimal:2020}, we use the Hazard U.S. (HAZUS) depth-damage curves provided by \gls{fema}.
         Since results are sensitive to choice of depth-damage equation, we illustrate (for comparison only) the ``Europa'' depth-damage relationship developed by the Joint Research Center (JRC) of the European Commission's science and knowledge service \citep{huizinga_depthdamage:2016}.
     }\label{fig:cost-depth-damage}
 \end{figure}
@@ -743,7 +742,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \centering
     \includegraphics[width=4in]{cost-expected-damage-emulator}
     \caption{
-        As discussed in \cref{sec:ead}, we model expected annual damages (eq.~\ref{eq:ead}) as a function of the house's elevation relative to \gls{msl}.
+        As discussed in \cref{sec:case-metrics}, we model expected annual damages (eq.~\ref{eq:ead}) as a function of the house's elevation relative to \gls{msl}.
         Damages ($y$ axis) are shown as a percentage of house value.
     }\label{fig:cost-expected-damage-emulator}
 \end{figure}
@@ -764,7 +763,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \caption{
         Prior distributions for annual maximum storm surge.
         Rather than apply a prior over model parameters directly, we apply a weakly informative prior over quantiles of the resulting distribution (that is, over a function of the model parameters) following \citet{coles_evd:1996}.
-        See \cref{sec:storm-surge} for details.
+        See \cref{sec:case-surge} for details.
         For the 2, 10, 100, and 500 year events we apply Normal distributions, truncated at zero, with means \SIlist{4;6;10;15}{ft} and standard deviations \SIlist{1.5;1.75;2.25;2.75}{ft}, respectively.
     }\label{fig:surge-gev-priors}
 \end{figure}
@@ -783,7 +782,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \caption{
         Synthetic data experiment as a positive control test for the \gls{gev} model of storm surge.
         A synthetic record was sampled from a \gls{gev} distribution with location, scale, and shape parameters of 4, 0.5, and 0.15, respectively (dots).
-        These samples were used to fit the Bayesian \gls{gev} model described in \cref{sec:storm-surge}; the gray shading indicates the 50, 80, and 95\% posterior confidence intervals.
+        These samples were used to fit the Bayesian \gls{gev} model described in \cref{sec:case-surge}; the gray shading indicates the 50, 80, and 95\% posterior confidence intervals.
         The blue line shows the true quantiles of the (known) \gls{gev} distribution.
         By random chance the sample maximum has a true return period of $\gg 250$ years, which increases the upper confidence interval of the estimated return probabilities, but the true value is nevertheless within the 50\% posterior confidence interval.
         This experiment yields similar results for alternative values of the known \gls{gev} distribution, and for different random seeds (not shown).
@@ -794,7 +793,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \centering
     \includegraphics[width=\textwidth]{surge-posterior-chains}
     \caption{
-        \Gls{mcmc} plots for posterior draws from the storm surge model.
+        Markov chain diagnostic plots for posterior draws from the storm surge model.
         We draw \num{10000} samples by running four chains of \num{3500} iterations each and discarding the first \num{1000}.
         The mixing of the chains is consistent with, though does not guarantee, convergence.
     }\label{fig:surge-posterior-chains}
@@ -812,7 +811,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \centering
     \includegraphics[width=\textwidth]{surge-test-statistics}
     \caption{
-        Posterior predictive checks for the stationary \gls{gev} storm surge model (\cref{sec:storm-surge}).
+        Posterior predictive checks for the stationary \gls{gev} storm surge model (\cref{sec:case-surge}).
         Each panel shows a different test statistic: partial autocorrelation at lags 1 and 2; sample maximum; sample minimum; sample median; and Mann-Kendall trend test statistic.
         The histograms show the distribution of each test statistic from the posterior predictive distribution.
         Orange lines show the test statistic's value in the observed data.
@@ -826,6 +825,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \caption{
         Expected total lifetime cost (damages plus up-front cost) as a function of \gls{slr} over the house lifetime and height increase $\Delta h$.
         Initial house elevation is fixed to \SI{1}{ft} below the \gls{bfe}.
+        Expectations were computed for discrete values of $\Delta h$ ($x$ axis) by discretizing \glspl{sow} ($y$ axis), then taking the sample mean over each grid cell.
     }\label{fig:scenario-map-height-slr}
 \end{figure}
 
@@ -834,7 +834,7 @@ Once this interpolation has been precomputed, calculating expected annual damage
 \begin{table}[h]
     \centering
     \caption{
-        Diagnostic statistics for the \gls{mcmc} sampling for the storm surge posterior draws.
+        Diagnostic statistics for the Hamiltonian Monte Carlo sampling for the storm surge posterior draws.
         Statistics include the mean and standard deviation of each parameter, the naive standard error and Monte Carlo standard error (which measure uncertainty in the mean), the effective sample size, $\hat{R}$ diagnostic, and effective samples per second, which describes sampling speed.
         In general, a $\hat{R}$ value close to one is consistent with, though does not guarantee, convergence.
     }\label{tab:surge-posterior-mcmc-diagnostics}

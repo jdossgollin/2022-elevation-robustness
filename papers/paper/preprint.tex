@@ -135,57 +135,57 @@ Key points
 
 \section{Introduction}\label{sec:introduction}
 
-Flood risk management relies on probabilistic estimates of flood hazard:
+Flood risk management relies on probabilistic estimates of flood hazard:\james{Maybe broader, start generally and then give the example to flood risk management}
 \begin{enumerate}
     \item Formal flood risk management in the United States is implemented through a mix of floodplain management policies, design standards, and insurance programs.
     \item Local governments can build infrastructure to reduce flood risk; they often prioritize these by considering a reduction in damages from a design storm (\eg, the 100 year storm) \citep{hcfcd_prioritization:2019}
     \item There is a role for industry organizations that set standards (\eg, reliability) that local governments often incorporate into building codes \citep{asce_infrastructure_climate:2021}
-    \item The National Flood Insurance Program was designed as a partnership between the federal government and local communities; communities can voluntarily join the program by adopting a floodplain ordinance based on the most up-to-date flood hazard maps provided by \gls{fema}. At a minimum, communities that choose to join must require that new development and substantially improved or damaged properties in high hazard areas be built at or above the level of a flood with a return period of one in 100 years (i.e., the 100-year flood). \citep{kousky_voucher:2014}
-    \item Beyond flood insurance and disaster recovery there has been a federal retreat from flood risk management leaving local governments and individuals with most of the responsibility for flood risk management: ``the federal government recognizes its risks as a major owner and operator of infrastructure, facilities, \ldots, and insurer of properties and crops \ldots leaving states, localities, and individual agencies to make their own plans'' \citep{shi_transformative:2021}
+    \item The National Flood Insurance Program was designed as a partnership between the federal government and local communities; communities can voluntarily join the program by adopting a floodplain ordinance based on the most up-to-date flood hazard maps provided by \gls{fema}. At a minimum, communities that choose to join must require that new development and substantially improved or damaged properties in high hazard areas be built at or above the level of a flood with a return period of one in 100 years (i.e., the 100-year flood).\james{Relate to annual exceedance probability} \citep{kousky_voucher:2014}
+    \item Beyond flood insurance and disaster recovery there has been a federal retreat\james{Word choice heads up} from flood risk management leaving local governments and individuals with most of the responsibility for flood risk management: ``the federal government recognizes its risks as a major owner and operator of infrastructure, facilities, \ldots, and insurer of properties and crops \ldots leaving states, localities, and individual agencies to make their own plans'' \citep{shi_transformative:2021}
 \end{enumerate}
-Future flood hazard is deeply uncertain
+Future flood hazard is deeply uncertain\james{Define deep uncertainty}
 \begin{enumerate}
     \item ``Along the U.S. coastline, public infrastructure and \$1 trillion in national wealth held in coastal real estate are threatened by rising sea levels, higher storm surges, and the ongoing increase in high tide flooding'' \citep{reidmiller_reportinbrief:2018}
-    \item Nonstationarity also affects inland and pluvial flooding \citep{Milly:2008dg} and derives from a combination of climate change, land use change, and local river modifications \citep{Merz:2014gf}
-    \item Federal guidelines for flood risk management that directly inform policy-making recognize the presence of nonstationarity but have failed to identify objectively valid approaches for modeling nonstationarity, \citep{Montanari:2014hl,Serinaldi:2015bq}
+    \item Nonstationarity affects inland and pluvial flooding \citep{Milly:2008dg} and derives from a combination of climate change, land use change, and local river modifications \citep{Merz:2014gf}
+    \item Federal guidelines for flood risk management that directly inform policy-making recognize the presence of nonstationarity but have failed to\james{them's fighting words} identify objectively valid approaches for modeling nonstationarity, \citep{Montanari:2014hl,Serinaldi:2015bq}
     \item For coastal flooding, \gls{fema} guidance suggests using up to date estimates of \gls{msl} \citep{fema_slr:2016}, but no projections, and stationary estimates of storm surge \citep{fema_ffa:2016}, although the analyst at each location has considerable flexibility
     \item Ditto extreme rainfall \citep{atlas14_texas:2018} or floods \citep{bulletin17c:2019}
-    \item This is because where historic flood risk can be constrained by estimates, future flood risk depends on intrinsically unpredictable human decisions like greenhouse gas emissions, and is therefore deeply uncertain \citep{keller_management:2021}
+    \item This is because where historic flood risk can be constrained by estimates, future flood risk depends on intrinsically unpredictable human decisions like greenhouse gas emissions, and is therefore deeply uncertain \citep{keller_management:2021}\james{This is used below, avoid redundancy}
 \end{enumerate}
 Methods for decision making under deep uncertainty emphasize exploring many possible futures
 \begin{enumerate}
     \item deep uncertainty describes ``known unknowns'' where there is not a single objectively true model \citep{walker_deep:2013,Walker:2013gi,lempert_complex:2002}
-    \item This is related to equifinality where different models fit the historical record equally well but diverge as one looks into the future \citep{beven_equifinality:2006,DossGollin:2019}
-    \item Applying classical optimization methods to problems with deep uncertainty can yield highly fragile solutions in the sense that guidance might change substantially if a different plausible model were used
+    \item This is related to equifinality where different models fit the historical record equally\james{Add a qualifier} well but diverge as one looks into the future \citep{beven_equifinality:2006,DossGollin:2019}
+    \item Applying classical optimization methods to problems with deep uncertainty can yield highly fragile solutions in the sense that guidance might change substantially if a different plausible model were used\james{Ref needed}
     \item \citet{bankes:1993} draws a distinction between exploratory and consolidative modeling
     \item Decision scaling \citep{Steinschneider:2015kk}
     \item global sensitivity analysis \citep{saltelli_sensitivity:2010,herman_salib:2017,sobol_sensitivity:2001} feeds large scenario ensembles into a black box model, then analyzes outputs to assess the relative importance of each input (conditional on an assumed joint distribution over inputs)
     \item MORDM \citep{kasprzyk:2013} combines exploratory modeling (exploring performance over many scenarios) and policy search (using optimization tools)  \citep{kasprzyk:2013,kasprzyk_denovo:2012,hadka_mordm:2015}. Typically ``robustness metric'' is used \citep{herman:2015,mcphail_robustness:2019}
-    \item RDM-like methods have been applied to coastal infrastructure planning by sampling \glspl{sow} from a \gls{pdf} of \gls{slr}, then identifying decisions that meet some predetermined satisficing criteria \citep{mcphail_robustness:2019} over a large fraction of possible futures \citep{sriver_sealevel:2018,garner_slrise:2018,lempert_slr:2012}
+    \item RDM-like\james{Explain what qualifies as RDM and how this relates to MORDM} methods have been applied to coastal infrastructure planning by sampling \glspl{sow} from a \gls{pdf} of \gls{slr}, then identifying decisions that meet some predetermined satisficing criteria \citep{mcphail_robustness:2019} over a large fraction of possible futures \citep{sriver_sealevel:2018,lempert_slr:2012,wong_nola:2017}
     \item For a more complete review see \citet{marchau:2019}
     \item Crucially, these approaches all emphasize exploring performance over many scenarios, then describing this performance into some set of metrics.
 \end{enumerate}
 Some critiques
 \begin{enumerate}
-    \item There are always subjective  modeling decisions, but sometimes they are opaque which makes it hard to communicate them to the end user
-    \item The range you choose is also subjective! \citep{schneider_dangerous:2001,schneider_scenarios:2002}
+    \item There are always subjective  modeling decisions, but sometimes these decisions are opaque which makes it hard to communicate them to the end user
+    \item The range you choose is also subjective! \citep{schneider_dangerous:2001,schneider_scenarios:2002}\james{Broader Issue: You are either explicitly or implicitly a Bayesian in climate change research}
     \item \citet{schneider_scenarios:2002} criticized the reluctance of the \gls{ipcc} special report on emission scenarios \citep{nakicenovic_scenarios:2000} to assign probabilities to scenarios, writing ``if we in the scientific assessment business do not offer some explicit notions of the likelihood of projected events, then the users of our products -- policy analysts and policy makers -- must guess what we think these likelihood estimates are.'' Different end users will, in general, have different preferences that motivate different design choices given the same information, it is unlikely that these end users have expertise in global emissions pathways, climate sensitivity, or ice sheet dynamics.
-    \item Technical detail: joint probability distributions over high dimensional spaces are confusing. Bayesian analysis teaches us that posterior distributions of parameters are often highly correlated. If we neglect that by sampling over the marginal distribution of each parameter separately, we may be sampling almost entirely from regions of the parameter space that are not consistent with our data \citep[see][for a detailed illustration]{carpenter_dimensionality:2017}!
+    \item Technical detail: joint probability distributions over high dimensional spaces can be confusing. Bayesian analyses show that posterior distributions of parameters are often highly correlated.\james{Refs} If we neglect that by sampling over the marginal distribution of each parameter separately, we may be sampling almost entirely from regions of the parameter space that are not consistent with our data \citep[see][for a detailed illustration]{carpenter_dimensionality:2017}!
     \item Some outcomes of deeply uncertain processes are more likely than others \citep{hausfather_scenarios:2020,ho_scenarios:2019,srikrishnan_probabilistic:2022} yet this is generally not acknowledged in, \eg, \gls{ipcc} analysis
     \item Technical detail: sampling over ranges is not invariant to parameterization: if I sample $\theta \sim \mathrm{Uniform}(a, b)$ and then resample $\log theta \sim \mathrm{Uniform}(\log a, \log b)$, I'll get different samples and thus different estimates
 \end{enumerate}
 The question of whether probability is a useful tool for decision making under deep uncertainty depends on how one interprets probability; we argue that a subjective Bayesian interpretation of probability is useful for many DMDU problems
 \begin{enumerate}
     \item We are inspired by methods and philosophy of Bayesian model choice in the ``$\mathcal{M}$-open'' case where there is no true model to identify
-    \item Many modern discussions of Bayesian philosophy \citep{jaynes_probability:2003,McElreath:2016vu,Gelman:2014tc,bernardo_bayesian:1994} also emphasize a philosophical view of probability as a language with which to reason about the unknown rather than a statement of objective truth \citep[see][for a thorough discussion of Bayesian philosophy]{gelman_philosophy:2013}. This is in many ways closer to the exploratory modeling proposed by \citet{bankes:1993} than the top-down, deterministic, fragile central planning approaches that it (and \cite{rittel:1973} and others) critiqued
-    \item Bayesian decision theory was conceived as a calculus for reasoning rather than for identifying objective truth; \citeauthor{definetti_probability:1972} often said that ``probability does not exist'' \citeyear{definetti_probability:1972}. \citet{savage:1954} and \citet{ramsey_probability:2016}, among others, also viewed probability as ``subjective,'' representing the state of belief of the decision-maker.
-    \item We know that choosing a single ``best'' model under-estimates uncertainty so inferences need to be combined across models \citep[\eg, as in stacking;][]{Yao:2018bu}
+    \item Many modern discussions of Bayesian philosophy \citep{jaynes_probability:2003,McElreath:2016vu,Gelman:2014tc,bernardo_bayesian:1994} also emphasize a philosophical view of probability as a language with which to reason about the unknown rather than a statement of objective truth \citep[see][for a thorough discussion of Bayesian philosophy]{gelman_philosophy:2013}. This is in many ways closer to the exploratory modeling proposed by \citet{bankes:1993} than the top-down, deterministic, fragile central planning approaches that it (and \cite{rittel:1973} and others) critique
+    \item Bayesian decision theory was conceived as a calculus for reasoning rather than for identifying objective truth; \citeauthor{definetti_probability:1972} often said that ``probability does not exist'' \citep{definetti_probability:1972}. \citet{savage:1954} and \citet{ramsey_probability:2016}, among others, also viewed probability as ``subjective,'' representing the state of belief of the decision-maker.
+    \item We know that choosing a single ``best'' model can drastically under-estimate uncertainty so inferences need to be combined across models \citep[\eg, as in stacking;][]{Yao:2018bu}
     \item In the absence of data that would tell us how accurate each model is via some likelihood function, we have to use the prior.
-    \item The famous phrase ``all models are wrong, but some are useful'' \citep[generally attributed to][]{box:1976} also suggests that probability distributions and predictions ought to be viewed subjectively.
+    \item The famous phrase ``all models are wrong, but some are useful'' \citep[generally attributed to][]{box:1976} also suggests that probability distributions and predictions ought to be viewed subjectively.\james{Wording}
     \item Although the true data generating process is not known and inference should not be represented as objective truth, probability gives a transparent and consistent language for reasoning about uncertainty.
     \item Since modeling assumptions cannot overcome epistemic uncertainty, even with better models and more data, we draw from the literature on statistical model selection in the $\mathcal{M}$-open setting, which provides a theoretical background for choosing between models when the true data generating process is not among the models considered \citep[see][]{Piironen:2017eh}.
     \item Often, combining inferences from multiple models is more effective than seeking a single ``best'' model \citep{Yao:2018bu}. More fundamentally, this literature emphasizes the importance of iteratively building models, simulating the consequences of those models, and critiquing them \citep{gelman_workflow:2020}.
-    \item Since, by definition, models are not ``true,'' this iterative workflow \citep{gelman_workflow:2020} aims to identify models that are useful and promote a dialog amongst stakeholders \citep{gelman_philosophy:2013}
+    \item Since, by definition, models are not ``true,'' this iterative workflow \citep{gelman_workflow:2020} aims to identify models that are useful and promote a dialog amongst stakeholders and decisionmakers and analysts \citep{gelman_philosophy:2013}
 \end{enumerate}
 Our aim is to illustrate how methods for model selection in the $\mathcal{M}$-open case can improve decision making under deep uncertainty.
 \begin{enumerate}
@@ -194,13 +194,13 @@ Our aim is to illustrate how methods for model selection in the $\mathcal{M}$-op
 \end{enumerate}
 We illustrate our approach with a didactic case study\ldots.
 \begin{enumerate}
-    \item House elevation in the coastal zone as a specific example of a problem where both over- or under-investment could be a problem
+    \item House elevation in the coastal zone as a specific example of a problem where both over- or under-investment can lead to poor outcomes
     \item Federal guidance uses both standards (floodplain, \gls{bfe}) and cost-benefit analysis (does it pass test?)
+    \item Official guidance for homeowners, notably from \gls{fema}, recommends elevating to the \gls{bfe} (typically the \SI{100}{year} flood) plus a freeboard \citep{fema_retrofitting:2014,asce_24-14:2015,fema_retrofitting:2014} but recent suggests scope for improvement.
     \item Be sure to note that this has parallels to lots of other engineering design guidance.
     \item \citet{xian_elevation:2017}: one size does not fit all
     \item \citet{zarekarizi_suboptimal:2020}: neglecting uncertainty leads to bad outcomes
     \item Prior studies have found that floodproofing and building-scale vulnerability reduction measures, including house elevation, can effectively reduce local flood damages in many contexts \citep{demoel_reducing:2014,deruig_building:2020,kreibich_building:2005,slotter_floodproofing:2020,Rozer:2016dn,mobley_mitigation:2020,aerts_cost:2018}.
-    \item Official guidance for homeowners, notably from \gls{fema}, recommends elevating to the \gls{bfe} (typically the \SI{100}{year} flood) plus a freeboard \citep{fema_retrofitting:2014,asce_24-14:2015,fema_retrofitting:2014} but recent suggests scope for improvement.
     \item For example, \citet{xian_elevation:2017} uses a cost-benefit analysis to demonstrate that tailoring recommendations to the initial elevation of a structure can reduce expected costs.
           \citet{zarekarizi_suboptimal:2020} show that neglecting uncertainty in discount rate, house lifespan, flood risk, and depth-damage curves can lead to maladaptation.
     \item Yet these studies are silent on the question of how nonstationary flood hazard should factor into this decision.
@@ -216,22 +216,23 @@ In the next we discuss application to the house elevation case study.
 
 Following \cref{fig:flowchart}, consider using $J$ \glspl{sow} $\vb{s} = \qty{s_1, s_2, \ldots, s_J}$ (box b in \cref{fig:flowchart}) to evaluate $I$ discrete decisions $\vb{x} = \qty{x_1, x_2, \ldots, x_I}$ (box a in \cref{fig:flowchart}).
 For each scenario $s_j \in \vb{s}$ and decision $x_i \in \vb{x}$ we use a system model $f$ to calculate a set of metrics describing the performance of decision $x_i$ on \gls{sow} $s_j$, which we denote $u_{ij} = f(x_i, s_j)$ (box c in \cref{fig:flowchart}).
-While we assume here that the \glspl{sow} and decisions are known and discrete, this approach could be  coupled to a policy search model that proposes candidate decisions $x_i$ from some decision space $\mathcal{X}$.\klaus{Is there better mathematical notation for panel (b)?}
+While we assume here that the \glspl{sow} and decisions are known and discrete, this approach could be  coupled to a policy search model that proposes candidate decisions $x_i$ from some decision space $\mathcal{X}$.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{bayes-rdm.pdf}
     \caption{
-        Outline of the proposed decision analytic framework.
+        Outline of the proposed decision-analytic framework.
+        ADD SOME EXPLANATORY TEXT. What are the boxes and panels. % TODO
     }\label{fig:flowchart}
 \end{figure}
 
 \subsection{Explore}\label{sec:analysis-explore}
 
 A first analytical step is to use the model in an ``exploratory'' mode.
-Exploratory modeling avoids making explicit assumption  about the likelihood different \glspl{sow} and instead seeks to generate new knowledge through existence proofs, hypothesis generation, and vulnerability identification \citep{bankes:1993}.
-Common applications include ``discovering'' particularly relevant scenarios  \citep{lamontagne_discovery:2018,groves_scenarios:2007} and mapping a system's response to decisions and \glspl{sow} \citep{Brown:2012kb,Poff:2015jn,Steinschneider:2015kk,sriver_sealevel:2018}.
-Although exploratory modeling seeks to avoid explicit assumptions about the likelihood of different futures, subjective modeling decisions including the choice of system model, the set of candidate decisions, the criteria used to assess outcomes, and the choice of how to sample \glspl{sow} \citep[see][]{quinn_exploratory:2020} strongly influence results.
+Exploratory modeling avoids making explicit assumption  about the likelihood different \glspl{sow} and instead seeks to generate new knowledge through existence proofs, hypothesis generation, and vulnerability identification \citep{bankes:1993}.\james{May be redundant}
+Common applications include discovering particularly relevant scenarios  \citep{lamontagne_discovery:2018,groves_scenarios:2007} and mapping a system's response to decisions and \glspl{sow} \citep{Poff:2015jn,Steinschneider:2015kk,sriver_sealevel:2018}.
+Although exploratory modeling seeks to avoid explicit assumptions about the likelihood of different futures, subjective modeling decisions including the choice of system model, the set of candidate decisions, the criteria used to assess outcomes, and the choice of how to sample \glspl{sow} \citep[see][]{quinn_exploratory:2020} strongly influence results.\james{Link back to topic. In the topic, there is no link to observations. Make this clear and use this as a transition to the next section}
 
 \subsection{Condition}\label{sec:analysis-condition}
 
@@ -251,7 +252,7 @@ Many decision analytic tools used in climate risk management can be interpreted 
 A common application (to which we return in our case study) is when using probabilistic models with deeply uncertain boundary conditions.
 For example, \ldots\james{Add a water resources and a flood example}
 In this case, $M$ describes both the choice of model and the choice of boundary condition (\eg, choice of physical model and the \gls{rcp} scenario).
-As we shall illustrate in \cref{sec:results-conditional}, this analysis models uncertainty \emph{within models} probabilistically, but models uncertainty \emph{between models} only as a.\ldots\klaus{I'm stuck, can you help me finish this sentence?}
+As we shall discuss in \cref{sec:results-conditional}, this analysis models uncertainty \emph{within models} probabilistically, but models uncertainty \emph{between models} only using a scenario approach (\ie, choices of model structures or factors such as forcings we show as cases) without any explicit probability statement \citep[see][]{wong_nola:2017}.\james{Wording}
 
 Another application is to studies that generate an ensemble of \glspl{sow} by sampling parameters across fixed ranges.
 For example, \citet{lempert_slr:2012} sample parameters describing the rate of \gls{slr} across a range of values to inform coastal adaptation.
@@ -260,24 +261,27 @@ Since sampling over a range is equivalent to sampling from a Uniform distributio
 \begin{equation}
     p(\Omega | M) = \prod_{\ell=1}^L \mathrm{Uniform} \qty(\theta_{\ell,\min}, \theta_{\ell,\max}).
 \end{equation}
-If this product of independent Uniform distributions truly represents a well-calibrated belief about the joint probability distribution over \glspl{sow} $p(\Omega)$ then it should be used, but analysts should be clear that, like it or not, they are making probabilistic assumptions, and should apply methods for model critique and validation \citep[see][for some directions]{gelman_workflow:2020}.
+If this product of independent Uniform distributions truly represents a well-calibrated belief about the joint probability distribution over \glspl{sow} $p(\Omega)$ then it should be used, but analysts should be clear that, like it or not, they are making probabilistic assumptions, and should apply methods for model critique and validation \citep[see][]{gelman_workflow:2020}.
 
-Our primary concern is not that subjective assumptions about the likelihood of different futures are wrong -- this is, almost surely, inevitable -- but that when these assumptions are opaque and presented without critique or validation they may lead to sub-optimal decisions.
+Our primary concern is not that subjective assumptions about the likelihood of different futures are wrong -- this is, almost surely, inevitable -- but that when these assumptions are opaque and presented without critique or validation they may lead to poor decisions.
 
 \subsection{Synthesize}\label{sec:analysis-synthesize}
 
 If the ensemble of \glspl{sow} available does not represent our subjective belief about the plausibility of future conditions, then some corrective measure should be taken.
 One possibility is to discard the $\vb{s}$ and resample from some ``true'' distribution $p_\mathrm{belief}$.
-In practice this is impractical because simulating $\vb{s}$ may rely on complicated models that are computationally expensive to re-run.
-Consequently, climate risk management often uses the outputs of structured simulations and analyses \citep[\eg, from the Coupled Model Intercomparison Project's simulations;][]{meehl_cmip:2000}; it is neither practical nor feasible for local decision-makers to re-run climate models every time they want to sample \glspl{sow} from a different distribution.
+In practice, this is impractical because simulating $\vb{s}$ may rely on complicated models that are computationally expensive to re-run.
+Consequently, climate risk management often uses the outputs of structured simulations and analyses.
+For example, many studies use outputs from the Coupled Model Intercomparison Project's simulations \citep{meehl_cmip:2000} to assess risks and design adaptation strategies.\james{Add some refs}
+It is not practical or feasible for end users to re-run such complex Earth system models every time they want to sample \glspl{sow} from a different distribution.
 
 Instead of attempting to re-sample $\vb{s}$, we instead consider re-weighting.
 To do this we first project the \glspl{sow} $\vb{s} \in \Omega$ onto a low-dimensional representation, which we denote $\qty{\psi_1, \psi_2, \ldots, \psi_J} \in \Psi$.
-This allows us to specify $p_\mathrm{belief}(\Psi)$ instead of $p_\mathrm{belief}(\Omega)$.
-We then calculate a probabilistic weight $w_j \in \qty[0, 1]$ for each \gls{sow} $s_j$ such that $\sum_{j=1}^J w_j \psi_j$ approximates $p_\mathrm{belief}(\Psi)$.\klaus{Really we are setting the weights so that $\sum_{j=1}^J w_j \pi(s_j)$ approximates $\int_{s} p(s) \pi(s) \dd{s}$ -- is this too hand-wavey?}
-We present here the 1D case.
-Without loss of generality, assume the $\psi_j$ to be sorted from least to greatest so that $\psi_{j-1} \leq \psi_j$, ($j \neq 1$).
-Defining $F_\mathrm{belief}(s)$ to be the cumulative distribution corresponding to $p_\mathrm{belief}$, we calculate weights as illustrated in \cref{fig:grid-sketch}:
+This allows us to specify a prior belief over this reduced space $p_\mathrm{belief}(\Psi)$ instead of over the full space $p_\mathrm{belief}(\Omega)$.
+We then calculate a probabilistic weight $w_j \in \qty[0, 1]$ for each \gls{sow} $s_j$ so that the weighted distribution of $\psi_j$ closely approximates $p_\mathrm{belief}(\Psi)$.
+
+We present here the case where the $\psi_j$ are one-dimensional.
+We first sort the $\psi_j$  from least to greatest so that $\psi_{j-1} \leq \psi_j$, ($j \neq 1$).
+Defining $F_\mathrm{belief}(s)$ to be the cumulative distribution corresponding to $p_\mathrm{belief}$, we calculate weights as
 \begin{equation}\label{eq:weights}
     w_j = \begin{cases}
         F_\mathrm{belief}\qty(\frac{1}{2}\qty[\psi_1 + \psi_2])                                                                     & j = 1     \\
@@ -285,32 +289,36 @@ Defining $F_\mathrm{belief}(s)$ to be the cumulative distribution corresponding 
         1 - F_\mathrm{belief}\qty(\frac{1}{2}\qty[\psi_{J-1} + \psi_J])                                                             & j = J.
     \end{cases}
 \end{equation}
-For higher dimensional projections, this equation can be extended by partitioning the parameter space into a Voronoi diagram, and then integrating the \gls{pdf} $p_\mathrm{belief}$ over the boundaries of each region.
+This step is illustrated in \cref{fig:grid-sketch}.
+For higher dimensional projections, this equation can be extended by partitioning the parameter space into a Voronoi diagram, and then integrating the \gls{pdf} $p_\mathrm{belief}$ over each region.
+This approach is widely used in analysis of tropical cyclones: first an ensemble of cyclones is simulated, and then probabilistic weights are calculated for each based on attributes such as intensity, landfall location, and radius \citep{johnson_clara:2013,resio_probabilities:2007,toro_jpm-os:2010}.
 From a practical perspective, many simulation models round outputs, meaning that there is a possibility of having $\psi_j$ that are equal; in this case it may be helpful to add a small amount of noise to the $\psi_j$ before computing the weights.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{grid-sketch}
     \caption{
-        Schematic of \gls{sow} weighting scheme defined in \cref{eq:weights} for $J=4$.
-        This method is illustrated for a hypothetical target distribution (orange line) and four samples $\psi_1, \psi_2, \psi_3, \psi_4$ (blue dots).
-        As shown in \cref{eq:weights}, the weights $w_j$ (vertical blue lines) are calculated based on the cumulative distribution function of the target distribution at the halfway points $\frac{1}{2}\qty[\psi_i+\psi_{i+1}]$ (vertical dashed lines).
+        Schematic of \gls{sow} weighting scheme defined in \cref{eq:weights}.
+        This method is illustrated for a hypothetical target distribution (orange line) and $J=4$ samples $\psi_1, \psi_2, \psi_3, \psi_4$ (orange dots).
+        As shown in \cref{eq:weights}, the weights $w_j$ (vertical lines) are calculated based on the cumulative distribution function of the target distribution  (black line) at the halfway points $\frac{1}{2}\qty[\psi_i+\psi_{i+1}]$ (vertical dashed lines).
     }\label{fig:grid-sketch}
 \end{figure}
 
 The aim of this re-weighting framework is to integrate an ensemble of \glspl{sow} used for exploratory modeling into formal decision analysis.
-As in \cref{sec:analysis-condition} we must condition on a model, but whereas that analysis conditions upon deep uncertainties, this approach synthesizes them.
+As in \cref{sec:analysis-condition}, we must condition on a model: where the analysis of \cref{sec:analysis-condition} conditions upon deep uncertainties, the approach outlined in this subsection synthesizes across them.
 It is crucially important to understand that stakeholders and experts will not, in general, agree on $p_\mathrm{belief}$ because its uncertainty is epistemic -- that is, there is no ``true'' value of $p_\mathrm{belief}$ that could be estimated if only we had better models and data.
 However, reasoning using subjective probability allows\ldots\james{Finish sentence}
 
 \section{Case study}\label{sec:case-study}
 
-We model a one-time decision of whether to elevate a house, and if so by how much (\cref{fig:xlrm}), for a \emph{hypothetical} house in Norfolk, VA.
+We model a one-time decision of whether to elevate a house, and if so by how much (\cref{fig:xlrm}).
+We focus on a case study of a \emph{hypothetical} house in Norfolk, VA.
 For interpretability, we focus on deep uncertainty in \gls{msl} and treat other model parameters as more shallow uncertainties as shown in \cref{tab:uncertainties}.
-To use the notation developed in the previous section, we consider the following.
+We use the notation developed in the previous section to describe the case study.
+Specifically,
 \begin{enumerate}
     \item The decision vector $\vb{x}$ is a scalar describing how high to elevate a house ($\Delta h$); we consider $\Delta h = \qty{\SI{0}{ft}, \SI{0.25}{ft}, \ldots, \SI{12}{ft}}$ f
-    \item The \glspl{sow} describe annual time series of \gls{msl} over the $T$ year house lifetime ($T=71$ generally; see \cref{tab:uncertainties}) so $\vb{s} \in \mathbb{R}^T$
+    \item The \glspl{sow} describe annual time series of \gls{msl} over the $T=71$ year house lifetime so $\vb{s} \in \mathbb{R}^T$
     \item The system model $f$ quantifies up-front costs and lifetime expected damages, given a decision $x_i$ and \gls{sow} $s_j$, by integrating economic and engineering damage models over a probability distribution for storm surge.
 \end{enumerate}
 In the remainder of this section we describe data sources and treatment of \gls{slr} (\cref{sec:case-slr}), storm surge (\cref{sec:case-surge}), damages and metrics (\cref{sec:case-metrics}), and finally the subjective priors $p_\mathrm{belief}$ used to apply the re-weighting method described in \cref{sec:analysis-synthesize} to this case study (\cref{sec:case-priors}).
@@ -319,32 +327,34 @@ In the remainder of this section we describe data sources and treatment of \gls{
     \centering
     \caption{
         Summary of parameters, their notation, and how their uncertainty is represented.
+        Symbols describing the decision-analytic framework are described in \cref{fig:flowchart}.
     }\label{tab:uncertainties}
-    \small
-    \begin{tabular}{l l p{3.5in}}
+    \footnotesize
+    \begin{tabular}{p{1.25in} p{0.75in} p{3in}}
         \toprule
-        Name             & Symbol            & Uncertainty                                                                          \\
+        Name                 & Symbol            & Uncertainty                                                                          \\
         \midrule
-        \Gls{msl}        & $\overline{y}(t)$ & Deeply uncertain: four physical models $\times$ four \acrshort{rcp} scenarios        \\
-        Storm surge      & $y'(t)$           & Probabilistic: Bayesian inference on a stationary \acrshort{gev} model               \\
-        Ann-max flood    & $y(t)$            & Deterministic: $y(t)=\overline{y}(t)+y'(t)$                                          \\
-        Discount rate    & $1-\gamma$        & Fixed at 2.5\%                                                                       \\
-        Depth-damage     & $D(h-y)$          & Deterministic: based on HAZUS model                                                  \\
-        Elevation cost   & $C(\Delta h)$     & Deterministic: a piecewise linear model following \citet{zarekarizi_suboptimal:2020} \\
-        Initial height   & $h_0$             & Deterministic: \SI{1}{ft} below the \gls{bfe} unless otherwise noted                 \\
-        House floor area &                   & Deterministic: \SI{1500}{ft^2} unless otherwise noted                                \\
-        Structural value &                   & Deterministic: \usd{200000} unless otherwise noted                                   \\
-        House lifespan   & $T$               & Deterministic: 71 years unless otherwise noted                                       \\
+        \Gls{msl}            & $\overline{y}(t)$ & Deeply uncertain: four physical models $\times$ four \acrshort{rcp} scenarios        \\
+        Storm surge          & $y'(t)$           & Probabilistic: Bayesian inference on a stationary \acrshort{gev} model               \\
+        Annual maximum flood & $y(t)$            & Deterministic: $y(t)=\overline{y}(t)+y'(t)$                                          \\
+        Discount rate        & $1-\gamma$        & Fixed at 2.5\% per year                                                              \\
+        Depth-damage         & $D(h-y)$          & Deterministic: based on HAZUS model \citep[see][]{zarekarizi_suboptimal:2020}        \\
+        Elevation cost       & $C(\Delta h)$     & Deterministic: a piecewise linear model following \citet{zarekarizi_suboptimal:2020} \\
+        Initial height       & $h_0$             & Deterministic: \SI{1}{ft} below the \gls{bfe}, unless otherwise noted                \\
+        House floor area     &                   & Deterministic: \SI{1500}{ft^2}                                                       \\
+        Structural value     &                   & Deterministic: \usd{200000}                                                          \\
+        House lifespan       & $T$               & Deterministic: 71 years                                                              \\
         \bottomrule
     \end{tabular}
+    %TODO: check if there are other symbols used
 \end{table}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{xlrm.pdf}
     \caption{
-        Conceptual diagram of the decision problem.
-        A \gls{sow} consists of a description of the uncertain factors (red).
+        Conceptual diagram of the considered example.
+        A \acrfull{sow} consists of a description of the uncertain factors (red).
         We model a problem with a single lever (yellow), which is how high to elevate a house ($\Delta h$).
         For each \acrshort{sow} and each value of $\Delta h$, the system model (blue) is used to calculate performance metrics (orange).
     }\label{fig:xlrm}
@@ -356,9 +366,9 @@ We analyze simulations of \gls{msl} at Sewells Point, VA from four probabilistic
 The four models considered are (i) the BRICK model (version 0.2) with slow (``BRICK Slow'') and (ii) fast (``BRICK Fast'') ice sheet dynamics \citep{wong_brick0.2:2017}, (iii) the \citet{kopp_probabilistic:2014} model (``K14''), and (iv) the \citet{deconto_antarctica:2016} model (``DP16'').
 The \citet{kopp_probabilistic:2014} and \citet{deconto_antarctica:2016} models have a ten year time step, which we linearly interpolate onto a one year time step for consistency.
 These four models represent physical processes, particularly of ice sheet dynamics, in different ways, leading to diverging sensitivity of \gls{msl} to forcing.
-For a discussion of these methods, their similarities, their differences, and their consistency with other analyses see \citet{ruckert_coastal:2019}, \citet{kopp_evolving:2017}, and \citet{bamber_slrise:2019}.
+For a discussion of these model outputs we refer the reader to \citet{ruckert_coastal:2019}.
 
-Estimates of nonstationary \gls{msl} also depend on anthropogenic forcing, which is itself deeply uncertain.
+Estimates of nonstationary \gls{msl} also depend on anthropogenic forcing, which is itself deeply uncertain \citep{ho_scenarios:2019,srikrishnan_probabilistic:2022}.
 To sample this uncertainty, we use simulations from each physical model under four \gls{rcp} scenarios, yielding sixteen time-varying distributions of \gls{msl}.
 
 \begin{figure}
@@ -372,22 +382,20 @@ To sample this uncertainty, we use simulations from each physical model under fo
 \end{figure}
 
 The choices of physical model and \gls{rcp} scenario jointly determine future \gls{msl} $p(\overline{y}|t)$.
-\Cref{fig:lsl-evolution}(a) shows the time-varying \glspl{pdf} of \gls{msl} for three representative models.
+\Cref{fig:lsl-evolution}(a) shows the time-varying 90\% credible intervals of \gls{msl} for three representative models.
 The divergence between the the best-case (blue) and worst-case (red) models is small in the early 21st century and increases rapidly thereafter.
 \Cref{fig:lsl-evolution}(b) shows the \glspl{pdf} of mean sea level in 2100 (dashed vertical line in panel (a)) under each of the sixteen models considered.
 We return in \cref{sec:results-conditional} to the problem that these multiple models poses to decision makers.
 
 \subsection{Storm surges}\label{sec:case-surge}
 
-We model annual maximum floods $y(t)$ as the sum of sea level $\overline{y}(t)$, described in the previous subsection, and annual maximum storm surges $y'(t)$.
+Following prior work \citep[\eg,][]{garner_slrise:2018,lempert_slr:2012,sriver_sealevel:2018}, we model annual maximum floods $y(t)$ as the sum of sea level $\overline{y}(t)$, described in the previous subsection, and annual maximum storm surges $y'(t)$.
 
-Data on storm surge comes from Sewells Point, VA (gauge 8638610) from the NOAA tides and currents dataset,  freely available to the public at \url{https://tidesandcurrents.noaa.gov/waterlevels.html}.
+Data on storm surge comes from Sewells Point, VA (gauge 8638610) from the NOAA tides and currents dataset,  freely available to the public at \url{https://tidesandcurrents.noaa.gov/waterlevels.html}.\james{Try to figure out a better way to cite this dataset (it's hard)}
 Hourly recordings of water level are available from 1928 to the present; we use data from the period January 1, 1928 to December 31, 2021.
 For each calendar year we first remove the annual mean, then calculate the maximum water level.
 We refer this time series of annual maximum storm surges as $y'(t)$.
-
-In the historical record, major surges have been driven by two different mechanisms: tropical cyclones and Nor'easters.
-This time series of annual maxima is shown in \cref{fig:surge-obs-return}(a).
+We display this time series of annual maxima storm surges in \cref{fig:surge-obs-return}(a).
 The largest recorded surge was the Chesapeake-Potomac hurricane of 1933, which caused a surge of over \SI{7}{ft} at this gauge, but other hurricanes and Nor'easters have caused surges above \SI{6}{ft}.
 
 \begin{figure}
@@ -409,19 +417,19 @@ We model future storm surge using a stationary \gls{gev} model:
 \begin{equation}\label{eq:surge-model}
     y'(t) \sim \text{GEV}\qty(\mu, \sigma, \xi),
 \end{equation}
-where $y'(t)$ is the storm surge (above sea level) in year $t$ and a \gls{gev} distribution with location $\mu$, scale $\sigma$, and shape $\xi$ has the probability density function
-\begin{equation*}
+where $y'(t)$ is the storm surge (above sea level) in year $t$ and a \gls{gev} distribution with location, shape, and scale parameters $\mu$, $\sigma$, and $\xi$, respectively, has the probability density functionL
+\begin{equation}\label{eq:gev-dist}
     f(x | \mu, \sigma, \xi)= \begin{cases}
         \frac{1}{\sigma} \qty[ 1 + \qty( \frac{x-\mu}{\sigma} ) \xi ]^{-1 / \xi - 1} \exp \qty{- \qty[1+\qty(\frac{x-\mu}{\sigma}) \xi ]^{-1 / \xi} }, & \xi \neq 0 \\
         \frac{1}{\sigma} \exp \qty{-\frac{x-\mu}{\sigma}} \exp \qty{ -\exp \qty[-\frac{x-\mu}{\sigma}]},                                               & \xi=0.
     \end{cases}
-\end{equation*}
+\end{equation}
 This model assumes stationarity, neglecting any potential time dependence.
 
 Our approach to model building follows a principled workflow for model building and checking \citep[see][for details]{gelman_workflow:2020}.
 One model choice, analogous to the choice of statistical distribution or the assumption of stationarity, is the choice of how to represent prior information.
 We include two forms of prior information.
-First, we constrain $\xi > 0$ to reflect knowledge about the support of $y'$:
+First, we constrain the shape parameter to be positive, $\xi > 0$, to reflect knowledge about the support of $y'$, which for a variable distributed according to \cref{eq:gev-dist} is:
 \begin{equation*}
     \mathrm{supp}~ y' =
     \begin{cases}
@@ -429,7 +437,7 @@ First, we constrain $\xi > 0$ to reflect knowledge about the support of $y'$:
         \xi > 0: & y' \in \qty(\mu-\nicefrac{\sigma}{\xi},~ \infty).
     \end{cases}
 \end{equation*}
-Since storm surges cannot be negative, only the latter is physically defensible so we constrain $\xi > 0$.
+Since storm surges cannot be negative, only the latter is physically defensible, justifying our choice to constrain the shape parameter to be positive.
 Second, we add weakly informative priors.
 Rather than applying prior information directly over the joint distribution of the priors $\qty{\mu,\sigma,\xi}$, we instead apply a prior over extreme quantiles of the distribution, as in \citet{coles_evd:1996}.
 Specifically, we apply Normal (truncated at zero) priors over the 2, 10, 100, and 500 year return levels, with means \SIlist{4;6;10;15}{ft} and standard deviations \SIlist{1.5;1.75;2.25;2.75}{ft}, respectively.
@@ -438,7 +446,7 @@ These values were chosen to represent plausible physical ranges and are plotted 
 For inference, we draw \num{10000} samples from the posterior distribution $p(\mu,\sigma,\xi | y')$ using Hamiltonian Markov Chain Monte Carlo \citep{Betancourt:2017vd,hoffman_nuts:2011} implemented in the Turing package of the Julia programming language \citep{perkel_julia:2019,ge_turing:2018,tarek_dynamicppl:2020,besancon_distributions.jl:2021,bezanson_julia:2012}.
 Diagnostics suggest (though cannot guarantee) convergence (see \cref{tab:surge-posterior-mcmc-diagnostics}).
 We evaluate the model's fit using posterior predictive checks \citep[see][section 2.4 and references therein]{gelman_workflow:2020}.
-Using the lag 1 and 2 partial autocorrelations, sample maximum, sample minimum, sample median, and Mann-Kendall test value as Bayesian test statistics, we found that draws from the posterior predictive distribution matched the observed test statistic credibly (\cref{fig:surge-test-statistics}) although panels (a) and (b) suggest the possibility of temporal structure not captured by our stationary \gls{iid} model.
+Using the lag 1 and 2 partial autocorrelations, sample maximum, sample minimum, sample median, and Mann-Kendall test value as Bayesian test statistics, we found that draws from the posterior predictive distribution matched the observed test statistics credibly (\cref{fig:surge-test-statistics}) although panels (a) and (b) suggest the possibility of temporal structure not captured by our stationary \gls{iid} model.
 Future efforts could represent this structure by conditioning the parameters of the distribution on relevant climate indices \citep[as in][]{wong_structural:2020,Farnham:2016tw,farnham_jetstream:2017}.
 
 \Cref{fig:surge-obs-return}(b) shows the estimated return periods for these storm surges.
@@ -456,7 +464,7 @@ We define expected annual damages in year $t$ as the expectation of the damage f
 This expectation depends on the house's height ($h = h_0 + \Delta h$) where $h_0$ is the initial height relative to the gauge and $\Delta h$ is the amount by which the house is elevated.
 The expected annual damage is thus
 \begin{equation}\label{eq:ead}
-    \textrm{EAD}(t) = \mathbb{E}[D \qty(h-\overline{y}(t))] = \int_{y'} p(y') D \qty(h - \qty(\overline{y}(t) + y')) \dd{y'}
+    \textrm{EAD}(t) = \mathbb{E}[D \qty(h-\overline{y}(t))] = \int_{y'} p(y') D \qty(h - \qty(\overline{y}(t) + y')) \dd{y'},
 \end{equation}
 where $D(h-y)$ is a deterministic function specifying damage as a function of flood depth (relative to the house).
 Following \citet{zarekarizi_suboptimal:2020} we use the we use the Hazard U.S. (HAZUS) depth-damage curves provided by \gls{fema}; this depth-damage relationship is shown in \cref{fig:cost-depth-damage}.
@@ -472,7 +480,7 @@ The second component of the system model converts a time series of $\mathrm{EAD}
     \textrm{LED} = \sum_{t=t_i}^{t_f} \gamma^{\qty(t-t_i)-1} \textrm{EAD}(t),
 \end{equation}
 where the discount rate is $1 - \gamma$, the initial time $t_i=2022$, and the end time $t_f = t_i + T$.
-Although \citet{zarekarizi_suboptimal:2020} show that uncertainty in the discount rate is important for decision support, we use a fixed discount rate (see \cref{tab:uncertainties}) for the purposes of this study.
+Although \citet{zarekarizi_suboptimal:2020} show that uncertainty in the discount rate is important for decision support, we use a fixed discount rate (see \cref{tab:uncertainties}) for the purposes of this didactic study.
 For a more theoretical discussion see \citet{arrow_discount:2013}.
 
 To assess the performance of a given decision for a specific \gls{sow} (``Metrics'' in \cref{fig:xlrm}), we calculate the following metrics for each decision-\gls{sow} combination:
@@ -484,7 +492,9 @@ To assess the performance of a given decision for a specific \gls{sow} (``Metric
 
 \subsection{Prior over \glsentrylong{slr}}\label{sec:case-priors}
 
-We construct three probabilistic models for $p_\text{belief}(\psi)$, which represents the amount of \gls{slr} from 2022 to 2100.
+We construct three probabilistic models for $p_\text{belief}(\psi)$, which represents the amount of \gls{slr} from 2022 to 2100.\james{Expand a bit on other work and priors for SLR.}
+Refer to \citet{lempert_slr:2012,sriver_sealevel:2018,garner_slrise:2018}, and other studies.
+
 We use a Gamma distribution for all three priors, parameterized as
 \begin{equation*}
     f(x | \alpha, \theta) = \frac{x^{\alpha-1} e^{-x/\theta}}{\Gamma(\alpha) \theta^\alpha},
@@ -500,6 +510,7 @@ Their \glspl{pdf} are also plotted in \cref{fig:lsl-priors-weights}(A).
         The name of the distribution, the parameters of the Gamma distribution with shape $\alpha$ and scale $\theta$, and the 2.5, 25, 50, 75, and 97.5th percentiles.
     }\label{tab:slr-priors}
     \input{../../plots/lsl_priors.tex}
+    % TODO: add another column: Parameter and Quantiles [in feet]
 \end{table}
 
 We developed these priors for didactic purposes, to illustrate a range of possible beliefs.
@@ -519,7 +530,7 @@ We begin by using our model in an ``exploratory'' mode with an aim of learning a
 \begin{figure}
     \includegraphics[width=\textwidth]{scenario-map-slr-cost}
     \caption{
-        Scenario maps show the dependence of expected lifetime cost (damages plus up-front cost) as a function of \gls{msl} in 2100 for several values of $\Delta h$ and $h_0$.
+        Scenario maps show the dependence of expected lifetime cost (damages plus up-front cost) as a function of \gls{msl} in 2100 for several values of initial height ($h_0$) and house elevation ($\Delta h$).
         Colors indicate the density of \glspl{sow}; the color of each grid box corresponds to the number of \glspl{sow} falling within that box.
         The lowest-cost outcomes occur when both exposure is low ($h_0$ is large and \gls{slr} is minimal) and the house is not elevated (no up-front cost).
         The highest-cost outcomes arise when exposure is high ($h_0$ is small and \gls{slr} is rapid) and investment is inadequate.
@@ -528,15 +539,15 @@ We begin by using our model in an ``exploratory'' mode with an aim of learning a
     }\label{fig:scenario-map-slr-cost}
 \end{figure}
 
-\Cref{fig:scenario-map-slr-cost} shows the dependence of expected lifetime costs (damages plus up-front costs; $y$-axis) as a function of  \gls{slr} over the house lifetime ($x$-axis), height increase ($\Delta h$; columns), and initial elevation ($h_0$; rows).
-The best outcomes (yellow) arise when the house is not elevated ($\Delta h = 0$) and \gls{slr} is minimal (bottom left corners).
-The worst outcomes (blue) arise when the house is elevated only slightly and \gls{slr} is rapid.
+\james{Start with a summary sentence that outlines the paragraph}\Cref{fig:scenario-map-slr-cost} shows the dependence of expected lifetime costs (damages plus up-front costs; $y$-axis) as a function of  \gls{slr} over the house lifetime ($x$-axis), height increase ($\Delta h$; columns), and initial elevation ($h_0$; rows).
+The outcomes with lowest total lifetime costs arise when the house is not elevated ($\Delta h = 0$) and \gls{slr} is minimal (bottom left corners).
+The outcomes with highest total lifetime costs arise when the house is elevated only slightly and \gls{slr} is rapid.
 As $\Delta h$ increases, the best-case scenario becomes more expensive because up-front costs increase, but worst-case scenarios become less expensive because even if \gls{slr} is substantial, damages will be negligible.
 
 This analysis answers ``what-if'' questions like ``given $h_0$ and $\Delta h$, what is the range of total costs a homeowner could face if \gls{slr} over the house lifetime is \SI{1}{ft} or \SI{10}{ft}.''
 For some decision-makers, contextualizing this information against a few scenarios of \gls{slr} \citep[\eg, those of][]{sweet_slr:2022} may prove sufficient for decision making.
 This would be analogous to decision scaling methods that plot climate model projections on a scenario map of water system performance as a function of changes in key climate variables \citep{Brown:2012kb,Steinschneider:2015kk}.
-However, this analysis does not shed light on cost-benefit analyses or return periods, nor does it permit quantitative comparison against other possible decisions.
+However, this analysis does not shed light on cost-benefit analyses or return periods, nor does it permit quantitative comparison against other possible decisions.\james{Strong statement. Correct? What if we make or use strong implicit assumptions?}
 
 \subsection{Scenario-conditional optimization}\label{sec:results-conditional}
 We now turn to the scenario-conditional analysis described in \cref{sec:analysis-condition}.
@@ -548,6 +559,7 @@ As discussed in \cref{sec:analysis-condition}, this allows a probabilistic inter
     \includegraphics[width=\textwidth]{tradeoffs-by-rcp}
     \caption{
         Each probabilistic model or scenario leads to a different estimate of the Pareto frontier.
+        For emphasis, we highlight three representative models: the Brick Slow model \citep{wong_brick0.2:2017} under \gls{rcp} 2.6, the K14 \citep{kopp_probabilistic:2014} model under \gls{rcp} 6.0 and the DP16 model \citep{deconto_antarctica:2016,kolpin_introduction:2017} under \gls{rcp} 8.5.
         (A): trade-off between up-front cost (which is a monotonic function of height increase) and expected lifetime costs.
         (B): trade-off between up-front cost and lifetime expected damages (eq.~\ref{eq:led}).
         Light gray lines show estimates for all 16 models (four \gls{rcp} scenarios times four physical parameterizations) considered.
@@ -566,12 +578,13 @@ This approach is, in a sense, another form of exploratory modeling: instead of c
 This approach is attractive because it allows modelers to focus on their domain expertise (\eg, the response of ice sheets and global sea levels to a particular climate future).
 However, conditioning simulations on a set of climate futures and physical models presents what we term ``the multiple \gls{pdf} problem'' because it leaves decision makers with many \glspl{pdf} to choose from.
 The multiple \gls{pdf} problem has also been shown in other contexts.
-For example, \citet{sharma_rcp:2021}\klaus{According to Earth's Future this is in fact 2021} modeled the reliability of stormwater infrastructure under different climate models and downscaling methods, finding diverging estimates of future rainfall hazard, even under a single \gls{rcp} scenario.\james{If we think of other examples let's put them here}
+For example, \citet{sharma_rcp:2021}\klaus{According to Earth's Future this is in fact 2021} modeled the reliability of stormwater infrastructure under different climate models and downscaling methods, finding diverging estimates of future rainfall hazard, even under a single \gls{rcp} scenario.\james{Other examples: Wong et al 2017 -- levees. There are more!}
 Although this scenario-conditional analysis is appropriate for understanding differences between models, its key limitation is that \emph{it places the burden for deciding which model to design for onto the end user.}
 
 \subsection{Synthesizing deep uncertainties for decision analysis}\label{sec:results-synthesis}
 
-To overcome the limitations of scenario-conditional analysis, in this subsection we illustrate how the re-weighting method described in \cref{sec:analysis-synthesize} can shed light on climate risk management under deep uncertainty.
+The proposed approach can help overcome the limitations of scenario-conditional analysis.
+We illustrate how the re-weighting method described in \cref{sec:analysis-synthesize} can shed light on climate risk management under deep uncertainty.
 We present results using each of the models for $p_\mathrm{belief}$ outlined in \cref{sec:case-priors}.
 These three distributions are shown in \cref{fig:lsl-priors-weights}(A).
 
@@ -596,7 +609,7 @@ The uncertain \gls{slr} scenario places approximately equal weight across models
 
 This method can also be used to calculate expectations, allowing us to revisit the trade-off diagrams of \cref{fig:tradeoffs-by-rcp}.
 \Cref{fig:tradeoffs-by-prior} shows the total lifetime cost (panel A) and lifetime expected damages (panel B) under each model.
-Notably, they give different guidance.
+Notably, they give different guidance.\james{Say what this guidance is}
 Under an assumption of rapid \gls{slr}, elevating the house by approximately \SI{6}{ft} saves approximately 25\% of the house value relative to not elevating.
 Under an assumption of slow \gls{slr}, elevating the house by \SI{6}{ft} costs approximately 25\% of the house value relative to not elevating.
 Under the intermediate / uncertain \gls{slr} assumption, the expected lifetime costs are similar for elevating or not elevating the house.
@@ -615,8 +628,8 @@ Under all assumptions, elevating by only a few feet is impractical because it in
 
 Quick summary of what our motivation was
 \begin{enumerate}
-    \item We are motivated by the work of \citet{sriver_sealevel:2018} and \citet{lempert_slr:2012}, which points out that while for the particular case study at hand probabilistic and RDM analyses gave similar results (unsurprising since the probabilistic analysis used uniform priors over ranges), the motivation of RDM was an interactive,  problem-focused and iterative exploration with stakeholders. We are motivated to develop a method with more formal probabilistic interpretations that can also be used in this iterative framework.
-    \item Explore every \gls{sow}
+    \item We are motivated by the work of \citet{sriver_sealevel:2018} and \citet{lempert_slr:2012}, which points out that while for the particular case study at hand probabilistic and RDM analyses gave similar results (unsurprising since the probabilistic analysis used uniform priors over ranges)\james{Spell out the deficient guidance}, the motivation of RDM was an interactive,  problem-focused and iterative exploration with stakeholders. We are motivated to develop a method with more formal probabilistic interpretations that can also be used in this iterative framework.
+    \item Explore every \gls{sow} considered
     \item Be transparent about how we are calculating trade-offs
     \item Work with existing physical model ensembles
     \item We want to be robust to different plausible beliefs rather than robust to different outcomes
@@ -624,18 +637,18 @@ Quick summary of what our motivation was
 Quick summary of what we have done
 \begin{enumerate}
     \item It matters a lot which scenario you design for
-    \item Robustness metrics and robust decision analyses make implicit assumptions about the plausibility of future scenarios
+    \item Robustness metrics and robust decision analyses typically make implicit assumptions about the plausibility of future scenarios
 \end{enumerate}
 Limitations of the re-weighting
 \begin{enumerate}
     \item Our prior $p(\Omega)$ is limited -- we are just using \gls{msl} in 2100 but we could be looking at more parameters of it including rate of change, \etc
     \item The real world is in a state of ``unknown unknowns'' \citep[level 5 as defined in][fig.~1]{walker_deep:2013} so trying to represent \emph{all} uncertainty is futile; we must make subjective modeling choices and assumptions about what is most important
     \item Normal distributions used in \citet{fuller_inversion:2017} were applied for their simplicity and interpretability, but we note that they may not represent a well-calibrated prior belief about \gls{slr}; we refer the reader to \citet{gelman_workflow:2020} for a discussion of prior predictive checks that could be applied.
-    \item Perhaps discarding the edge \gls{ssp} scenarios is unhelpful;
+    \item Perhaps discarding the edge \gls{ssp} scenarios is unhelpful;\james{this is slang}
 \end{enumerate}
 Limitations of the case study
 \begin{enumerate}
-    \item Objectives: real people might care about uncertainty (risk aversion), probability of experiencing flooding at all (disruptions are hard to quantify), usable space created under the house, and more
+    \item Objectives: real people might care about uncertainty (risk aversion), probability of experiencing flooding at all (disruptions are hard to quantify), usable space created under the house, and more objectives
     \item More uncertainty (damage functions, cost of construction, lifespan, discount rate, \etc)
     \item Better data on cost of elevation and depth-damage
     \item Scalability: optimize separately for different kinds of house structures and locations
@@ -647,7 +660,7 @@ Future research needs:
     \item This didactic example illustrates a need for better synthesis and communication of deep uncertainties for decision making.
     \item More complex models to capture more relevant metrics
     \item Better models of nonstationary hazards
-    \item Interacting, sequential decisions
+    \item Interacting, sequential decisions\james{Commonly }
     \item Once a model is chosen, it will under-represent total uncertainty, since this depends on both with- and between-model variability. We hypothesize this will lead to under-valuation of adaptive measures.
     \item Ultimately, developing probabilistic scenarios of future emissions \citep[as in][]{srikrishnan_probabilistic:2022}, temperature, and sea level rise would be valuable.
 \end{enumerate}

@@ -31,7 +31,7 @@ function twiny(sp::Plots.Subplot)
 end
 twiny(plt::Plots.Plot=current()) = twiny(plt[1])
 
-pct_formatter(yi) = "$(Int.(round.(yi * 100)))%"
+pct_formatter(yi) = "$(Int(round(yi * 100))) %"
 blank_formatter(yi) = ""
 
 function get_roma_colormap()
@@ -46,40 +46,42 @@ end
 
 get_colormap() = get_roma_colormap()
 
-function plot_return_period(gevs::Vector{<:Distributions.GeneralizedExtremeValue}) where {T<:HouseElevation.MCMCChains.Chains}
-    
-        rts = range(1.25, 275; length=250) # return periods
-        aeps = 1 .- 1 ./ rts # annual exceedance probability
-        xticks = [2, 5, 10, 25, 50, 100, 250]
-        ranges = [0.95, 0.80, 0.5]
+function plot_return_period(
+    gevs::Vector{<:Distributions.GeneralizedExtremeValue}
+) where {T<:HouseElevation.MCMCChains.Chains}
+    rts = range(1.25, 500; length=250) # return periods
+    aeps = 1 .- 1 ./ rts # annual exceedance probability
+    xticks = [2, 5, 10, 25, 50, 100, 250, 500]
+    ranges = [0.95, 0.80, 0.5]
 
-        p = plot(;
-            xlabel="Return Period [years]",
-            ylabel="Return Level [ft]",
-            xscale=:log,
-            legend=:bottomright,
-            xticks=(xticks, string.(xticks)),
+    p = plot(;
+        xlabel="Return Period [years]",
+        ylabel="Return Level [ft]",
+        xscale=:log,
+        legend=:bottomright,
+        xticks=(xticks, string.(xticks)),
+    )
+
+    for range in ranges
+        qup = 1 - (1 - range) / 2
+        qlow = (1 - range) / 2
+        ub = [quantile([quantile(d, xi) for d in gevs], qup) for xi in aeps]
+        lb = [quantile([quantile(d, xi) for d in gevs], qlow) for xi in aeps]
+        range_pct = Int(range * 100)
+        plot!(
+            p,
+            rts,
+            ub;
+            fillbetween=lb,
+            fillcolor=:gray,
+            fillalpha=0.35,
+            linecolor=false,
+            label="$(range_pct)% Credible Interval",
         )
-
-        for range in ranges
-            qup = 1 - (1 - range) / 2
-            qlow = (1 - range) / 2
-            ub = [quantile([quantile(d, xi) for d in gevs], qup) for xi in aeps]
-            lb = [quantile([quantile(d, xi) for d in gevs], qlow) for xi in aeps]
-            range_pct = Int(range * 100)
-            plot!(p,
-                rts,
-                ub;
-                fillbetween=lb,
-                fillcolor=:gray,
-                fillalpha=0.35,
-                linecolor=false,
-                label="$(range_pct)% Credible Interval",
-            )
-        end
-        
-        median = [quantile([quantile(d, xi) for d in gevs], 0.50) for xi in aeps]
-        plot!(p, rts, median, label="Posterior Median")
-
-        return p
     end
+
+    median = [quantile([quantile(d, xi) for d in gevs], 0.50) for xi in aeps]
+    plot!(p, rts, median; label="Posterior Median")
+
+    return p
+end

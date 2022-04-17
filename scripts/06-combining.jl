@@ -8,7 +8,8 @@ function plot_grid_scheme()
     dist = Distributions.Normal()
     ψ = quantile.(dist, [0.05, 0.3, 0.7, 0.95])
     ψ_labels = [L"$\psi_%$i$" for i in 1:length(ψ)]
-    xlimits = (-3, 3)
+    xlimits = (-3, 2.5)
+    y_ticks = [0, 0.25, 0.5, 0.75, 1]
 
     ymax = pdf(dist, 0)
     grids = [0.5 * (ψ[j] + ψ[j + 1]) for j in 1:(length(ψ) - 1)]
@@ -27,8 +28,9 @@ function plot_grid_scheme()
         bottom_margin=5Plots.mm,
         left_margin=5Plots.mm,
         size=(800, 350),
+        yticks=(y_ticks, string.(y_ticks)),
     )
-    scatter!(p, ψ, zeros(size(ψ)); label="Observations", color=colors[2], markersize=5)
+    scatter!(p, ψ, zeros(size(ψ)); label="Sampled Points", color=colors[2], markersize=5)
 
     ymax_prev = 0.0
     x_arrow = range(minimum(xlimits), 0; length=length(ψ) + 2)[2:(end - 1)]
@@ -180,6 +182,7 @@ function plot_prior_tradeoffs(
         )
 
         # plot all trade-off lines in light gray
+        #=
         for rcp in all_rcp
             for model in all_models
                 w = weights([(si.rcp == rcp) & (si.model == model) for si in s])
@@ -187,11 +190,10 @@ function plot_prior_tradeoffs(
                 plot!(p, Δh_ft, cond; label="", color=:gray, linewidth=0.5, alpha=0.5)
             end
         end
-
-        # plot the conditional beliefs
+        =#
 
         # plot the trade-off for the priors
-        for (prior, color) in zip(priors, colors)
+        for (prior, color) in zip(priors, [:red, :blue, :green])
             w = HouseElevation.make_weights(prior.dist)
             cond = vec(mean(var, w; dims=1))
             plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=3)

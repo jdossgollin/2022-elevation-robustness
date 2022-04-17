@@ -22,7 +22,7 @@ function plot_surge_gev_priors()
     # loop through all the distributions
     for (prior, c) in zip(HouseElevation.gev_priors, colors)
         plot!(
-            p, 0:0.05:30, prior.dist; label="$(prior.rt) Year Surge", linewidth=3, color=c
+            p, 0:0.05:40, prior.dist; label="$(prior.rt) Year Surge", linewidth=3, color=c
         )
     end
     savefig(p, plots_dir("surge-gev-priors.pdf"))
@@ -229,6 +229,8 @@ function plot_surge_posterior_return(
 
     # add gray lines
     p = plot_return_period(post_gevs)
+    y_ticks = [5, 7.5, 10, 12.5, 15]
+    plot!(p; yaxis=:log, yticks=(y_ticks, string.(y_ticks)))
 
     # add weibul plot pls
     xp, ys = HouseElevation.weibull_plot_pos(surge_ft)
@@ -259,13 +261,17 @@ function plot_surge_obs_return(
     xlabel!(p1, "Time [year]")
     p2 = plot_surge_posterior_return(annual, fits)
     p2 = plot(p2; ylabel="")
-    add_panel_letters!([p1]; fontsize=12)
-    annotate!(p2, [1], [8.5], text("(B)", :left, 14))
+
+    y_ticks = collect(3:10)
+    p1 = plot!(p1; yaxis=:log, yticks=(y_ticks, string.(y_ticks)))
+    p2 = plot!(p2; yaxis=:log, yticks=(y_ticks, string.(y_ticks)))
+
+    add_panel_letters!([p1, p2]; fontsize=12, loc=(0.05, 0.95))
     p = plot(
         p1,
         p2;
         link=:y,
-        ylims=(2, 9),
+        ylims=(2.5, 10),
         layout=grid(1, 2; widths=[0.6, 0.35]),
         size=[1000, 350],
         bottommargin=8mm,

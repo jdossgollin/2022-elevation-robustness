@@ -57,7 +57,7 @@ function plot_scenario_map_slr_cost(;
             kwargs = Dict{Symbol,Any}(
                 :label => false,
                 :xformatter => x -> "",
-                :bins => (LinRange(0, maximum(msl_rise_ft), 60), LinRange(0, 4.5, 60)),
+                :bins => (LinRange(0, maximum(msl_rise_ft), 40), LinRange(0, 4.5, 40)),
                 :c => cmap,
                 :clims => clims,
                 :colorbar => false,
@@ -117,7 +117,7 @@ function plot_scenario_map_slr_cost(;
         xlims=(1, 1.1),
         xshowaxis=false,
         yshowaxis=false,
-        colorbar_title="Density of SOWs",
+        colorbar_title="Count of SOWs",
         colorbar_titlefontrotation=90,
         grid=false,
         clims=clims,
@@ -177,7 +177,7 @@ function plot_scenario_map_slr_cost(;
             cbar_fake_plot,
         )...;
         layout=l,
-        size=(1500, 1000),
+        size=(1200, 750),
         dpi=250,
         link=:y,
     )
@@ -222,20 +222,24 @@ function plot_scenario_map_height_slr(;
     )
 
     x_ft = ustrip.(u"ft", x)
+
     p = heatmap(
         x_ft,
         msl_plot,
         expected_cost;
         ylabel="LSLR: $syear to $eyear [ft]",
         colorbar_title="Expected Total Costs\n[% House Value]",
+        colorbar_formatter=pct_formatter,
         c=cgrad(:plasma; rev=true),
         linewidth=0,
-        levels=30,
+        levels=LinRange(0.25, 3.25, 31),
+        #clim=(0.25, 3.25),
         xticks=(x_ticks, string.(x_ticks)),
         xlabel=L"Height Increase $\Delta h$ [ft]",
-        size=(900, 500),
+        size=(800, 450),
         bottom_margin=5mm,
         left_margin=5mm,
+        right_margin=7.5mm,
     )
     contour!(p, x_ft, msl_plot, expected_cost; linewidth=0.5, levels=25)
     savefig(p, plots_dir("scenario-map-height-slr.pdf"))

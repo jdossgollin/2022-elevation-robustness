@@ -88,6 +88,7 @@ function plot_cost_upfront(
         label=false,
         xticks=0:2:14,
         color=colors[1],
+        yformatter=pct_formatter,
     )
     # add in-line label
     annotate!(p, [8], [0.675], text("Cost of Elevating", :center, 10; color=colors[1]))

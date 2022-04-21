@@ -45,7 +45,7 @@ function plot_rcp_tradeoffs(
             ylabel=varname,
             linewidth=2,
             xticks=(x_ticks, string.(x_ticks)),
-            yformatter=y -> pct_formatter(y),
+            yformatter=pct_formatter,
             top_margin=12.5Plots.mm,
             left_margin=7.5Plots.mm,
             bottom_margin=7.5Plots.mm,

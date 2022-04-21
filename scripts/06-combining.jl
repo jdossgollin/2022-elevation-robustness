@@ -18,7 +18,7 @@ function plot_grid_scheme()
     p = plot(
         x -> cdf(dist, x);
         xticks=(vcat(ψ, grids), vcat(ψ_labels, grid_labels)),
-        linewidth=3,
+        linewidth=4,
         color=colors[1],
         label="Target Distribution",
         xlims=xlimits,
@@ -81,7 +81,7 @@ function plot_priors()
             p,
             prior.dist,
             0,
-            10;
+            12.5;
             label=prior.name,
             color=color,
             linewidth=5,
@@ -172,9 +172,9 @@ function plot_prior_tradeoffs(
         p = plot(;
             xlabel=L"Height Increase $\Delta h$ [ft]",
             ylabel=varname,
-            linewidth=2,
+            linewidth=4.5,
             xticks=(x_ticks, string.(x_ticks)),
-            yformatter=y -> pct_formatter(y),
+            yformatter=pct_formatter,
             top_margin=12.5Plots.mm,
             left_margin=7.5Plots.mm,
             bottom_margin=7.5Plots.mm,
@@ -182,7 +182,6 @@ function plot_prior_tradeoffs(
         )
 
         # plot all trade-off lines in light gray
-        #=
         for rcp in all_rcp
             for model in all_models
                 w = weights([(si.rcp == rcp) & (si.model == model) for si in s])
@@ -190,10 +189,9 @@ function plot_prior_tradeoffs(
                 plot!(p, Δh_ft, cond; label="", color=:gray, linewidth=0.5, alpha=0.5)
             end
         end
-        =#
 
         # plot the trade-off for the priors
-        for (prior, color) in zip(priors, [:red, :blue, :green])
+        for (prior, color) in zip(priors, colors)
             w = HouseElevation.make_weights(prior.dist)
             cond = vec(mean(var, w; dims=1))
             plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=3)

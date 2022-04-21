@@ -61,8 +61,8 @@ function main()
 
     # create scenario maps
     let
-        elevation_init_bfe = [-2, -1, 0, 1]u"ft" # height relative to gauge
-        x_plot = [0, 3, 6, 9]u"ft"
+        elevation_init_bfe = [-2, -0.5, 1]u"ft" # height relative to gauge
+        x_plot = [0, 4, 8]u"ft" # elevations to plot
         plot_scenario_map_slr_cost(;
             x_plot=x_plot,
             elevation_init_bfe=elevation_init_bfe,

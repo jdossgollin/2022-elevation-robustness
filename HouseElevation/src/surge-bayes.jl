@@ -9,21 +9,32 @@ using MCMCChainsStorage
 using Optim
 using StatsBase
 using Turing
+using Distributions: InverseGamma
+
+"""
+This function converts a Normal distribution to an InverseGamma distribution,
+preserving the mean and variance analytically.
+"""
+function InverseGamma(d::Distributions.Normal)
+    α = 2 + d.μ^2 / d.σ^2
+    β = (α - 1) * d.μ
+    return Distributions.InverseGamma(α, β)
+end
 
 # stationary GEV model
 gev_priors = [
-    (rt=2, dist=Distributions.TruncatedNormal(6, 3, 0, Inf)),
-    (rt=10, dist=Distributions.TruncatedNormal(8, 4, 0, Inf)),
-    (rt=100, dist=Distributions.TruncatedNormal(12, 6, 0, Inf)),
-    (rt=500, dist=Distributions.TruncatedNormal(16, 8, 0, Inf)),
+    (rt=2, dist=InverseGamma(Distributions.Normal(6, 3))),
+    (rt=10, dist=InverseGamma(Distributions.Normal(8, 4))),
+    (rt=100, dist=InverseGamma(Distributions.Normal(12, 6))),
+    (rt=500, dist=InverseGamma(Distributions.Normal(16, 8))),
 ]
 
 @model function StationaryGEV(y)
 
-    # have to put a prior to define parameters in Turing
-    μ ~ Distributions.TruncatedNormal(0, 25, 0, Inf) # lower bound should not be negative
-    σ ~ Distributions.TruncatedNormal(0, 10, 0.01, Inf) # σ > 0 by definition
-    ξ ~ Distributions.TruncatedNormal(0, 2.5, 0, Inf) # surge has lower bound => ξ>0
+    # very weak prior -- need _a_ prior to define variables in Turing
+    μ ~ Distributions.TruncatedNormal(0, 25, 0, Inf)
+    σ ~ Distributions.TruncatedNormal(0, 10, 0.001, Inf)
+    ξ ~ Distributions.TruncatedNormal(0, 2.5, 0, Inf)
 
     dist = GeneralizedExtremeValue(μ, σ, ξ)
 

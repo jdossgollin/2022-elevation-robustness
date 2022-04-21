@@ -20,7 +20,7 @@
 \tikzstyle{uncertainty} = [rectangle, draw, fill=rosso, text=grigio, text width=6.5em, text centered]
 \tikzstyle{lever} = [rectangle, draw, fill=giallo, text=nero, text width=6.5em, text centered]
 \tikzstyle{relation} = [rectangle, draw, fill=thirds, text=grigio, text width=6.5em, text centered]
-\tikzstyle{metric} = [rectangle, draw, fill=orange, text=nero, text width=6.5em, text centered]
+\tikzstyle{metric} = [rectangle, draw, fill=grigio, text=nero, text width=6.5em, text centered]
 
 \tikzstyle{line} = [draw, very thick, color=nero, ->]
 \tikzset{>=latex}
@@ -43,7 +43,7 @@
     \node [lever] (elevate) at (0, 1.5) {How high to elevate?};
     \path [line] (elevate) to (relationships);
 
-    \node [font=\color{giallo}\selectfont] at (3.5, 2.5) {\Large Metrics};
+    \node [font=\color{grigio}\selectfont] at (3.5, 2.5) {\Large Metrics};
     \node [metric] (ccost) at (3.5, 1) {Up-front\\(construction)\\cost};
     \path [line] (relationships) to (ccost);
     \node [metric] (fcost) at (3.5, -1) {Lifetime expected damages};

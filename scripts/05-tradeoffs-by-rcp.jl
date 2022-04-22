@@ -77,7 +77,7 @@ function plot_rcp_tradeoffs(
             twiny(p),
             Δh_ft,
             [mean(var[:, i]) for (i, _) in enumerate(Δh_ft)];
-            xticks=(x_ticks, string.(round.(prop_cost, digits=2))),
+            xticks=(x_ticks, pct_formatter.(prop_cost)),
             xlabel="Up-Front Cost [% House Value]",
             linewidth=0,
             alpha=0,

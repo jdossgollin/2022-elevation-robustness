@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 
 % Figures
-\usepackage{graphicx}
+\usepackage[demo]{graphicx}
 \usepackage[list=true]{subcaption}
 \graphicspath{{../../plots/}{../../tikz/}{../../img/}}
 \usepackage[section]{placeins} % require floats to appear in the section they are defined
@@ -872,13 +872,13 @@ Once this interpolation has been precomputed, calculating expected annual damage
         Statistics include the mean and standard deviation of each parameter, the naive standard error and Monte Carlo standard error (which measure uncertainty in the mean), the effective sample size, $\hat{R}$ diagnostic, and effective samples per second, which describes sampling speed.
         In general, a $\hat{R}$ value close to one is consistent with, though does not guarantee, convergence.
     }\label{tab:surge-posterior-mcmc-diagnostics}
-    \input{../../plots/surge-posterior-mcmc-diagnostics.tex}
+    %\input{../../plots/surge-posterior-mcmc-diagnostics.tex}
 \end{table}
 
 \begin{table}[h]
     \centering
     \caption{As \cref{tab:surge-posterior-mcmc-diagnostics} but for draws from the prior distribution.}\label{tab:surge-prior-mcmc-diagnostics}
-    \input{../../plots/surge-prior-mcmc-diagnostics.tex}
+    %\input{../../plots/surge-prior-mcmc-diagnostics.tex}
 \end{table}
 
 \end{document}

@@ -75,6 +75,7 @@
 \newacronym{noaa}{NOAA}{the National Oceanic and Atmospheric Administration}
 \newacronym{pdf}{PDF}{probability density function}
 \newacronym{rcp}{RCP}{representative concentration pathway}
+\newacronym{rdm}{RDM}{robust decision making}
 \newacronym{slr}{SLR}{sea level rise}
 \newacronym{ssp}{SSP}{shared socio-economic pathway}
 \newacronym[]{usace}{USACE}{United States Army Corps of Engineers}
@@ -124,7 +125,6 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
 
-% up to 1250 words
 \begin{document}
 \maketitle
 \thispagestyle{empty}
@@ -389,9 +389,9 @@ We return in \cref{sec:results-conditional} to the problem that these multiple m
 
 \subsection{Storm surges}\label{sec:case-surge}
 
-Following prior work \citep[\eg,][]{garner_slrise:2018,lempert_slr:2012,sriver_sealevel:2018}, we model annual maximum floods $y(t)$ as the sum of sea level $\overline{y}(t)$, described in the previous subsection, and annual maximum storm surges $y'(t)$, neglecting hydrodynamic effects.
+Following prior work \citep[\eg,][]{garner_slrise:2018,sriver_sealevel:2018}, we model annual maximum floods $y(t)$ as the sum of sea level $\overline{y}(t)$, described in the previous subsection, and annual maximum storm surges $y'(t)$, neglecting hydrodynamic effects.
 
-Data on storm surge comes from Sewells Point, VA (gauge 8638610) from the NOAA tides and currents dataset,  freely available to the public at \url{https://tidesandcurrents.noaa.gov/waterlevels.html}.
+Data on storm surge comes from Sewells Point, VA (gauge 8638610) from the freely available NOAA tides and currents data archive \citep{noaa_tidesandcurrents:2022}.
 Hourly recordings of water level are available from 1928 to the present; we use data from the period January 1, 1928 to December 31, 2021.
 For each calendar year we first remove the annual mean, then calculate the maximum water level.
 We refer this time series of annual maximum storm surges as $y'(t)$.
@@ -402,7 +402,7 @@ The largest recorded surge was the Chesapeake-Potomac hurricane of 1933, which c
     \centering
     \includegraphics[width=\textwidth]{surge-obs-return}
     \caption{
-        Annual maximum storm surges (after subtracting \acrlong{msl}) at Sewells Point, VA from NOAA tides and currents dataset available at \url{https://tidesandcurrents.noaa.gov/waterlevels.html}.
+        Annual maximum storm surges (after subtracting \acrlong{msl}) at Sewells Point, VA from the freely available NOAA tides and currents data archive \citep{noaa_tidesandcurrents:2022}.
         (A):
         time series of historic storms.
         Red (yellow) arrows denote notable tropical cyclones (Nor'easters).
@@ -445,7 +445,7 @@ For inference, we draw \num{10000} samples from the posterior distribution $p(\m
 Diagnostics suggest (though cannot guarantee) convergence (see \cref{tab:surge-posterior-mcmc-diagnostics}).
 We evaluate the model's fit using posterior predictive checks \citep[see][section 2.4 and references therein]{gelman_workflow:2020}.
 Using the lag 1 and 2 partial autocorrelations, sample maximum, sample minimum, sample median, and Mann-Kendall test value as Bayesian test statistics, we find that draws from the posterior predictive distribution match the observed test statistics credibly (\cref{fig:surge-test-statistics}) although panels (a) and (b) suggest the possibility of temporal structure not captured by our stationary \gls{iid} model.
-Future efforts could represent this structure by conditioning the parameters of the distribution on relevant climate indices \citep[as in][]{wong_structural:2020,farnham_orbrep:2018,farnham_jetstream:2017,ossandon_semibayesian:2021}.
+Future efforts could represent this structure by conditioning the parameters of the distribution on relevant climate indices \citep[as in][]{wong_surge:2018,farnham_orbrep:2018,farnham_jetstream:2017,ossandon_semibayesian:2021}.
 
 Other model validations lend confidence to the stationary \gls{gev} model selected.
 For example, \cref{fig:surge-obs-return}(b) shows the estimated return periods for these storm surges; the estimated return period of the (shading) matches the (dots) the empirical plotting position dots.
@@ -507,7 +507,7 @@ Their \glspl{pdf} are also plotted in \cref{fig:lsl-priors-weights}(A).
 
 We developed these priors for didactic purposes, to illustrate a range of possible beliefs.
 We can compare them, for example, with analysis published by \gls{noaa}, which project \SIlist{1.94;2.62;4.27;5.25;6.89}{ft} for the low, intermediate, low intermediate, intermediate high, and high scenarios, respectively \citep[table.~2.4]{sweet_slr:2022}.
-We can also compare to the analyses of \citet{lempert_slr:2012,sriver_sealevel:2018} which use a rescaled Beta distribution with bounds of \SIrange{255}{2508}{\milli\meter} (\SIrange{0.83}{8.2}{ft}) and a most plausible estimate of \SI{950}{\milli\meter} (\SI{3.1}{ft}).
+We can also compare to the analyses of \citet{sriver_sealevel:2018} which use a rescaled Beta distribution with bounds of \SIrange{255}{2508}{\milli\meter} (\SIrange{0.83}{8.2}{ft}) and a most plausible estimate of \SI{950}{\milli\meter} (\SI{3.1}{ft}).
 Our samples bound all of these estimates.
 
 \section{Results and discussion}\label{sec:results}
@@ -539,6 +539,7 @@ As $\Delta h$ increases, the best-case scenario becomes more expensive because u
 This analysis answers ``what-if'' questions like ``given $h_0$ and $\Delta h$, what is the range of total costs a homeowner could face if \gls{slr} over the house lifetime is \SI{1}{ft} or \SI{10}{ft}.''
 For some decision-makers, contextualizing this information against a few scenarios of \gls{slr} \citep[\eg, those of][]{sweet_slr:2022} may prove sufficient for decision making.
 This would be analogous to decision scaling methods that plot climate model projections on a scenario map of water system performance as a function of changes in key climate variables \citep{Brown:2012kb,Steinschneider:2015kk}.
+Scenario mapping is also commonly used in \gls{rdm} analyses \citep{lempert_rdm:2019,sriver_sealevel:2018}.
 However, this analysis does not shed light on cost-benefit analyses or return periods, nor does it permit quantitative comparison against other possible decisions unless strong implicit assumptions are made.
 
 \subsection{Scenario-conditional optimization}\label{sec:results-conditional}
@@ -574,6 +575,7 @@ However, conditioning simulations on a set of climate futures and physical model
 The multiple \gls{pdf} problem has also been shown in other contexts.
 For example, \citet{sharma_rcp:2021} model the reliability of stormwater infrastructure under different climate models and downscaling methods, finding diverging estimates of future rainfall hazard, even under a single \gls{rcp} scenario.
 Similarly, \citet{wong_nola:2017} construct 18 probability distribution functions for future flood risk in New Orleans, considering multiple models for ice sheet dynamics and storm surge and multiple \gls{rcp} scenarios.
+And \citet{lempert_rdm:2019}
 Although this scenario-conditional analysis is appropriate for understanding differences between models, its key limitation is that it \textbf{places the burden for deciding which model to design for onto the end user.}
 
 \subsection{Synthesizing deep uncertainties for decision analysis}\label{sec:results-synthesis}
@@ -661,8 +663,8 @@ This framework can also be applied to uncertainties in non-physical variables.
 For example, investments in water resources planning and management depend on assumptions of future water demand, availability, and technologies \citep{trindade_deeplyuncertainpathways:2019}.
 Similarly, analyses of climate change mitigation options, such as estimates of the social cost of pollutants \citep{errickson_methane:2021} or cost-minimizing energy transition pathways, are conditional on probabilistic models for inputs like technology prices and population.
 
-Of course, all models are XYZ.\james{Get feedback from Klaus here}
-Seeking decisions that perform well across a range of assumptions through robust design and flexibility can improve outcomes.
+Of course, all models are ultimately wrong \citep{box:1976}.
+Thus seeking decisions that perform well across a range of assumptions, and improving the deccision space through robust design and flexibility, can improve outcomes.
 Yet whenever decisions are compared quantitatively, assumptions about the probability of different possible futures are necessarily made.
 We call for researchers studying climate risk management to make these implicit assumptions explicit, and we suggest that coordinated guidance can help practitioners determine better design criteria.
 
@@ -895,4 +897,5 @@ Once this interpolation has been precomputed, calculating expected annual damage
     \input{../../plots/surge-prior-mcmc-diagnostics.tex}
 \end{table}
 
+% up to 1250 words
 \end{document}

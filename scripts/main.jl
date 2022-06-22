@@ -23,9 +23,7 @@ function main()
     house_value_usd = 200_000.0 # HOUSE NOT LAND VALUE
     discount_rate = 0.025 # mortgages going for 3-4.5% at the moment
     syear = 2022
-    eyear = 2092
-    # for a **VERY** rough idea of prices see
-    # https://www.zillow.com/homedetails/9638-Selby-Pl-Norfolk-VA-23503/79223088_zpid/
+    eyear = syear + 70 - 1 # 70 year lifetime including first year
 
     # get the storm surge posterior samples
     fits = get_surge_posterior()

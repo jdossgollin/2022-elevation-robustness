@@ -39,3 +39,9 @@ Alternatively, you can run all analysis as a script from the command line with
 ```bash
 julia --project scripts/main.jl
 ```
+
+## Reproducibility
+
+We do not purport to achieve bitwise reproducibility, so your results may vary slightly, but you should be able to follow the above steps to get highly similar results.
+If you are unable to reproduce our results, please open an Issue using the issues tab above.
+The more detail you are able to provide, the more readily we can track down any potential problems.

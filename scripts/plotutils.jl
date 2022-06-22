@@ -1,4 +1,5 @@
 using Colors
+using ColorSchemesa
 using Distributions
 using Plots
 
@@ -47,7 +48,9 @@ end
 get_colormap() = get_roma_colormap()
 
 function plot_return_period(
-    gevs::Vector{<:Distributions.GeneralizedExtremeValue}
+    gevs::Vector{<:Distributions.GeneralizedExtremeValue};
+    color_scheme=ColorSchemes.algae,
+    type="Posterior",
 ) where {T<:HouseElevation.MCMCChains.Chains}
     rts = range(1.25, 500; length=250) # return periods
     aeps = 1 .- 1 ./ rts # annual exceedance probability
@@ -68,20 +71,21 @@ function plot_return_period(
         ub = [quantile([quantile(d, xi) for d in gevs], qup) for xi in aeps]
         lb = [quantile([quantile(d, xi) for d in gevs], qlow) for xi in aeps]
         range_pct = Int(range * 100)
+        fillcolor = ColorSchemes.get(color_scheme, range - 0.5)
         plot!(
             p,
             rts,
             ub;
             fillbetween=lb,
-            fillcolor=:gray,
-            fillalpha=0.35,
+            fillcolor=fillcolor,
+            fillalpha=1,
             linecolor=false,
             label="$(range_pct)% Credible Interval",
         )
     end
 
     median = [quantile([quantile(d, xi) for d in gevs], 0.50) for xi in aeps]
-    plot!(p, rts, median; label="Posterior Median")
+    plot!(p, rts, median; color=ColorSchemes.get(color_scheme, 1.0), label="$(type) Median", linewidth=2)
 
     return p
 end

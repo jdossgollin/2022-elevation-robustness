@@ -122,7 +122,7 @@ function plot_surge_synthetic_experiment(annual::HouseElevation.AnnualGageRecord
 
     # add data
     xp, ys = HouseElevation.weibull_plot_pos(fake_data)
-    scatter!(p, 1 ./ xp, ys; label="Obs (Weibull Plot Pos.)", color=colors[1], alpha=1)
+    scatter!(p, 1 ./ xp, ys; label="Observations", color=:gray, alpha=1)
 
     plot!(p; legend=:topleft)
 
@@ -234,7 +234,7 @@ function plot_surge_posterior_return(
 
     # add weibul plot pls
     xp, ys = HouseElevation.weibull_plot_pos(surge_ft)
-    scatter!(p, 1 ./ xp, ys; label="Obs (Weibull Plot Pos.)", color=colors[1], alpha=1)
+    scatter!(p, 1 ./ xp, ys; label="Observations", color=:gray, alpha=1)
     return p
 end
 
@@ -249,7 +249,7 @@ function plot_surge_prior_return() where {T<:HouseElevation.MCMCChains.Chains}
     df = DataFrames.DataFrame(prior_fits)
     gevs = [GeneralizedExtremeValue(row[:μ], row[:σ], row[:ξ]) for row in eachrow(df)]
 
-    p = plot_return_period(gevs)
+    p = plot_return_period(gevs; type="Prior")
     savefig(p, plots_dir("surge-prior-return.pdf"))
     return p
 end
@@ -266,7 +266,9 @@ function plot_surge_obs_return(
     p1 = plot!(p1; yaxis=:log, yticks=(y_ticks, string.(y_ticks)))
     p2 = plot!(p2; yaxis=:log, yticks=(y_ticks, string.(y_ticks)))
 
-    add_panel_letters!([p1, p2]; fontsize=12, loc=(0.05, 0.95))
+    fontsize = 10
+    annotate!(p1, (0.05, 0.95), text("(A)", :left, fontsize))
+    annotate!(p2, (1/1000, 0.95), text("(B)", :left, fontsize))
     p = plot(
         p1,
         p2;

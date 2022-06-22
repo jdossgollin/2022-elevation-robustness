@@ -30,7 +30,7 @@ function plot_grid_scheme()
         size=(800, 350),
         yticks=(y_ticks, string.(y_ticks)),
     )
-    scatter!(p, ψ, zeros(size(ψ)); label="Sampled Points", color=colors[2], markersize=5)
+    scatter!(p, ψ, zeros(size(ψ)); label="Sampled Points", color=colors[3], markersize=5)
 
     ymax_prev = 0.0
     x_arrow = range(minimum(xlimits), 0; length=length(ψ) + 2)[2:(end - 1)]
@@ -51,20 +51,25 @@ function plot_grid_scheme()
             linestyle=:dot,
         )
         plot!(p, [xmax, xmax], [0, ymax]; label=false, color=colors[3], linestyle=:dash)
+        
+        
+        # weights
         plot!(
             p,
             [x_arrow[i], x_arrow[i]],
             [ymax_prev, ymax];
             color=colors[5],
             linewidth=3,
-            label=false,
+            label= i==1 ? "Weights" : false,
         )
+
         annotate!(
             p,
             [x_arrow[i] + 0.2],
             [(ymax_prev + ymax) / 2],
             text(L"$w_%$i$", :center, 10; color=colors[5]),
         )
+        
         ymax_prev = ymax
     end
     savefig(p, plots_dir("grid-sketch.pdf"))
@@ -181,20 +186,11 @@ function plot_prior_tradeoffs(
             legend=ifelse(var == first(vars), :topright, false),
         )
 
-        # plot all trade-off lines in light gray
-        for rcp in all_rcp
-            for model in all_models
-                w = weights([(si.rcp == rcp) & (si.model == model) for si in s])
-                cond = vec(mean(var, w; dims=1))
-                plot!(p, Δh_ft, cond; label="", color=:gray, linewidth=0.5, alpha=0.5)
-            end
-        end
-
         # plot the trade-off for the priors
         for (prior, color) in zip(priors, colors)
             w = HouseElevation.make_weights(prior.dist)
             cond = vec(mean(var, w; dims=1))
-            plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=3)
+            plot!(p, Δh_ft, cond; label=prior.name, color=color, linewidth=4.5)
         end
 
         # add the cost on upper x axis

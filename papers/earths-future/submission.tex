@@ -53,8 +53,22 @@
 \newcommand{\usd}[1]{\SI{#1}[\$]{}}
 
 % cite things in supplemental info file
-\usepackage{xr}
-\externaldocument{supplemental}
+% see https://www.overleaf.com/learn/how-to/Cross_referencing_with_the_xr_package_in_Overleaf
+% it's a big strange for Overleaf!
+\usepackage{xr-hyper}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+\newcommand*{\myexternaldocument}[1]{%
+    \externaldocument{#1}%
+    \addFileDependency{#1.tex}%
+    \addFileDependency{#1.aux}%
+}
+\myexternaldocument{supplemental}
 
 % this goes last
 \usepackage{cleveref}

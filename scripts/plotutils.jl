@@ -1,5 +1,5 @@
 using Colors
-using ColorSchemesa
+using ColorSchemes
 using Distributions
 using Plots
 
@@ -85,7 +85,14 @@ function plot_return_period(
     end
 
     median = [quantile([quantile(d, xi) for d in gevs], 0.50) for xi in aeps]
-    plot!(p, rts, median; color=ColorSchemes.get(color_scheme, 1.0), label="$(type) Median", linewidth=2)
+    plot!(
+        p,
+        rts,
+        median;
+        color=ColorSchemes.get(color_scheme, 1.0),
+        label="$(type) Median",
+        linewidth=2,
+    )
 
     return p
 end

@@ -183,9 +183,9 @@
 % \end{keypoints}
 
 \begin{keypoints}
-  \item Decisions about how to manage climate risks are often made under deep uncertainty
+  \item Decisions about how to manage climate risks are often made under deep uncertainty.
   \item We introduce a Bayesian framework to transparently synthesize and characterize deep uncertainties with the goal to support decision-making
-  \item We demonstrate the framework using a simple case study of coastal flood risk management
+  \item We demonstrate the framework using a simple case study of house elevation for coastal flood risk management
 \end{keypoints}
 
 %% ------------------------------------------------------------------------ %%
@@ -210,11 +210,11 @@
 %% \begin{abstract} starts the second page
 
 \begin{abstract}
-  Projections of future climate risks can vary considerably between sources without a  consensus about their  relative probability.
+  Projections of future climate risks can vary considerably between sources without consensus regarding their relative probability.
   This deep uncertainty poses considerable communication and decision-analytical challenges.
   One such challenge is how to present trade-offs under deep uncertainty in a salient and interpretable manner.
   Some common approaches include analyzing a small subset of projections or invoking Laplace's principle of insufficient reason to justify a simple average.
-  These approaches (i) can underestimate risks, (ii) provide little insights into which assumptions drive decision-relevant outcomes, and (iii) can nudge how people choose their decisions-making frameworks.
+  These approaches can underestimate risks, hide deep uncertainties, and provide little insights into which assumptions drive decision-relevant outcomes.
   Here we introduce and demonstrate a transparent Bayesian framework for synthesizing deep uncertainties to inform decision support.
   The first step of this workflow is to create an ensemble of simulations representing possible futures and analyze them through standard exploratory modeling techniques.
   Next, a small set of probability distributions representing subjective beliefs over possible futures is used to weight the scenarios.
@@ -227,13 +227,13 @@
 What are sound strategies to manage risks driven by climatic changes?
 Addressing this question is complicated by the large uncertainties surrounding projections of the coupled natural-human systems.
 These uncertainties often arise from choices experts have to make, for example about technical detail on how to model future water levels.
-Different experts can disagree about these choices and provide different plausible projections.
+Different experts can disagree about these choices, leading to different plausible projections.
 Analyzing decisions in such a situation of deep uncertainty poses nontrivial challenges.
-For one, just picking one of these projections or just an average can lead to poor decisions.
-On the other extreme, communicating results separately for all projections can overwhelm decision-makers.
+At one extreme, just picking a single representative projection can lead to under-estimation of risk and poor decisions.
+At the other extreme, communicating results separately for each projection can overwhelm decision-makers.
 To make matters worse, typical approaches to this problem are mostly silent on what assumptions make a difference for the decisions at hand.
 We develop and demonstrate a framework to address these challenges.
-The framework provides a transparent approach (i) to combine a large number of deeply uncertain projections to a more understandable and smaller sample and (ii) to provide insights as to how assumptions and modeling choices made by experts influence decisions.
+The framework provides a transparent approach to (i) combine a large number of deeply uncertain projections to a more understandable and smaller sample and (ii) provide insights as to how assumptions and modeling choices made by experts influence decisions.
 We demonstrate the approach with a relatively simple example question of how high to elevate a house in the face of deeply uncertain projections about future water levels.
 
 %% ------------------------------------------------------------------------ %%
@@ -244,9 +244,8 @@ We demonstrate the approach with a relatively simple example question of how hig
 
 \section{Introduction}\label{sec:introduction}
 
-Many critical infrastructure services around the world are aging and inadequate for a changing climate \cite<\eg,>[]{doss-gollin_txtreme:2021,doss-gollin_fatalism:2020,chester_reliable:2020}.
-Looking to the future, it is expected that changes to regulation, economics and finance, patterns of population and infrastructure use, as well as climate, will further stress infrastructure systems.
-This motivates the question: which possible futures should infrastructure systems and components be designed for?
+Many critical infrastructure services around the world are aging and inadequate, and anticipated changes to regulation, economics and finance, patterns of population and infrastructure use, and climate challenge their ability to meet societal needs \cite<\eg,>[]{doss-gollin_txtreme:2021,doss-gollin_fatalism:2020,chester_reliable:2020,ho_dams:2017}.
+The need to upgrade existing infrastructure and build new facilities motivates the question: for which possible futures should infrastructure systems and components be designed?
 The answer to this question depends in part on values: intrinsic trade-offs between safety, performance, cost, and other objectives depend on context and stakeholder preferences \cite{keller_management:2021} and are often regulated by statue or industry guidelines.
 For example, hospitals and critical infrastructure are generally designed to a higher standard of risk protection than ordinary buildings.
 At the same time, performance depends upon future conditions, and so decisions about which scenario to design for are necessarily subject to implicit or explicit assumptions about the likelihood or possibility of different future conditions.
@@ -264,20 +263,20 @@ For example, some levees in the Netherlands are required to be designed such tha
 There are many advantages to standards-based design.
 In particular, these heuristics are scalable and explainable, do not require complex analysis to apply, and are fair in at least a procedural sense.
 However, there are also limitations.
-In particular, this sort of one-size-fits-all guidance may not be an efficient or desirable way to balance tradeoffs.
+In particular, this sort of one-size-fits-all guidance may not be an efficient or desirable way to balance tradeoffs between metrics of stakeholder values such as sense of place, distributive justice, economic efficiency, and safety \cite{keller_management:2021}.
 This has motivated economically informed approaches, like risk-based design and cost benefit analysis \cite{eijgenraam_flooding:2014,vandantzig_dike:1956,xian_elevation:2017}, that place ``a strong emphasis upon a proportionate response to risk, so that the amount invested in risk reduction is in proportion to the magnitude of the risk and the cost-effectiveness with which that risk may be reduced'' \cite{merz_fluvial:2010}.
 These quantitative cost-benefit analyses also rely on probabilistic descriptions of relevant hazard, and may be particularly sensitive to representation of tail probabilities.
 
-Currently used methods for estimating these \glspl{pdf} emphasize data-driven, nominally objective methods that can be applied consistently across locations.
-For example, \gls{usgs} Bulletin 17C specifies procedures for estimating flood frequency and \gls{noaa} Atlas 14 provides estimates of the intensity, duration, and frequency of extreme rainfall.
+Currently methods for estimating the \glspl{pdf} of climate hazards used in standard-setting and decision-making emphasize nominally objective methods that can be applied consistently across locations.
+For example, \gls{usgs} Bulletin 17C specifies procedures for estimating flood frequency \cite{bulletin17c:2019} and \gls{noaa} Atlas 14 provides estimates of the intensity, duration, and frequency of extreme rainfall \cite{atlas14_texas:2018}.
 Among several statistical assumptions these analyses make that have been recently called into question is stationarity \cite<the assumption that past and future hazard come from the same \gls{pdf}; see>[for a review]{merz_review:2014}.
 For example, clear trends in extreme rainfall are apparent across much of southeastern Texas \cite{fagnant_spatiotemporal:2020,nielsen-gammon_txrainfall:2020}, and trends in many other hazards are consistent with observations \cite<see>[for a comprehensive summary]{ipcc_impacts:2022}.
 While some methods have been proposed for incorporating trends into these analyses \cite<see>[for a review]{Salas:2018ge}, these assume specific forms of nonstationarity which may not fully represent physical processes or true levels of uncertainty \cite{DossGollin:2019,Montanari:2014hl,Serinaldi:2015bq}.
-Ultimately, the difficulty of incorporating nonstationarity into existing frameworks has led to continued reliance on stationarity despite recognition of the associated limitations (see \cite{bulletin17c:2019}, p.~2, or \cite{atlas14_texas:2018} p.~A.4-42).
+Ultimately, the difficulty of incorporating nonstationarity into existing frameworks has led to continued reliance on stationarity despite recognition of the associated limitations as discussed in p.~2 of \citeA{bulletin17c:2019} and p.~A.4-42 of \citeA{atlas14_texas:2018}.
 
 \subsection{Emerging paradigms}
 
-Projecting nonstationary hazard is difficult because many future hazards depend on intrinsically unpredictable human decisions (\eg, the rate of future greenhouse gas emissions) or on physical processes that are poorly constrained by existing data \cite<\eg, collapse of the West Antarctic ice sheet; see>[]{deconto_antarctica:2016}.
+Projecting nonstationary hazard is difficult because many future hazards depend on intrinsically unpredictable human decisions (\eg, the rate of future greenhouse gas emissions) or on physical processes that are poorly constrained by existing data \cite<\eg, collapse of the West Antarctic ice sheet;>[]{deconto_antarctica:2016}.
 In other words, they are deeply uncertain \cite{keller_management:2021,walker_deep:2013,lempert_complex:2002}.
 These deeply uncertain nonstationary hazards challenge not only the existing stationary estimates but, more fundamentally, the premise that objective estimates of future hazard exist and can be estimated empirically.
 
@@ -301,7 +300,7 @@ We are motivated by parallels between decision making under deep uncertainty and
 In the literature on decision making under deep uncertainty, this has led to recognition of the need to develop strategies that are robust to model imperfections.
 We find parallels to this challenge in the Bayesian literature on model selection, particularly in the ``$\mathcal{M}$-open'' case in which there is no ``true'' model to identify and all models are imperfect representations of reality.
 This is a theoretical contrast to the ``$\mathcal{M}$''-closed case in which a true model can be identified and written down but is one amongst finitely many models from which an analyst has to choose as well as the ``$\mathcal{M}$''-complete case in which a true model exists but is inaccessible in the sense that even though it can be conceptualized it cannot be written down \cite{bernardo_bayesian:1994}.
-Whereas model selection in the $\mathcal{M}$-closed case seeks to asymptotically identify the true model from a set of candidate models, model selection in the $\mathcal{M}$-open case emphasizes a subjective view, both of probability itself and of the modeling process, for which probability offers a self-consistent language with which to reason about the unknown rather than a statement of objective truth (see \cite{gelman_philosophy:2013}, \cite{ramsey_probability:2016}, or \cite{jaynes_probability:2003} for a discussion of Bayesian philosophy and \cite{Piironen:2017eh} for a technical discussion of methods for model selection).
+Whereas model selection in the $\mathcal{M}$-closed case seeks to asymptotically identify the true model from a set of candidate models, model selection in the $\mathcal{M}$-open case emphasizes a subjective view, both of probability itself and of the modeling process, for which probability offers a self-consistent language with which to reason about the unknown rather than a statement of objective truth (see \citeA{gelman_philosophy:2013}, \citeA{ramsey_probability:2016}, or \citeA{jaynes_probability:2003} for a discussion of Bayesian philosophy and \citeA{Piironen:2017eh} for a technical discussion of methods for model selection).
 From a practical perspective, model selection in the $\mathcal{M}$-open case emphasizes building models iteratively, simulating the consequences of these models, and subsequently using these simulations to critique and improve them \cite{gelman_workflow:2020}.
 
 In this paper we offer a first conceptual step towards bridging the fields of \gls{dmdu} and Bayesian model building.

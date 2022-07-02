@@ -18,10 +18,15 @@ include("06-combining.jl")
 
 function main()
 
+    # uses notation from paper:
+    # s = vector of scenarios
+    # x = decision vector
+    # u = metrics
+
     # define some constants
     house_floor_area = 1500u"ft^2"
     house_value_usd = 200_000.0 # HOUSE NOT LAND VALUE
-    discount_rate = 0.025 # mortgages going for 3-4.5% at the moment
+    discount_rate = 0.025
     syear = 2022
     eyear = syear + 70 - 1 # 70 year lifetime including first year
 
@@ -43,7 +48,6 @@ function main()
     end
 
     # make some plots of the sea level (BRICK) data
-    # uses notation from paper: s = set of all scenarios
     let
         s = HouseElevation.get_lsl(; syear=syear, eyear=2125)
         plot_lsl_evolution(s)
@@ -90,6 +94,8 @@ function main()
             house_value_usd=house_value_usd,
             overwrite=false,
         )
+
+        # plot expected costs as a function of Δh annd LSRL
         plot_scenario_map_height_slr(; x=x, s=s, u=u, house_value_usd=house_value_usd)
 
         # plot tradeoffs by RCP scenario

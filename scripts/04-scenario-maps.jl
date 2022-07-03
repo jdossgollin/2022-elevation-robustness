@@ -72,10 +72,15 @@ function plot_scenario_map_slr_cost(;
                     :title_align => :center,
                 )
             elseif row == N_row
+                kwargs[:xformatter] = identity
                 push!(
-                    kwargs, :xlabel => "LSLR: $syear to $eyear [ft]", :bottommargin => 7.5mm
+                    kwargs,  :bottommargin => 7.5mm
                 )
-                kwargs[:xformatter] = x -> x # update it
+                if col == 2
+                    push!(
+                    kwargs, :xlabel => "SLR: $syear to $eyear [ft]"
+                )
+                end
             end
 
             # left column has ylabel, right hgas h₀
@@ -227,7 +232,7 @@ function plot_scenario_map_height_slr(;
         x_ft,
         msl_plot,
         expected_cost;
-        ylabel="LSLR: $syear to $eyear [ft]",
+        ylabel="SLR from $syear to $eyear [ft]",
         colorbar_title="Expected Total Costs\n[% House Value]",
         colorbar_formatter=pct_formatter,
         c=cgrad(:plasma; rev=true),

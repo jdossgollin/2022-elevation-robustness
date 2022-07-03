@@ -268,7 +268,7 @@ function plot_surge_obs_return(
 
     fontsize = 10
     annotate!(p1, (0.05, 0.95), text("(A)", :left, fontsize))
-    annotate!(p2, (1/1000, 0.95), text("(B)", :left, fontsize))
+    annotate!(p2, (1 / 1000, 0.95), text("(B)", :left, fontsize))
     p = plot(
         p1,
         p2;

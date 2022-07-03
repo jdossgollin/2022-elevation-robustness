@@ -11,9 +11,7 @@ function plot_rcp_tradeoffs(
 
     # define constant
     model_rcp_plot = (
-        (rcp=2.6, model="BRICK Slow"),
-        (rcp=6.0, model="K14"),
-        (rcp=8.5, model="DP16"),
+        (rcp=2.6, model="BRICK Slow"), (rcp=6.0, model="K14"), (rcp=8.5, model="DP16")
     )
 
     all_rcp = unique([si.rcp for si in s])
@@ -36,10 +34,7 @@ function plot_rcp_tradeoffs(
     ]
     vars = [total_cost, led]
 
-    for (var, varname) in zip(
-        vars,
-        varnames,
-    )
+    for (var, varname) in zip(vars, varnames)
         p = plot(;
             xlabel=L"Height Increase $\Delta h$ [ft]",
             ylabel=varname,

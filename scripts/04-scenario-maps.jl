@@ -73,13 +73,9 @@ function plot_scenario_map_slr_cost(;
                 )
             elseif row == N_row
                 kwargs[:xformatter] = identity
-                push!(
-                    kwargs,  :bottommargin => 7.5mm
-                )
+                push!(kwargs, :bottommargin => 7.5mm)
                 if col == 2
-                    push!(
-                    kwargs, :xlabel => "SLR: $syear to $eyear [ft]"
-                )
+                    push!(kwargs, :xlabel => "SLR: $syear to $eyear [ft]")
                 end
             end
 

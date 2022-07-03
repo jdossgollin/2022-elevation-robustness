@@ -1,5 +1,6 @@
-# 2021-elevation-robustness
+# Repository for "A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management"
 
+This is the GitHub repository for the paper "A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management" by James Doss-Gollin and Klaus Keller.
 This code is developed by James Doss-Gollin.
 If you use this code, please cite our paper:
 

@@ -21,6 +21,8 @@ The more detail you are able to provide, the more readily we can track down any 
 All code has been developed using Julia 1.6, specifically the long term support (LTS) version 1.6.5.
 You can download this version of Julia at [https://julialang.org/downloads/](https://julialang.org/downloads/).
 
+If you've never used Julia before, the [course webpage](https://jdossgollin.github.io/environmental-data-science/) has instructions for getting started.
+
 ### Install Packages
 
 This repository uses a Julia environment.

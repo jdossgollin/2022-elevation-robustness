@@ -1,8 +1,8 @@
-# Repository for "A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management"
+# A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management
 
-This is the GitHub repository for the paper "A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management" by James Doss-Gollin and Klaus Keller.
+This is the GitHub repository for the paper _**A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management**_ by James Doss-Gollin and Klaus Keller.
 This code is developed by James Doss-Gollin.
-If you use this code, please cite our paper:
+If you use our code, please cite our paper:
 
 ```bibtex
 TBD
@@ -31,7 +31,7 @@ using Pkg
 Pkg.instantiate()
 ```
 
-*or* open `Pkg` mode in the REPL (by typing `]`) and run `instantiate`.
+_or_ open `Pkg` mode in the REPL (by typing `]`) and run `instantiate`.
 
 ### Running
 

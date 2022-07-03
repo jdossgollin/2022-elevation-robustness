@@ -51,8 +51,7 @@ function plot_grid_scheme()
             linestyle=:dot,
         )
         plot!(p, [xmax, xmax], [0, ymax]; label=false, color=colors[3], linestyle=:dash)
-        
-        
+
         # weights
         plot!(
             p,
@@ -60,7 +59,7 @@ function plot_grid_scheme()
             [ymax_prev, ymax];
             color=colors[5],
             linewidth=3,
-            label= i==1 ? "Weights" : false,
+            label=i == 1 ? "Weights" : false,
         )
 
         annotate!(
@@ -69,7 +68,7 @@ function plot_grid_scheme()
             [(ymax_prev + ymax) / 2],
             text(L"$w_%$i$", :center, 10; color=colors[5]),
         )
-        
+
         ymax_prev = ymax
     end
     savefig(p, plots_dir("grid-sketch.pdf"))

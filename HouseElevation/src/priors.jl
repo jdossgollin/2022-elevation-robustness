@@ -21,17 +21,15 @@ function write_priors(fname::String)
     priors = get_priors()
     df = vcat(
         [
-            DataFrame(
+            DataFrame([
+                "Name" => String(p.name),
+                L"$\alpha$" => p.dist.α,
+                L"$\theta$" => p.dist.θ,
                 [
-                    "Name" => String(p.name),
-                    L"$\alpha$" => p.dist.α,
-                    L"$\theta$" => p.dist.θ,
-                    [
-                        "Q$(q*100)" => round(quantile(p.dist, q); digits=2) for
-                        q in [0.025, 0.25, 0.5, 0.75, 0.975]
-                    ]...,
-                ],
-            ) for p in priors
+                    "Q$(q*100)" => round(quantile(p.dist, q); digits=2) for
+                    q in [0.025, 0.25, 0.5, 0.75, 0.975]
+                ]...,
+            ],) for p in priors
         ]...,
     )
     tex_str = Latexify.latexify(

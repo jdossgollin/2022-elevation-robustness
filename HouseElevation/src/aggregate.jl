@@ -14,10 +14,8 @@ end
 """
 Calculate the weights
 """
-function make_weights(
-    prior::T; σ=0.01
-) where {T<:Distributions.UnivariateDistribution}
-    s = get_lsl(syear=2022, eyear=2100)
+function make_weights(prior::T; σ=0.01) where {T<:Distributions.UnivariateDistribution}
+    s = get_lsl(; syear=2022, eyear=2100)
     y = ustrip.(u"ft", get_year_data(s, 2100))
     noise = rand(Normal(0, σ), length(y))
     y = y .+ noise

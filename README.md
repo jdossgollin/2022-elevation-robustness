@@ -1,5 +1,7 @@
 # A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management
 
+[![DOI](https://zenodo.org/badge/357754608.svg)](https://zenodo.org/badge/latestdoi/357754608)
+
 This is the GitHub repository for the paper _**A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management**_ by James Doss-Gollin and Klaus Keller.
 This code is developed by James Doss-Gollin.
 If you use our code, please cite our paper:
@@ -83,4 +85,5 @@ This repository contains a live repository of our code, incorporating updates an
 We have used Zenodo to archive the precise versions of our code used to generate journal submissions.
 Please see:
 
-1. (Empty for now)
+1. [10.5281/zenodo.6799457](doi.org/10.5281/zenodo.6799457): code for generating preprint
+

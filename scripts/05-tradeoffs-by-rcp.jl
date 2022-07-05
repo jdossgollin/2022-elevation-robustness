@@ -83,9 +83,6 @@ function plot_rcp_tradeoffs(
     end
 
     add_panel_letters!(p_archive; fontsize=12, loc=(0.1, 0.95))
-    for p in p_archive
-        annotate!(p, (0.05, 0.05), text("😃", :center, 16))
-    end
 
     # add horizontal and vertical areas
     harrow = plot(

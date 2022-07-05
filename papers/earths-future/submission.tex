@@ -3,11 +3,9 @@
 %% required packages
 \usepackage{lineno}
 \usepackage[inline]{trackchanges} %for better track changes. finalnew option will compile document with changes incorporated.
-\usepackage{soul}
 
 % Figures
 \usepackage{graphicx}
-\usepackage[list=true]{subcaption}
 \graphicspath{{../../plots/}{../../tikz/}{../../img/}}
 \usepackage[section]{placeins} % require floats to appear in the section they are defined
 
@@ -217,8 +215,8 @@ We demonstrate the approach with a relatively simple example question of how hig
 
 \section{Introduction}\label{sec:introduction}
 
-Many critical infrastructure services around the world are aging \cite{ho_dams:2017}.
-Further, anticipated changes to regulation, economics and finance, patterns of population and infrastructure use, and climate challenge their ability to meet their design objectives \cite{doss-gollin_txtreme:2021,doss-gollin_fatalism:2020,chester_reliable:2020}.
+Many critical infrastructure services around the world are aging \cite<\eg,>{ho_dams:2017}.
+Moreover, anticipated changes to regulation, economics and finance, patterns of population and infrastructure use, and climate challenge their ability to meet their design objectives \cite{doss-gollin_txtreme:2021,doss-gollin_fatalism:2020,chester_reliable:2020}.
 The need to upgrade and expand infrastructure motivates the question: for which possible futures should infrastructure systems and components be designed?
 The answer to this question depends in part on values: intrinsic trade-offs between safety, performance, cost, and other objectives depend on context and stakeholder preferences \cite{keller_management:2021} and are often regulated by statute or industry guidelines \cite{bruneau_multihazard:2017}.
 For example, hospitals and critical infrastructure are generally designed to a higher standard of risk protection than ordinary buildings \cite{asce_7-10:2013}.
@@ -244,14 +242,14 @@ These quantitative cost-benefit analyses also rely on probabilistic descriptions
 The approaches currently used to estimate the \glspl{pdf} of climate hazards used in standard-setting and decision-making emphasize nominally objective methods that can be applied consistently across locations.
 For example, \gls{usgs} Bulletin 17C specifies procedures for estimating flood frequency \cite{bulletin17c:2019} and \gls{noaa} Atlas 14 provides estimates of the intensity, duration, and frequency of extreme rainfall \cite{atlas14_texas:2018}.
 Among several statistical assumptions these analyses make that have been recently called into question is stationarity \cite<the assumption that past and future hazard come from the same \gls{pdf}; see>[for a review]{merz_review:2014}.
-For example, clear trends in extreme rainfall are apparent across much of southeastern Texas \cite{fagnant_spatiotemporal:2020,nielsen-gammon_txrainfall:2020}, and trends in many other hazards for other locations are consistent with observations \cite<see>[for a comprehensive summary]{ipcc_impacts:2022}.\footnote{Klaus comment TBD}
+For example, clear trends in extreme rainfall are apparent across much of southeastern Texas \cite{fagnant_spatiotemporal:2020,nielsen-gammon_txrainfall:2020}, and trends in many other hazards for other locations are consistent with observations \cite<see>[for a comprehensive summary]{ipcc_impacts:2022}.
 While some methods have been proposed for incorporating trends into these analyses \cite<see>[for a review]{Salas:2018ge}, these assume specific forms of nonstationarity which may not fully represent physical processes or true levels of uncertainty \cite{doss-gollin_robustadaptation:2019,Montanari:2014hl,Serinaldi:2015bq}.
 Ultimately, the difficulty of incorporating nonstationarity into existing frameworks has led to continued reliance on stationarity despite recognition of the associated limitations as discussed in p.~2 of \citeA{bulletin17c:2019} and p.~A.4-42 of \citeA{atlas14_texas:2018}.
 
 \subsection{Emerging paradigms}
 
 Projecting nonstationary hazard is difficult because many future hazards depend on human decisions (\eg, future greenhouse gas emissions) or on physical processes that are poorly constrained by existing data \cite<\eg, collapse of the West Antarctic ice sheet;>[]{deconto_antarctica:2016}.
-In other words, they are deeply uncertain \cite{keller_management:2021,walker_deep:2013,lempert_complex:2002}.
+In other words, they are deeply uncertain \cite{keller_management:2021,walker_deep:2013,lempert_complex:2002,haasnoot_sealevelrise:2021}.
 These deeply uncertain nonstationary hazards challenge not only the existing stationary estimates but, more fundamentally, the premise that objective estimates of future hazard exist and can be estimated empirically.
 
 Recognizing the challenges of \gls{dmdu}, many frameworks for identifying robust decisions have been proposed.
@@ -288,7 +286,8 @@ We proceed as follows.
 In \cref{sec:analysis} we present three formal decision analytic frameworks for analyzing an ensemble of \gls{slr} simulations, building through existing approaches for exploratory modeling (\cref{sec:analysis-explore}) and scenario analysis (\cref{sec:analysis-condition}) towards a formal Bayesian method for transparently synthesizing deep uncertainty through subjective prior beliefs (\cref{sec:analysis-synthesize}).
 In \cref{sec:case-study} we describe the case study in detail.
 Next in \cref{sec:results} we present results for each of the three decision lenses and discuss the advantages and limitations of each theoretical approach.
-Finally in \cref{sec:conclusions} we discuss key findings, future research needs, and implications for policy and practice.
+In \cref{sec:caveats} we discuss limitations of the study and future research needs.
+Finally in \cref{sec:conclusions} we discuss key findings and implications for policy and practice.
 
 \section{Decision analytic framework}\label{sec:analysis}
 
@@ -321,7 +320,7 @@ Despite the aversion to strong assumptions about the likelihood of different fut
 \subsection{Condition}\label{sec:analysis-condition}
 
 Although exploratory modeling is a useful framework for understanding systems, there are many questions that it cannot answer.
-For example, answering questions like ``what is the 95th percentile of metric $u$ under decision $x$'' or ``which decision minimizes expected damages'' or ``what is the probability of exceeding a critical threshold'' requires constructing estimators for the probability distribution over outcomes \cite<see>{schneider_scenarios:2002}.
+For example, answering questions like ``what is the 95th percentile of metric $u$ under decision $x$'' or ``which decision minimizes expected damages'' or ``what is the probability of exceeding a critical threshold'' requires constructing estimators for the probability distribution over outcomes \cite<see>[for a general discussion]{schneider_scenarios:2002}.
 
 One way to interpret an ensemble of \glspl{sow} is as \gls{iid} draws from some true data generating process.
 This commonly arises when a single deep uncertainty (\eg, an emissions pathway) is used as an input for a fully probabilistic model; we call this scenario-conditional probabilistic analysis.
@@ -383,7 +382,7 @@ However, we posit that since we cannot be ``right,'' it is valuable to maximize 
 \section{Demonstrating the concept with a case study}\label{sec:case-study}
 
 To illustrate the proposed decision analytic framework, we model a one-time decision of whether to elevate a house, and if so by how much (\cref{fig:xlrm}).
-Following \citeA{zarekarizi_suboptimal:2020}, we focus on a case study of a \emph{hypothetical} house in Norfolk, VA.
+Following the approach outlined in \citeA{zarekarizi_suboptimal:2020}, we focus on a case study of a \emph{hypothetical} house in Norfolk, VA.
 For interpretability, we focus on deep uncertainty in \gls{msl} and approximate other model parameters as shallow uncertainties as shown in \cref{tab:uncertainties}.
 We use the notation developed in the previous section to describe the case study.
 Specifically,
@@ -427,6 +426,7 @@ In the remainder of this section we describe data sources and treatment of \gls{
     A \acrfull{sow} consists of a description of the uncertain factors (red).
     We model a problem with a single lever (yellow), which is how high to elevate a house ($\Delta h$).
     For each \acrshort{sow} (red) and each value of $\Delta h$, the system model (blue) is used to calculate performance metrics (gray).
+    We also compute a third metric, expected lifetime costs, which is the sum of up-front costs and lifetime expected damages.
   }\label{fig:xlrm}
 \end{figure}
 
@@ -562,7 +562,7 @@ We use a Gamma distribution for all three priors, parameterized following \cref{
 \Cref{tab:slr-priors} specifies the parameters of these distributions, as well as some quantiles of the distributions.
 Their \glspl{pdf} are also plotted in \cref{fig:lsl-priors-weights}(A).
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \caption{
     Subjective priors over \gls{slr} from 2022 to 2100, \ie $p_\mathrm{belief}(\psi)$.
@@ -634,6 +634,7 @@ As discussed in \cref{sec:analysis-condition}, this allows a formal estimation o
     (B): trade-off between up-front cost and lifetime expected damages (eq.~\ref{eq:led}).
     Light gray lines show estimates for all 16 models (four \gls{rcp} scenarios times four physical parameterizations) considered.
     Colored lines highlight three representative models for emphasis.
+    Gray lines and the smiling face in the lower left corner indicate the direction of preference.
   }\label{fig:tradeoffs-by-rcp}
 \end{figure}
 
@@ -649,7 +650,7 @@ This approach is attractive because it allows modelers to focus on their domain 
 However, conditioning simulations on a set of climate futures and physical models presents what we term ``the multiple \gls{pdf} problem'' because it leaves decision makers with many \glspl{pdf} to choose from and hence many trade-off curves to navigate.
 The multiple \gls{pdf} problem has also been shown in other contexts.
 For example, \citeA{sharma_rcp:2021} model the reliability of stormwater infrastructure under different climate models and downscaling methods, finding diverging estimates of future rainfall hazard, even under a single \gls{rcp} scenario.
-Similarly, \citeA{wong_nola:2017} construct 18 probability distribution functions for future flood risk in New Orleans, considering multiple models for ice sheet dynamics and storm surge and multiple \gls{rcp} scenarios.
+Similarly, \citeA{wong_nola:2017} construct 18 probability distribution functions for future flood risk in New Orleans, considering multiple models for ice sheet dynamics and storm surge and multiple \gls{rcp} scenarios and \citeA{haasnoot_sealevelrise:2021} identify global adaptation needs for different scenarios of \gls{slr}.
 Although this scenario-conditional analysis is appropriate for understanding differences between models, its key limitation is that it \textbf{places the burden for deciding which model to design for onto the end user.}
 
 \subsection{Synthesizing deep uncertainties for decision analysis}\label{sec:results-synthesis}
@@ -693,14 +694,7 @@ Under all assumptions, elevating by only a few feet is impractical because it in
   }\label{fig:tradeoffs-by-prior}
 \end{figure}
 
-\section{Conclusions}\label{sec:conclusions}
-
-This study develops a framework designed to increase the transparency of quantitative decision analysis under deep uncertainty.
-We develop a framework capable of blending iterative, stakeholder-driven exploratory modeling with subjective probabilistic expert assessment.
-Such an approach is urgently needed given that deeply uncertain nonstationarity hazards pose a fundamental challenge to classical methods of hazard estimation.
-We use a didactic case study of house elevation in the coastal zone to illustrate a method for transparently synthesizing across deep uncertainties.
-
-\subsection{Implications for research and practice}
+\section{Discussion and research needs}\label{sec:caveats}
 
 Several limitations to our study merit further discussion.
 The first category has to do with limitations of the underlying method proposed for reweighting \glspl{sow}.
@@ -728,11 +722,16 @@ From a methodological perspective, developing model chains that capture uncertai
 From a decision support perspective, improved understanding of the conditions under which household-scale strategies for flood risk management, like elevation, achieve relevant objectives could support improved resilience and adaptation.
 Additionally, since developing bespoke analyses for each house may be impractical, identifying decision rules that are applicable across different house characteristics may improve useability.
 
-\subsection{Conclusions and implications}
+\section{Conclusions}\label{sec:conclusions}
+
+This study develops a framework designed to increase the transparency of quantitative decision analysis under deep uncertainty.
+We develop a framework capable of blending iterative, stakeholder-driven exploratory modeling with subjective probabilistic expert assessment.
+Such an approach is urgently needed given that deeply uncertain nonstationarity hazards pose a fundamental challenge to classical methods of hazard estimation.
+We use a didactic case study of house elevation in the coastal zone to illustrate a method for transparently synthesizing across deep uncertainties.
 
 The proposed scenario weighting framework can be applied to inform critical challenges in climate risk management.
 An obvious area of application is to the design of infrastructure.
-For example, much of the stormwater infrastructure in the United States is inadequate for current climates \cite{lopez-cantu:2018}, let alone future changes.
+For example, much of the stormwater infrastructure in the United States is inadequate for current and anticipated future climates \cite{lopez-cantu:2018}.
 Yet upgrading this infrastructure is costly and subject to large uncertainties between rainfall models \cite{sharma_rcp:2021} and \gls{rcp} scenarios.
 Similarly, decisions like  levee heightening \cite{garner_slrise:2018,oddo_coastal:2017,vandantzig_dike:1956} and sea wall design (as discussed in the Introduction) are subject to deep uncertainties in sea level rise.
 Investments in water resources planning and management depend on assumptions of future water demand, availability, and technologies \cite{trindade_deeplyuncertainpathways:2019}.

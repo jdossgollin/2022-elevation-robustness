@@ -41,10 +41,8 @@ function plot_rcp_tradeoffs(
             linewidth=2,
             xticks=(x_ticks, string.(x_ticks)),
             yformatter=pct_formatter,
-            top_margin=12.5Plots.mm,
-            left_margin=7.5Plots.mm,
-            bottom_margin=7.5Plots.mm,
             legend=ifelse(var == first(vars), :topright, false),
+            bottom_margin=7.5Plots.mm,
         )
 
         i = 1 # counter for colors
@@ -83,8 +81,56 @@ function plot_rcp_tradeoffs(
         # add to our plots
         push!(p_archive, p)
     end
+
     add_panel_letters!(p_archive; fontsize=12, loc=(0.1, 0.95))
-    p = plot(p_archive...; layout=(1, 2), link=:x, size=(1100, 550))
+    for p in p_archive
+        annotate!(p, (0.05, 0.05), text("😃", :center, 16))
+    end
+
+    # add horizontal and vertical areas
+    harrow = plot(
+        [0.98, 0.02],
+        [0, 0];
+        axis=false,
+        ticks=false,
+        legend=false,
+        arrow=:closed,
+        color=:gray,
+        xlims=(0, 1),
+        ylims=(-0.1, 0.1),
+    )
+
+    # add the vertical arrow
+    varrow = plot(
+        [0, 0],
+        [0.98, 0.02];
+        axis=false,
+        ticks=false,
+        legend=false,
+        arrow=:closed,
+        color=:gray,
+        xlims=(-0.1, 0.1),
+        ylims=(0, 1),
+    )
+
+    blankplot = plot(; legend=false, grid=false, foreground_color_subplot=:white)
+
+    # arrange everything
+    l = grid(2, 4; heights=[0.025, 0.975], widths=[0.025, 0.475, 0.025, 0.475])
+
+    p = plot(
+        blankplot,
+        harrow,
+        blankplot,
+        harrow,
+        varrow,
+        p_archive[1],
+        varrow,
+        p_archive[2];
+        layout=l,
+        link=:x,
+        size=(1100, 500),
+    )
 
     savefig(plots_dir("tradeoffs-by-rcp.pdf"))
     return p

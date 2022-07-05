@@ -131,6 +131,7 @@ function plot_scenario_map_slr_cost(;
     cbar_fake_plot[1][:xaxis][:showaxis]
     cbar_fake_plot[1][:yaxis][:showaxis]
 
+    # add the horizontal arrow
     harrow = plot(
         [0.2, 0.9],
         [0, 0];
@@ -146,6 +147,7 @@ function plot_scenario_map_slr_cost(;
         harrow, [0.5], [0.1], text(L"Increasing House Elevation ($\Delta h$)", :center, 14)
     )
 
+    # add the vertical arrow
     varrow = plot(
         [0, 0],
         [0.1, 0.9];

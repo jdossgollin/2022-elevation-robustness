@@ -13,9 +13,9 @@ TBD
 ## Reproducibility
 
 This section provides guidance on reproducing our results.
-
 We do not purport to achieve bitwise reproducibility, so your results may vary slightly, but you should be able to follow the above steps to get highly similar results.
-If you are unable to reproduce our results, please open an Issue using the issues tab above.
+If you are unable to reproduce our results, please [open an Issue](https://github.com/jdossgollin/2022-elevation-robustness/issues).
+You may also send a Tweet to [@jdossgollin](https://twitter.com/jdossgollin).
 The more detail you are able to provide, the more readily we can track down any potential problems.
 
 ### Install Julia
@@ -23,23 +23,33 @@ The more detail you are able to provide, the more readily we can track down any 
 All code has been developed using Julia 1.6, specifically the long term support (LTS) version 1.6.5.
 You can download this version of Julia at [https://julialang.org/downloads/](https://julialang.org/downloads/).
 
-If you've never used Julia before, the [course webpage](https://jdossgollin.github.io/environmental-data-science/) has instructions for getting started.
-
 ### Install Packages
 
 This repository uses a Julia environment.
-To download all required packages, run the following in a Julia session
+To download all required packages, run the following in a Julia session (i.e, the REPL).
+
+1. **Open a Julia REPL**. If you've never used Julia before, the [course webpage](https://jdossgollin.github.io/environmental-data-science/) has some helpful resources.
+1. **Open `Pkg` mode** in the REPL (by typing `]`) and make sure you see something that looks like
+
+    ```julia-repl
+    (2022-elevation-robustness) pkg>
+    ```
+
+1. **Activate** the environment. Now that you are in `Pkg` mode, run `activate .` (and hit Enter)
+1. **Instantiate** to set up the packages. To do this, just run `instantiate` (and hit Enter)
+1. **Leave `Pkg` mode** by hitting Backspace
+
+If you don't want to use `Pkg` mode, you can run the following in the Julia REPL
 
 ```julia-repl
 using Pkg
+Pkg.activate(".")
 Pkg.instantiate()
 ```
 
-_or_ open `Pkg` mode in the REPL (by typing `]`) and run `instantiate`.
-
 ### Running
 
-In a Julia REPL (assuming you have navigated to this project directory) run
+In a Julia REPL, make sure that you have activated the project environment (see above) and run
 
 ```julia-repl
 include("scripts/main.jl")
@@ -86,4 +96,3 @@ We have used Zenodo to archive the precise versions of our code used to generate
 Please see:
 
 1. [10.5281/zenodo.6799457](doi.org/10.5281/zenodo.6799457): code for generating preprint
-

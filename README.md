@@ -48,6 +48,7 @@ To download all required packages, run the following in a Julia session (i.e, th
 If you don't want to use `Pkg` mode, you can run the following in the Julia REPL
 
 ```julia-repl
+pwd() # make sure it looks like /path/to/folder/2022-elevation-robustness
 using Pkg
 Pkg.activate(".")
 Pkg.instantiate()

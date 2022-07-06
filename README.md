@@ -3,11 +3,17 @@
 [![DOI](https://zenodo.org/badge/357754608.svg)](https://zenodo.org/badge/latestdoi/357754608)
 
 This is the GitHub repository for the paper _**A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management**_ by James Doss-Gollin and Klaus Keller.
-This code is developed by James Doss-Gollin.
-If you use our code, please cite our paper:
+This code is developed by [James Doss-Gollin](https://github.com/jdossgollin) and has been reproduced by [Sitara Baboolal](https://github.com/SBabs08).
+If you use our code, please cite our preprint (the citation for a paper will be posted later) as something like:
 
 ```bibtex
-TBD
+@misc{doss-gollin_subjective:2022,
+  title = {A Subjective {{Bayesian}} Framework for Synthesizing Deep Uncertainties in Climate Risk Management},
+  author = {Doss-Gollin, James and Keller, Klaus},
+  date = {2022-06-07},
+  publisher = {{Earth and Space Science Open Archive}},
+  doi = {10.1002/essoar.10511798.1},
+}
 ```
 
 ## Reproducibility
@@ -28,7 +34,7 @@ You can download this version of Julia at [https://julialang.org/downloads/](htt
 This repository uses a Julia environment.
 To download all required packages, run the following in a Julia session (i.e, the REPL).
 
-1. **Open a Julia REPL**. If you've never used Julia before, the [course webpage](https://jdossgollin.github.io/environmental-data-science/) has some helpful resources.
+1. **Open a Julia REPL**. If you've never used Julia before, there are some helpful resources posted on the [course site](https://jdossgollin.github.io/environmental-data-science/) of the Rice course CEVE 543 Environmental Data Science.
 1. **Open `Pkg` mode** in the REPL (by typing `]`) and make sure you see something that looks like
 
     ```julia-repl
@@ -42,6 +48,7 @@ To download all required packages, run the following in a Julia session (i.e, th
 If you don't want to use `Pkg` mode, you can run the following in the Julia REPL
 
 ```julia-repl
+pwd() # make sure it looks like /path/to/folder/2022-elevation-robustness
 using Pkg
 Pkg.activate(".")
 Pkg.instantiate()

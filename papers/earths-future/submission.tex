@@ -203,13 +203,13 @@ These are often, though not always, informed by probabilistic analysis of releva
 For example, \gls{fema}, local governments, and engineering consultants produce local floodplain maps in many communities.
 These trigger specific floodplain regulations, such as a requirement for homes in the 100-year floodplain with federally backed mortgages to be covered by flood insurance \cite{kousky_voucher:2014}.
 Additionally, local building codes (based on guidance such as \citeA{asce_24-05:2006} or \citeA{FEMA_p-55:2011}) may require new construction in flood zones to be elevated freeboard above a nominal \gls{bfe}.
-Probabilistic analysis also informs the design of large-scale infrastructure.in particu
+Probabilistic analysis also informs the design of large-scale infrastructure.
 For example, some levees in the Netherlands are designed for a nominal annual failure probability of $\nicefrac{1}{4000}$ \cite{eijgenraam_flooding:2014}, while a seawall proposed as part of a \$29 billion coastal protection project for  Galveston Bay was designed by setting the nominal annual probability of overtopping to 1\% \cite[Appendix D.,~p.~2-59]{USACE_coastal:2021}.
 
 There are many advantages to standards-based design.
 In particular, these heuristics are scalable and explainable, they reduce the complexity of design analysis, and they are fair in at least a procedural sense.
 However, reliance on these heuristics also faces limitations.
-In particular, this sort of one-size-fits-all guidance may not be an efficient or desirable way to balance tradeoffs between metrics of stakeholder values such as sense of place, distributive justice, economic efficiency, and safety \cite{keller_management:2021}.
+In particular, this sort of one-size-fits-all guidance may not be an efficient or desirable way to balance trade-offs between metrics of stakeholder values such as sense of place, distributive justice, economic efficiency, and safety \cite{keller_management:2021}.
 This has motivated economically informed approaches, like risk-based design and cost benefit analysis \cite{eijgenraam_flooding:2014,vandantzig_dike:1956,xian_elevation:2017}, that place ``a strong emphasis upon a proportionate response to risk, so that the amount invested in risk reduction is in proportion to the magnitude of the risk and the cost-effectiveness with which that risk may be reduced'' \cite{merz_fluvial:2010}.
 These quantitative cost-benefit analyses also rely on probabilistic descriptions of relevant hazard, and can be particularly sensitive to representation of tail probabilities \cite{merz_heavytails:2022,wong_floodrisk:2018,garner_slrise:2018}.
 
@@ -229,7 +229,7 @@ These deeply uncertain nonstationary hazards challenge not only the existing sta
 Recognizing the challenges of \gls{dmdu}, many frameworks for identifying robust decisions have been proposed.
 Most emphasize the use of models in an exploratory (``what-if'') framework to learn about interactions between decisions and system dynamics \cite{bankes:1993}.
 For example, robust decision making \cite{lempert_shaping:2003} evaluates models over large ensembles of possible futures to assess the performance of different policies under each, then applies statistical analysis to identify the conditions under which particular policies perform well or poorly.
-When the decision space is complex, many analyses use policy search (often using multiobjective optimization tools) to identify promising actions \cite{kasprzyk:2013,kasprzyk_denovo:2012,hadka_mordm:2015}.
+When the decision space is complex, many analyses use policy search (often using multi-objective optimization tools) to identify promising actions \cite{kasprzyk:2013,kasprzyk_denovo:2012,hadka_mordm:2015}.
 In addition, many studies formally quantify robustness to deep uncertainties \cite{herman:2015,mcphail_robustness:2019} and use this as a criterion for policy comparison.
 
 Although these \gls{dmdu} methods have proven valuable in a wide range of settings, they still require necessarily subjective assessments about the likelihood of future conditions.
@@ -307,7 +307,7 @@ For example, \citeA{sriver_sealevel:2018} sample parameters describing the rate 
 Similarly, \citeA{trindade_waterpathways:2020} checks the performance of candidate decisions against an ensemble of synthetic time series of streamflow, water demand, and other parameters by sampling parameters that transform the available data over a plausible range \cite<\ie, robustness metrics; see>[for details]{mcphail_robustness:2019,herman:2015}.
 Since sampling over a range is equivalent to sampling from a Uniform distribution, this assumption is equivalent to assuming the true inputs to come from independent Uniform distributions (one for each parameter) bounded by the plausible range.
 
-Our primary concern is not that subjective assumptions about the likelihood of different futures are wrong -- this is, almost surely, inevitable -- but that when these assumptions are opaque and presented without critique or validation they may lead to inscrutable decision processes and suboptimal decisions.
+Our primary concern is not that subjective assumptions about the likelihood of different futures are wrong -- this is, almost surely, inevitable -- but that when these assumptions are opaque and presented without critique or validation they may lead to inscrutable decision processes and sub-optimal decisions.
 
 \subsection{Synthesize}\label{sec:analysis-synthesize}
 
@@ -671,7 +671,7 @@ Under all assumptions, elevating by only a few feet is impractical because it in
 \section{Discussion and research needs}\label{sec:caveats}
 
 Several limitations to our study merit further discussion.
-The first category has to do with limitations of the underlying method proposed for reweighting \glspl{sow}.
+The first category has to do with limitations of the underlying method proposed for re-weighting \glspl{sow}.
 For example, we develop a subjective prior belief $p_\mathrm{belief}(\Psi)$ over \gls{msl} in the year 2100.
 Although this is a low-dimensional representation of the full time series, it is not a sufficient statistic; prior studies have shown that using Approximate Bayesian Computation to calibrate models on low dimensional statistics using that are not sufficient statistics can lead to biased posterior estimates \cite{csillery_abc:2010,marjoram_abc:2006}.
 Although we are not performing calibration here, and this is thus not a direct concern, time series with the same \gls{msl} in 2100 may differ in other ways, and experts may have prior information about the likelihood of these differences not represented in our model.
@@ -694,7 +694,7 @@ Yet although framing the decision through a sequential lens can increase adaptab
 These limitations motivate several directions for future research.
 From a methodological perspective, developing model chains that capture uncertainties in global energy and economic pathways, global climate sensitivity, and local hazard response \cite<see fig.~1 of>[]{moss_uncertainties:2000} offers a principled framework for fully probabilistic estimation of local hazard, subject to (still necessarily subjective) priors over key parameters.
 From a decision support perspective, improved understanding of the conditions under which household-scale strategies for flood risk management, like elevation, achieve relevant objectives could support improved resilience and adaptation.
-Additionally, since developing bespoke analyses for each house may be impractical, identifying decision rules that are applicable across different house characteristics may improve useability.
+Additionally, since developing bespoke analyses for each house may be impractical, identifying decision rules that are applicable across different house characteristics may improve usability.
 
 \section{Conclusions}\label{sec:conclusions}
 

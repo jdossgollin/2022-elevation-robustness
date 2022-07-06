@@ -34,7 +34,7 @@ You can download this version of Julia at [https://julialang.org/downloads/](htt
 This repository uses a Julia environment.
 To download all required packages, run the following in a Julia session (i.e, the REPL).
 
-1. **Open a Julia REPL**. If you've never used Julia before, the [course webpage](https://jdossgollin.github.io/environmental-data-science/) has some helpful resources.
+1. **Open a Julia REPL**. If you've never used Julia before, there are some helpful resources posted on the [course site](https://jdossgollin.github.io/environmental-data-science/) of the Rice course CEVE 543 Environmental Data Science.
 1. **Open `Pkg` mode** in the REPL (by typing `]`) and make sure you see something that looks like
 
     ```julia-repl

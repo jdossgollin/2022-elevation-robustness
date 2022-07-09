@@ -249,6 +249,7 @@ This is a theoretical contrast to the ``$\mathcal{M}$-closed'' case in which the
 Commonly used classical methods for model selection implicitly assume $\mathcal{M}$-closed case and are defined by their ability to asymptotically identify the true model from a set of candidate models.
 By contrast, model selection in the $\mathcal{M}$-open case emphasizes a subjective view of the modeling process, for which probability offers a self-consistent language with which to reason about the unknown rather than a statement of objective truth (see \citeA{gelman_philosophy:2013}, \citeA{ramsey_probability:2016}, or \citeA{jaynes_probability:2003} for a discussion of Bayesian philosophy and \citeA{Piironen:2017eh} for a technical discussion of methods for model selection).
 From a practical perspective, model selection in the $\mathcal{M}$-open case emphasizes building models iteratively, simulating the consequences of these models, and subsequently using these simulations to critique and improve them until an acceptable model (in the analyst's subjective judgement) is reached \cite{gelman_workflow:2020}.
+Thus, where classical statistics, particularly as applied to environmental systems, has often emphasized objectivity, we draw from this Bayesian literature that  emphasizes a focus on building transparency in the presentation, analysis, and critique of models and results.
 
 In this paper we offer a first conceptual step towards bridging the fields of \gls{dmdu} and Bayesian model building.
 We consider a didactic case study of whether to elevate a hypothetical house, and if so how high, as a specific example of a decision problem subject to both shallow (storm surge) and deep (\gls{slr}) uncertainties.
@@ -363,7 +364,7 @@ Specifically,
 \begin{enumerate}
   \item The decision vector $\vb{x}$ is comprised of discrete possible house heightenings ($\Delta h$); we consider $\Delta h = \qty{\SI{0}{ft}, \SI{0.25}{ft}, \ldots, \SI{12}{ft}}$.
   \item The \glspl{sow} describe annual time series of \gls{msl} over the $T=70$ year house lifetime so $\vb{s} \in \mathbb{R}^T$
-  \item The system model $f$ quantifies up-front costs and lifetime expected damages, given a decision $x_i$ and \gls{sow} $s_j$, by integrating economic and engineering damage models over a probability distribution for storm surge.
+  \item The system model $f$ quantifies up-front costs (the cost of elevating) and lifetime expected damages (the structural cost of experiencing floods), given a decision $x_i$ and \gls{sow} $s_j$, by integrating economic and engineering damage models over a probability distribution for storm surge. We elaborate upon these metrics in \cref{sec:case-metrics}.
 \end{enumerate}
 In the remainder of this section we describe data sources and treatment of \gls{slr} (\cref{sec:case-slr}), storm surge (\cref{sec:case-surge}), damages and metrics (\cref{sec:case-metrics}), and finally the subjective priors $p_\mathrm{belief}$ used to apply the re-weighting method described in \cref{sec:analysis-synthesize} to this case study (\cref{sec:case-priors}).
 
@@ -409,7 +410,8 @@ In the remainder of this section we describe data sources and treatment of \gls{
 We analyze simulations of \gls{msl} at Sewells Point, VA from four probabilistic physical models using data published in \citeA{ruckert_coastal:2019}.
 The four models considered are (i) the BRICK model (version 0.2) with slow (``BRICK Slow'') and (ii) fast (``BRICK Fast'') ice sheet dynamics \cite{wong_brick0.2:2017}, (iii) the \citeA{kopp_probabilistic:2014} model (``K14''), and (iv) the \citeA{deconto_antarctica:2016} model (``DP16'').
 The \citeA{kopp_probabilistic:2014} and \citeA{deconto_antarctica:2016} models have a ten year time step, which we linearly interpolate onto a one year time step for consistency.
-These four models represent physical processes, particularly of ice sheet dynamics, in different ways, leading to diverging sensitivity of \gls{msl} to forcing.
+These four models represent physical processes, particularly of ice sheet dynamics, in different ways.
+The differences in these models leading to diverging estimates of how \gls{msl} responds to temperature.
 For a discussion of these model outputs we refer the reader to \citeA{ruckert_coastal:2019}.
 
 Estimates of nonstationary \gls{msl} also depend on anthropogenic forcing, which is itself deeply uncertain \cite{ho_scenarios:2019,srikrishnan_probabilistic:2022}.
@@ -730,10 +732,12 @@ This work was supported by \acrfull{noaa} through the Mid-Atlantic Regional Inte
 JDG thanks Rice University for support.
 KK thanks Dartmouth College for support.
 The authors thank
+Sitara Baboolal,
 Tor Erlend Fjelde,
-Vivek Srikrishnan,
+Catalina González-Dueñas,
 Adam Pollack,
-and Sitara Baboolal
+and
+Vivek Srikrishnan
 for helpful comments.
 
 

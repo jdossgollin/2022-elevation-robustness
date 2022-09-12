@@ -1,0 +1,319 @@
+\documentclass{ar2rc}
+
+\usepackage{siunitx}
+\usepackage{apacite}
+\usepackage{physics}
+
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{color}
+\newcommand{\jdg}[1]{\todo[color=red!30]{#1}}
+\newcommand{\all}[1]{\todo[color=blue!30]{#1}}
+
+% better lists
+\usepackage{enumitem}
+\setlist{nosep}
+
+% cross-refs
+\usepackage{xr}
+%\externaldocument{./submission_02}
+\hypersetup{hidelinks}
+\usepackage{cleveref}
+
+\title{A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management}
+\author{James Doss-Gollin and Klaus Keller}
+\journal{Earth's Future}
+
+\begin{document}
+
+\maketitle
+
+We thank the editors and both referees for their thoughtful, detailed, and extremely constructive comments on our initial submission.
+
+Referee 1 particularly encouraged us to clarify the presentation of our methods and results.
+As noted in responses to the specific comments given below, we have attempted to incorporate these suggestions into the revised manuscript.
+
+Referee 2 encouraged us to (1) better contextualize our methodological approach relative to previous works, (2) clarify and improve the mathematical formulation of our approach, and (3) to better describe the usefulness of our method.
+The specific
+
+In the remainder of this document we address the specific comments made by the two referees.
+
+\section{Referee \#1}
+
+\RC{
+    This work introduces a Bayesian framework to synthesize and characterize deep uncertainties to merge standard exploratory modeling techniques with more traditional decision support tools that require statistics like the expected value.
+    Such statistics, which require weighting sampled states of the world, are problematic in the presence of deep uncertainty.
+    The authors argue that many decision making frameworks commonly used for robust decision-making problems actually make such a weighting, but that is not transparent.
+    Decisions about the sampling range, joint sampling distribution, and statistics (such as domain criterion) can have consequences for the robustness of the options presented to stakeholders, but this may not be clear.
+    The proposed framework allows for a synthesis across deep uncertainties using subjective Bayesian priors.
+    The method is demonstrated for a very simple house-raising example including both sea level rise and a stationary storm surge risk.
+}
+
+\AR{
+    Thank you for your comments.
+    This is an excellent summary of the aim and scope of this paper.
+}
+
+\RC{
+    Overall, I found the work well written and informative, and I think it is very promising.
+    The framework's novelty arises from the way it stitches standard methods from Bayesian statistics and DMDU.
+    This is not a negative statement, as I think by employing common-sense methods in a novel way the authors' framework is more likely to gain traction.
+    An important contribution is the introduction, which nicely lays out the current state of practice, emerging methods (primarily from the DMDU community), and then research gaps.
+    I appreciated the author's care in discussing the difficulty in adopting non-stationary frequency methods for extremes, with key citations to important works by Montanari, Seranaldi, and Bulletin 17C's introduction.
+}
+
+\AR{}
+
+\RC{
+    The use of the word model to mean different things. Throughout the manuscript, and particularly in Figure 1, the authors utilize the term 'model' to refer to both the combination of RCP-SLR model/assumption and the systems model.
+    I found this confusing at multiple places.
+    One suggestion is to call the 'models' in box d of Figure 1 'scenarios' or something like that.
+    So the scenario is the deep uncertainty (RCP-SLR model) and then the possible futures in box b of Figure 1 are samples drawn from the pdf that's conditioned on the scenario in Box d.
+    I think this new terminology would be particularly important if one were to have more than one systems model in box c.
+}
+
+\AR{
+    This is a tricky distinction to draw and we should be more clear.
+    One possibility is to use Model and Probabilistic Scenario.
+    Another is Physical Model and Predictive Model. Maybe something else?
+}
+
+\RC{
+    I understand the intention of the paper is to showcase the method, not necessarily the results.
+    This said, some more discussion about the findings would be helpful.
+    For example, in Figure 7A there is a spike after 0 ft of increased height. If some detail were given on the construction cost function (taken from another work), and at least a few more sentences on the results, I think it would really improve an already very good manuscript.
+}
+
+\AR{
+    Good suggestion, can do.
+}
+
+\RC{
+    Line 270: I think more detail should be given, perhaps in the discussion, of the difficulty projecting SOW to some lower dimensional representation may present in more complicated problems.
+    Here it is given little attention, which is fine because this is meant to be a simple didactic problem.
+    But I could imagine a much more complicated setting, perhaps in a multisector problem, where collapsing the state space of the world presents problems.
+    I suggest the authors provide some more discussion of the challenge this may present and how one might overcome it in the discussion.
+}
+
+\AR{
+    Yes, we have a bit of discussion about this but more would be helpful.
+}
+
+\RC{
+    Line 284: One really exciting direction is the opportunity to test the sensitivity of the objective tradeoffs to $p_\textup{belief}$.
+    It may be the case that some objectives are not affected by the differences in $p_\textup{belief}$ between stakeholders and so there is no point in getting tied up trying to pin it down.
+    I'm not proposing any additional analysis, only that this sort of screening is possible and is consistent with the spirit of exploratory modeling and RDM.
+    It would be an interesting exercise, perhaps for follow-on work.
+}
+
+\AR{
+    Yes, good suggestion and we can elaborate on this ni the discussion.
+}
+
+\RC{
+    Table 1: I think at least some detail should be given about the elevation cost and depth-damage functions.
+    I understand they were taken from another work. This would make interpreting the later results easier.
+}
+
+\AR{
+    Yes, can do, especially since the shape of these curves matter a lot.
+    For example, findings that elevating a little bit is ineffective in nearly all circumstances stem from the shape of the construction cost curve.
+}
+
+\RC{
+    Figure 5b.
+    If the intention is to show the agreement of the fitted model with the annual maximum storm surges, a P-P plot might be clearer.
+    I leave this up to the authors.
+    I have no doubt the GEV is a good fit.
+}
+
+\AR{
+    The purpose here is to show the probability distribution using a standard return period plot.
+    But a Q-Q or P-P plot in the supplemental material to assess fit would be good.
+}
+
+\RC{
+    Figure 4b.
+    There is remarkable disagreement between the models of mean sea level rise.
+    It might be worth at least a few sentences commenting on this.
+}
+
+\AR{
+    We mainly defer to \citeA{ruckert_coastal:2019} on this, but we can add a bit of discussion.
+}
+
+\RC{
+    Equation 4: it might be helpful to define $p$ here.
+}
+
+\AR{
+    Can and should do.
+}
+
+\RC{
+    Line 416: The use of the gamma distribution is quite sensible but is presented without justification.
+    This might be worth just a short sentence on why it was chosen.
+}
+
+\AR{
+    Good suggestion.
+}
+
+\RC{
+    Figure 8: The y-axis labels on B-D should be more descriptive.
+}
+
+\AR{
+    Yes, can do.
+}
+
+\section{Referee \#2}
+
+\RC{
+    This manuscript addresses an important topic: the role of probabilistic methods in decision-making under deep uncertainty.
+    The authors point out that scenario-based DMDU methods implicitly put probabilities on scenarios but do not make these assumptions transparent.
+    They address this by developing a method to calculate the weights implicitly applied to each deeply uncertain scenario.
+    I applaud this effort -- the tension between scenario-based methods that use optimization and probabilistic methods is an important and understudied one.
+    I also see a lot of value in how the authors have framed the problem and described the pros and cons of scenario-based DMDU methods and probabilistic methods for CBA in the context of infrastructure design.
+    The simple case study of raising the elevation of a house under flood risk affected by deeply uncertain sea level rise is appropriate for demonstrating the method and is technically sound.
+}
+
+\AR{
+    Thanks\ldots
+}
+
+\RC{
+    However, I have three major concerns that prevent me from recommending the manuscript for publication in its current form.
+    I defer to the editor on whether, assuming all these concerns are addressed in revision, the contribution warrants publication in Earth's Future.
+}
+
+\AR{
+    Thanks for the insightful comments.
+}
+
+\RC{
+    First, the paper is not well grounded in previous literature at the intersection of Bayesian /probabilistic methods and DMDU.
+    This has led the authors to make overly broad claims about their contribution that make it difficult to discern what they are adding beyond existing methods.
+    It is certainly not true that ``In this paper we offer a first conceptual step towards bridging the fields of DMDU and Bayesian model building'' as claimed in line 183.
+    Here are some papers that integrate Bayesian/probabilistic methods into DMDU contexts.
+    The first three are especially similar to the authors' contributions; the authors need to make a compelling argument for what their approach adds beyond this existing literature.
+    \citeA{reis_distribution:2020},
+    \citeA{taner_probabilistic:2019},
+    \citeA{hui_adaptive:2018},
+    \citeA{fletcher_learning:2019},
+    \citeA{fletcher_groundwater:2019}
+}
+
+\AR{
+    Thanks, can do.
+    I haven't read \citeA{reis_distribution:2020}, \citeA{taner_probabilistic:2019}, or \citeA{hui_adaptive:2018} but will do.
+    We can add a paragraph to the introduction describing this intersection, possibly with a few additional papers.
+}
+
+\RC{
+    My second key concern is that the mathematical formulation is not clear and complete, and it is not always clear how the sample application aligns with the general framework.
+    Given that the authors suggest the mathematical formulation is a key part of their contribution, this is important.
+    Specifically:
+    The method is framed both in the introduction (lines 157-182) and methods section (lines 240-250) around Bayesian model selection.
+    However, it is not clear if or how the authors are performing Bayesian model selection.
+    In figure 1e and line 247, the authors provide a conditional probability of $u$ given $x_i$ and $M_k$, and state this is the result of IID draws from $M_k$.
+    This is similar to the $p(y|M_k)$ term in the classical BMA framework from \citeA{raftery_bma:2005} equation 1.
+    Does this imply that there is a Bayesian posterior for model weights developed?
+    If so, what is it?
+    What data is used for the updating and what is the likelihood function? It is unclear if or how Bayes' is used here.
+}
+
+\AR{
+    This is a great question and one we need to clarify.
+    I think specifically that the way we talk about Bayesian model selection is a bit unclear.
+    We also could describe the limitations of BMA (which is suited to the M-closed case).
+    Our claim here is that there is no updating because everything is based on the prior, but it's true in principle that one could think about how this would be updated; we can discuss this a bit.
+}
+
+\RC{
+    Shortly later in the paragraph under section 2.3, the authors take an expected value of $f(s)$ and state that it ``can be readily estimated as $\frac{1}{N} \sum_{j=1}^N f(\bf{s}_j)$.''
+    I believe this is inconsistent with the interpretation of the SOW being samples from an underlying distribution.
+    We know that: $\mathbb{E}\qty[f(s)]=\sum_{s \in \Omega}f(s)P_s(s)$ where $P_s$ is the probability mass function of $s$.
+    This is equivalent to the authors' equation above only when assuming that $P_s(s)$ is a discrete uniform RV where each SOW gets equal probability.
+    However, this seems to be at odds with the authors interpretation that the SOW are IID draws from some underlying distribution of models.
+    If that is the case, the probability mass or density function shouldn't simply put probability on the available SOW, as these are merely samples from an underlying distribution.
+    It conflates the sample with the population.
+    If, for example, the SOW were believed to be IID samples from a lognormal distribution, the we would expect an estimate for $\mathbb{E}\qty[f(s)]$ that is asymmetric across the $f(s)$ in different SOW, not an unweighted average.
+}
+
+\AR{
+    This is another insightful comment, and I think we can frame this a bit better in the literature on non-naive Monte Carlo sampling.
+    $\mathbb{E}\qty[f(s)] \approx \frac{1}{N} \sum_{j=1}^N s_j$ is a naive Monte Carlo estimate of the expectation, which is only valid if the SOW are IID draws from $P_s$.
+    This is often done in practice, however, and referring to other papers as suggested may be helpful for pointing this out.
+}
+
+\RC{
+    I am further confused by equation 1 and the following paragraph on choosing the weights.
+    First, are the weights “chosen” by the analyst, as stated in line 266, or are they estimated as a way of making clear what weights are implied by a certain selection of SOW?
+}
+
+\AR{
+    Let's make sure it is clear that they are implied by a certain $p_\text{belief}$ and sampling distribution of SOWs
+}
+
+\RC{
+    Second, what is the mathematical basis for equation 2?
+    The description in 267- 272 describes the method illustrated in figure 2 but doesn't justify it, and I could not find the method in the references provided.
+    It seems like the approach is a way of approximating some unknown continuous distribution of $M_k$ using the discrete sampled SOW, but the authors do not state this.
+    If this is true, it could potentially be used to address my comment above about conflating sample and population.
+}
+
+\AR{
+    This is just a definition, but we can cite something like \citeA{johnson_clara:2013} that uses grid-based methods
+}
+
+\RC{
+    Finally, I am confused how the application in section 4.3 is equivalent to this.
+    Line 413 states ``we construct three probabilistic models for $p_\textup{belief}$'' and then refers to these models in line 418 as ``priors''.
+    The use of the word “prior” implies a Bayesian model.
+    Does this suggest that equation (2) is meant to be a prior distribution? It is not described that way in section 2.3. If so, what is the posterior? What is the likelihood? My interpretation is that the “target distribution” in figure 2 is F belief, but that the weights over SOW are just an approximation of that, not a posterior.
+}
+
+\AR{
+    Another good point -- need to clarify that refer to priors because we don't have any data about the future so we are relying entirely on prior beliefs.
+    But we're not applying Bayes' rule.
+}
+
+\RC{
+    It is clear the storm surge model in 3.2 uses a Bayesian model to fit a GEV using historical storm surge data. But this is presented as a probabilistic uncertainty, not a deep uncertainty, so it remains unclear how Bayesian methods are used to synthesize deep uncertainties.
+}
+
+\AR{
+    We can discuss this point.
+}
+
+\RC{
+    It is not clear to me if there is an error in the mathematical presentation or if it simply needs to be clarified. It is possible also that this is a valid probabilistic framework, but not a Bayesian one, in which case the approach would need to be substantially reframed. If I have misunderstood due to lack of clarity in the presentation, I welcome a clarification from the authors.
+}
+
+\AR{
+    I think we can clarify and need to.
+    In part, at least, the term ``Bayesian'' seems to be suggesting a method of estimation, which is not what we are doing.
+}
+
+\RC{
+    My final key critique is that I think the authors need to make a more compelling case for the usefulness of their approach relative to existing DMDU methods to warrant
+    publication. If I am interpreting correctly, the two new aspects of the method are 1) the conditioning step (section 2.2 which I believe though am not sure is the same as what is applied in section 4.2) and 2) the deep uncertainty synthesis. The key result from the conditioning step is show in Figures 6 and 7. It seems to me that Figure 6 is quite similar to visuals commonly used in exploratory analysis like parallel axis plots or scatter plots showing the results against different objectives across SOWs. Take as an example Figure 6 from Quinn et al. 2020. This plot shows frequency and severity of water shortage as measured by cumulative frequency across SOWs in the experiment, visualized with darker colors for more SOWs. This is a common type of figure in exploratory analysis used to transparently visualize the results across SOW. The authors figure 6 seems quite similar to this. What is more useful or transparent about your conditioning approach? I mean that as a genuine question – I have found the methods difficult to follow and would appreciate clarification from the authors.
+}
+
+\AR{
+    Thanks, we can add a bit to the discussion.
+}
+
+\RC{
+    Similarly, Figure 8 shows the key results from the weighting step.
+    As I understand it, panel a shows the authors illustrative assumptions for sea level rise distributions, and then panels b-d show what weights across SOWs are consistent with those assumptions. What should a decision maker takeaway from this? How might they use it in their decision process? It would be helpful to see this articulated in the example and expanded on in the discussion or conclusions.
+}
+
+\AR{
+    This should come across more clearly in the conclusions.
+}
+
+\bibliographystyle{apacite}
+\bibliography{library-bibtex}
+
+\end{document}

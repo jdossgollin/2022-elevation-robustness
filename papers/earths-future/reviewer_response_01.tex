@@ -13,6 +13,37 @@
 \usepackage{enumitem}
 \setlist{nosep}
 
+% some commands
+\usepackage{xspace}
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+\newcommand{\usd}[1]{\SI{#1}[\$]{}}
+
+% ACRONYMS
+\usepackage[acronym, nopostdot, nonumberlist, shortcuts, numberedsection, nogroupskip,]{glossaries}
+\newacronym{bfe}{BFE}{base flood elevation}
+\newacronym{cmip}{CMIP}{the Coupled Model Intercomparison Project}
+\newacronym{dmdu}{DMDU}{decision making under deep uncertainty}
+\newacronym{fema}{FEMA}{the Federal Emergency Management Agency}
+\newacronym{gev}{GEV}{generalized extreme value}
+\newacronym{hazus}{HAZUS}{Hazard U.S.}
+\newacronym{iid}{IID}{independent and identically distributed}
+\newacronym{ipcc}{IPCC}{International Panel on Climate Change}
+\newacronym{msl}{MSL}{mean relative sea level}
+\newacronym{noaa}{NOAA}{the National Oceanic and Atmospheric Administration}
+\newacronym{pdf}{PDF}{probability density function}
+\newacronym{rcp}{RCP}{representative concentration pathway}
+\newacronym{rdm}{RDM}{robust decision making}
+\newacronym{slr}{SLR}{sea level rise}
+\newacronym{ssp}{SSP}{shared socio-economic pathway}
+\newacronym[]{usace}{USACE}{United States Army Corps of Engineers}
+\newacronym[]{usgs}{USGS}{United States Geological Survey}
+\newacronym[\glslongpluralkey={states of the world}]{sow}{SOW}{state of the world}
+
 % cross-refs
 \usepackage{xr}
 %\externaldocument{./submission_02}
@@ -46,6 +77,12 @@ In the remainder of this document we address the specific comments made by the t
     Decisions about the sampling range, joint sampling distribution, and statistics (such as domain criterion) can have consequences for the robustness of the options presented to stakeholders, but this may not be clear.
     The proposed framework allows for a synthesis across deep uncertainties using subjective Bayesian priors.
     The method is demonstrated for a very simple house-raising example including both sea level rise and a stationary storm surge risk.
+
+    Overall, I found the work well written and informative, and I think it is very promising.
+    The framework's novelty arises from the way it stitches standard methods from Bayesian statistics and DMDU.
+    This is not a negative statement, as I think by employing common-sense methods in a novel way the authors' framework is more likely to gain traction.
+    An important contribution is the introduction, which nicely lays out the current state of practice, emerging methods (primarily from the DMDU community), and then research gaps.
+    I appreciated the author's care in discussing the difficulty in adopting non-stationary frequency methods for extremes, with key citations to important works by Montanari, Seranaldi, and Bulletin 17C's introduction.
 }
 
 \AR{
@@ -54,17 +91,7 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \RC{
-    Overall, I found the work well written and informative, and I think it is very promising.
-    The framework's novelty arises from the way it stitches standard methods from Bayesian statistics and DMDU.
-    This is not a negative statement, as I think by employing common-sense methods in a novel way the authors' framework is more likely to gain traction.
-    An important contribution is the introduction, which nicely lays out the current state of practice, emerging methods (primarily from the DMDU community), and then research gaps.
-    I appreciated the author's care in discussing the difficulty in adopting non-stationary frequency methods for extremes, with key citations to important works by Montanari, Seranaldi, and Bulletin 17C's introduction.
-}
-
-\AR{}
-
-\RC{
-    The use of the word model to mean different things. Throughout the manuscript, and particularly in Figure 1, the authors utilize the term 'model' to refer to both the combination of RCP-SLR model/assumption and the systems model.
+    The use of the word model to mean different things. Throughout the manuscript, and particularly in Figure 1, the authors utilize the term `model' to refer to both the combination of RCP-SLR model/assumption and the systems model.
     I found this confusing at multiple places.
     One suggestion is to call the 'models' in box d of Figure 1 'scenarios' or something like that.
     So the scenario is the deep uncertainty (RCP-SLR model) and then the possible futures in box b of Figure 1 are samples drawn from the pdf that's conditioned on the scenario in Box d.
@@ -175,13 +202,7 @@ In the remainder of this document we address the specific comments made by the t
     I applaud this effort -- the tension between scenario-based methods that use optimization and probabilistic methods is an important and understudied one.
     I also see a lot of value in how the authors have framed the problem and described the pros and cons of scenario-based DMDU methods and probabilistic methods for CBA in the context of infrastructure design.
     The simple case study of raising the elevation of a house under flood risk affected by deeply uncertain sea level rise is appropriate for demonstrating the method and is technically sound.
-}
 
-\AR{
-    Thanks\ldots
-}
-
-\RC{
     However, I have three major concerns that prevent me from recommending the manuscript for publication in its current form.
     I defer to the editor on whether, assuming all these concerns are addressed in revision, the contribution warrants publication in Earth's Future.
 }
@@ -194,20 +215,35 @@ In the remainder of this document we address the specific comments made by the t
     First, the paper is not well grounded in previous literature at the intersection of Bayesian /probabilistic methods and DMDU.
     This has led the authors to make overly broad claims about their contribution that make it difficult to discern what they are adding beyond existing methods.
     It is certainly not true that ``In this paper we offer a first conceptual step towards bridging the fields of DMDU and Bayesian model building'' as claimed in line 183.
-    Here are some papers that integrate Bayesian/probabilistic methods into DMDU contexts.
-    The first three are especially similar to the authors' contributions; the authors need to make a compelling argument for what their approach adds beyond this existing literature.
+    Here are some papers that integrate Bayesian/probabilistic methods into DMDU contexts:
     \citeA{reis_distribution:2020},
     \citeA{taner_probabilistic:2019},
     \citeA{hui_adaptive:2018},
-    \citeA{fletcher_learning:2019},
-    \citeA{fletcher_groundwater:2019}
+    \citeA{fletcher_learning:2019}, and
+    \citeA{fletcher_groundwater:2019}.
+    The first three are especially similar to the authors' contributions; the authors need to make a compelling argument for what their approach adds beyond this existing literature.
 }
 
 \AR{
-    Thanks, can do.
-    I haven't read \citeA{reis_distribution:2020}, \citeA{taner_probabilistic:2019}, or \citeA{hui_adaptive:2018} but will do.
+    Thanks very much for this helpful comment.
+    This comment underscores a need for improved clarity in the introduction to the manuscript; as noted, there are numerous papers that use probabilistic tools, including Bayesian methods, in DMDU contexts.
+    We have clarified that there is a long literature on the relative merits of probabilistic vs non-probabilistic information in DMDU contexts, as noted in \citeA{taner_probabilistic:2019}, but that this debate has often centered on a top-down, technocratic, objectivist philosophy of probability in which there is explicitly or implicitly assumed to be a true probability distribution.
+    Our contribution is to outline how a subjective Bayesian philosophical approach can address many of the concerns raised by critics of probabilistic approaches while providing a principled and transparent method for reasoning about uncertainty.
+
     We can add a paragraph to the introduction describing this intersection, possibly with a few additional papers.
+    \citeA{hui_adaptive:2018} is a nice example of the use of SDP applied to a levee heightening problem.
+    There is Bayesian updating through the dynamic programming, but deep uncertainty is addressed only by considering several scenarios of hydrological conditions.
+    \citeA{taner_probabilistic:2019} is conceptually quite similar to our approach.
+    This paper focuses on joint distributions of uncertain parameters rather than how different subjective beliefs about these parameters affect the decision.
+    This paper also focuses on how probabilistic versus exploratory frameworks lead to different robustness values, whereas here we focus more generally on mapping trade-offs.
+    \citeA{reis_distribution:2020} shows that scenario discovery and exploratory modeling results are sensitive to parameterization and choice of distribution.
+    \citeA{fletcher_learning:2019} and \citeA{fletcher_groundwater:2019} apply SDP (which can be interpreted as having an implicit Bayesian updating step) but shallow uncertainties are considered.
 }
+
+\begin{quote}
+    Add a sentence to the intro and link it here
+\end{quote}
+
 
 \RC{
     My second key concern is that the mathematical formulation is not clear and complete, and it is not always clear how the sample application aligns with the general framework.
@@ -224,15 +260,30 @@ In the remainder of this document we address the specific comments made by the t
 
 \AR{
     This is a great question and one we need to clarify.
-    I think specifically that the way we talk about Bayesian model selection is a bit unclear.
-    We also could describe the limitations of BMA (which is suited to the M-closed case).
-    Our claim here is that there is no updating because everything is based on the prior, but it's true in principle that one could think about how this would be updated; we can discuss this a bit.
+    For reference, equation 1 of \citeA{raftery_bma:2005} is
+    $$p(y) = \frac{1}{K} \sum_{k=1}^K p(y|M_k) p(M_k | y^T),$$
+    ``where $p( y | M_k)$ is the forecast PDF based on model $M_k$ alone, and $p(M_k | y^T)$ is the posterior probability of model $M_k$ being correct given the training data, and reflects how well model $M_k$ fits the training data.''
+
+    This comment is closely related to the previous comment in that we draw inspiration from the literature on Bayesian model selection but do not explicitly perform it.
+    Our approach is conceptually similar to BMA as noted (and even close to stacking; see \cite{Yao:2018bu}).
+    There are two key differences.
+    First, these methods focus on estimating the weights assigned to each model from data; in our context we have no data.
+    Future work could consider adaptive decision making (by revisiting the decision at multiple time steps, \ie stochastic control) in which case there would be data available in the future that could be used to estimate these weights as in several of the papers referenced in the previous comment.
+    Second, these methods assign weights to each model, whereas we assign weights to each SOW.
+    This is motivated by the fact that the SOWs in our applications, and in many climate adaptation applications, are computationally expensive to generate.
 }
+
+\begin{quote}
+    Need to think about how we want to address this in the text
+\end{quote}
+
 
 \RC{
     Shortly later in the paragraph under section 2.3, the authors take an expected value of $f(s)$ and state that it ``can be readily estimated as $\frac{1}{N} \sum_{j=1}^N f(\bf{s}_j)$.''
     I believe this is inconsistent with the interpretation of the SOW being samples from an underlying distribution.
-    We know that: $\mathbb{E}\qty[f(s)]=\sum_{s \in \Omega}f(s)P_s(s)$ where $P_s$ is the probability mass function of $s$.
+    We know that:
+    $$\mathbb{E}\qty[f(s)]=\sum_{s \in \Omega}f(s)P_s(s)$$
+    where $P_s$ is the probability mass function of $s$.
     This is equivalent to the authors' equation above only when assuming that $P_s(s)$ is a discrete uniform RV where each SOW gets equal probability.
     However, this seems to be at odds with the authors interpretation that the SOW are IID draws from some underlying distribution of models.
     If that is the case, the probability mass or density function shouldn't simply put probability on the available SOW, as these are merely samples from an underlying distribution.
@@ -242,9 +293,25 @@ In the remainder of this document we address the specific comments made by the t
 
 \AR{
     This is another insightful comment, and I think we can frame this a bit better in the literature on non-naive Monte Carlo sampling.
-    $\mathbb{E}\qty[f(s)] \approx \frac{1}{N} \sum_{j=1}^N s_j$ is a naive Monte Carlo estimate of the expectation, which is only valid if the SOW are IID draws from $P_s$.
-    This is often done in practice, however, and referring to other papers as suggested may be helpful for pointing this out.
+    As noted, we write in section 2.3 that
 }
+\begin{quote}
+    If the \glspl{sow} are drawn \gls{iid} from the true distribution, then the expected value of some function  $f$, $\mathbb{E}\qty[f(\vb{s})]$, can be readily estimated as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$.
+    However, this is often not the case; for example, a fixed set of simulations may be available for analysis or low-probability but high-impact regions of the parameter space may have been sampled.
+    In this case, the formula must be adjusted to
+    \begin{equation*}
+        \mathbb{E}\qty[f(\vb{s})] \approx \frac{1}{N} \sum_{i=j}^N w_j f(\vb{s}_j),
+    \end{equation*}
+    where the $w_j$ are suitably chosen weights such that their sum is equal to 1.
+\end{quote}
+
+\AR{
+    This does not require assuming that the set of sows, $\vb{s}$, is a discrete uniform RV, only that they are drawn IID from $p(\vb{s})$
+}
+
+\begin{quote}
+    Need to revisit -- the comment about population doesn't make sense to me
+\end{quote}
 
 \RC{
     I am further confused by equation 1 and the following paragraph on choosing the weights.
@@ -254,6 +321,11 @@ In the remainder of this document we address the specific comments made by the t
 \AR{
     Let's make sure it is clear that they are implied by a certain $p_\text{belief}$ and sampling distribution of SOWs
 }
+
+\begin{quote}
+    Let's change it so that instead of saying ``suitably chosen'' weights we just say $\text{s.t.}~ \sum_j w_j = 1$.
+    There's another set of questions.
+\end{quote}
 
 \RC{
     Second, what is the mathematical basis for equation 2?
@@ -313,6 +385,8 @@ In the remainder of this document we address the specific comments made by the t
     This should come across more clearly in the conclusions.
 }
 
+% ugly hack to hide month in APACite
+\renewcommand{\APACrefYearMonthDay}[3]{\APACrefYear{#1}}
 \bibliographystyle{apacite}
 \bibliography{library-bibtex}
 

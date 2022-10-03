@@ -12,7 +12,7 @@ If you use our code, please cite our preprint (the citation for a paper will be 
   author = {Doss-Gollin, James and Keller, Klaus},
   date = {2022-06-07},
   publisher = {{Earth and Space Science Open Archive}},
-  doi = {10.1002/essoar.10511798.1},
+  doi = {10.1002/essoar.10511798.2},
 }
 ```
 
@@ -26,8 +26,9 @@ The more detail you are able to provide, the more readily we can track down any 
 
 ### Install Julia
 
-All code has been developed using Julia 1.6, specifically the long term support (LTS) version 1.6.5.
-You can download this version of Julia at [https://julialang.org/downloads/](https://julialang.org/downloads/).
+All code has been developed using Julia 1.6, specifically version 1.6.5.
+We recommend using [JuliaUp](https://github.com/JuliaLang/juliaup) to install this version of Julia.
+If you run Julia using VS Code's Julia extension, this version will be selected automatically (see `.vscode/settings.json`).
 
 ### Install Packages
 

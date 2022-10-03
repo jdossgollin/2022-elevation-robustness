@@ -77,7 +77,7 @@ end
 function plot_priors()
     priors = get_priors()
     p = plot(;
-        xlabel="SLR 2022-2100, at Sewells Point, VA [ft]", ylabel="Probability Density"
+        xlabel="SLR 2022-2100, at Sewells Point, VA [ft]", ylabel="Probability Density", title="(a): Implicit Prior"
     )
     for (prior, color) in zip(priors, [:red, :blue, :green])
         plot!(
@@ -92,7 +92,6 @@ function plot_priors()
         )
     end
     p
-    #savefig(p, plots_dir("lsl-priors.pdf"))
     return p
 end
 
@@ -107,6 +106,8 @@ function plot_weight(s::Vector{<:HouseElevation.LSLSim})
         df[!, prior.name] = w
         w_avg = combine(groupby(df, [:model, :rcp]), prior.name => sum => :weight)
         @assert sum(w_avg[!, :weight]) ≈ 1
+
+        letter = collect('a':'z')[i]
         p = @df w_avg groupedbar(
             :model,
             :weight,
@@ -114,7 +115,8 @@ function plot_weight(s::Vector{<:HouseElevation.LSLSim})
             palette=colors,
             legendtitle="  RCP",
             legend=i == 1 ? :topright : false,
-            ylabel="$(prior.name)",
+            title="($letter): $(prior.name)",
+            ylabel="Implicit Weight Assigned",
             xrotation=30,
         )
         return p
@@ -126,7 +128,6 @@ end
 
 function plot_priors_weights(s::Vector{<:HouseElevation.LSLSim})
     plots = vcat(plot_priors(), plot_weight(s)...)
-    add_panel_letters!(plots; loc=(0.15, 0.99), fontsize=11)
     p = plot(
         plots...;
         layout=(2, 2),

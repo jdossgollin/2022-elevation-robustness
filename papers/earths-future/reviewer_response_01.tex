@@ -45,8 +45,22 @@
 \newacronym[\glslongpluralkey={states of the world}]{sow}{SOW}{state of the world}
 
 % cross-refs
-\usepackage{xr}
-%\externaldocument{./submission_02}
+\usepackage{xr-hyper}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+\newcommand*{\myexternaldocument}[1]{%
+    \externaldocument{#1}%
+    \addFileDependency{#1.tex}%
+    \addFileDependency{#1.aux}%
+}
+\myexternaldocument{submission_02}
+\myexternaldocument{supplemental}
+
 \hypersetup{hidelinks}
 \usepackage{cleveref}
 
@@ -103,18 +117,35 @@ In the remainder of this document we address the specific comments made by the t
     After some discussion we have decided to refer to ``scenarios'' (where it adds clarity, ``probabilistic scenarios'') and ``models'' (or ``physical models'' where it is helpful to draw distinctions from, \eg, system models).
 }
 
+\begin{quote}
+    Need to go back and check this!
+    Will be easier to do on paper.
+\end{quote}
+
 \RC{
     I understand the intention of the paper is to showcase the method, not necessarily the results.
     This said, some more discussion about the findings would be helpful.
-    For example, in Figure 7A there is a spike after 0 ft of increased height. If some detail were given on the construction cost function (taken from another work), and at least a few more sentences on the results, I think it would really improve an already very good manuscript.
+    For example, in Figure 7A there is a spike after 0 ft of increased height.
+    If some detail were given on the construction cost function (taken from another work), and at least a few more sentences on the results, I think it would really improve an already very good manuscript.
 }
 
 \AR{
-    Good suggestion, can do.
+    Thanks for this helpful suggestion.
+    We have added some discussion.
 }
 
 \begin{quote}
-    Copy and paste in the new text where we discuss figure 7A
+    For example, \cref{fig:tradeoffs-by-rcp}(a) plots the expected total lifetime cost as a function of $\Delta h$ for the sixteen models considered (we highlight three representative models).
+    \DIFdelbegin \DIFdel{Similarly, \mbox{%DIFAUXCMD
+            \cref{fig:tradeoffs-by-rcp}}\hskip0pt%DIFAUXCMD
+        (b) plots the }\DIFdelend \DIFaddbegin \DIFadd{This panel shows }\DIFaddend lifetime expected damages as a function of $\Delta h$\DIFdelbegin \DIFdel{.
+    }\DIFdelend \DIFaddbegin \DIFadd{, shown in \mbox{%DIFAUXCMD
+            \cref{fig:tradeoffs-by-rcp}}\hskip0pt%DIFAUXCMD
+        (b,  plus the up-front cost of construction.
+        Because there are high fixed costs associated with building (see cost curve in \mbox{%DIFAUXCMD
+            \cref{fig:cost-up-front}}\hskip0pt%DIFAUXCMD
+        ), it generally does not make sense to raise the house by only a small amount, since this incurs these fixed costs without providing substantial damage reduction.
+    }\DIFaddend
 \end{quote}
 
 \RC{
@@ -125,11 +156,18 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Yes, we have a bit of discussion about this but more would be helpful.
+    Thank you for this helpful suggestion.
+    We agree that this merits further discussion and have briefly added some nuance to the section on limitations and research needs.
+    We have removed extraneous references to Approximate Bayesian Computation.
 }
 
 \begin{quote}
-    Copy and paste in the new text
+    Although this is a low-dimensional representation of the full time series, it is not a sufficient statistic\DIFdelbegin \DIFdel{; prior studies have shown that using Approximate Bayesian Computation to calibrate models on low dimensional statistics using that are not sufficient statistics can lead to biased posterior estimates \mbox{%DIFAUXCMD
+            \cite{csillery_abc:2010,marjoram_abc:2006}}\hskip0pt%DIFAUXCMD
+        .
+        Although we are not performing calibration here, and this is thus not a direct concern, }\DIFdelend \DIFaddbegin \DIFadd{, meaning that many possible low-dimensional representations are possible; }\DIFaddend time series with the same \gls{msl} in 2100 may differ in other ways\DIFdelbegin \DIFdel{, and experts may have prior information about the likelihood of these differences not represented in our model}\DIFdelend \DIFaddbegin \DIFadd{.
+        For problems with more sources of uncertainty, such as multisector problems, choosing a low-dimensional representation may prove more challenging.
+        In such settings, more detailed diagnostics and sensitivity analyses may shed light on the appropriateness of different modeling choices}\DIFaddend .
 \end{quote}
 
 \RC{
@@ -140,11 +178,14 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Yes, good suggestion and we can elaborate on this ni the discussion.
+    Thanks for this helpful suggestion.
+    We have added the following text to section 2.3.
 }
 
 \begin{quote}
-    Copy and paste in the new text
+    \DIFaddbegin \DIFadd{Considering multiple probabilistic models for $p_\mathrm{belief}$ can also be useful for understanding the sensitivity of the decision to the choice of $p_\mathrm{belief}$.
+        Further, the sensitivity, or lack thereof, of different objectives to the choice of $p_\mathrm{belief}$ may be useful for identifying future research needs.
+    }
 \end{quote}
 
 \RC{
@@ -153,12 +194,17 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Yes, can do, especially since the shape of these curves matter a lot.
-    For example, findings that elevating a little bit is ineffective in nearly all circumstances stem from the shape of the construction cost curve.
+    We agree with this suggestion since the shape of these curves matters a lot.
+    We have added the following text.
 }
 
 \begin{quote}
-    Copy and paste in the new text
+    \DIFaddbegin \DIFadd{Both  models show damage increasing with flood depth before reaching an upper limit.
+    }\DIFaddend
+\end{quote}
+
+\begin{quote}
+    ``Up-front cost'' is the cost of elevating a house. Following \citeA{zarekarizi_suboptimal:2020}, we use estimates of construction cost from the Coastal Louisiana Risk Assessment \cite{fischbach_clara:2012}. We normalize this cost by house value; this cost curve is shown in \cref{fig:cost-up-front} \DIFaddbegin \DIFadd{and shows a large up-front cost plus a piecewise linear marginal cost}\DIFaddend .
 \end{quote}
 
 \RC{
@@ -169,8 +215,10 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    The purpose here is to show the probability distribution using a standard return period plot.
-    But a Q-Q or P-P plot in the supplemental material to assess fit would be good.
+    Thanks for this suggestion.
+    The purpose of this plot is actually not to demonstrate the quality of fit but rather to present the distribution using a ``return period plot'' standard in the flood frequency analysis community.
+    As such, we have decided to leave it as is.
+    We concur with the reviewer that if the objective were to assess the fit of the model, a P-P plot (along with other model checks) would be more appropriate.
 }
 
 \RC{
@@ -180,11 +228,18 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    We mainly defer to \citeA{ruckert_coastal:2019} on this, but we can add a bit of discussion.
+    Thanks for this suggestion.
+    We agree that the differences between models are surprising and relevant.
+    We have added the following sentence.
 }
 
 \begin{quote}
-    Copy and paste in the new text
+    \DIFaddbegin \DIFadd{The differences between models arise primarily due to different representations of Antarctic Ice Sheet contributions to global \mbox{%DIFAUXCMD
+            \gls{slr} }\hskip0pt%DIFAUXCMD
+        and statistical calibration methodologies; for a more detailed discussion we refer the reader to \mbox{%DIFAUXCMD
+            \citeA{ruckert_coastal:2019}}\hskip0pt%DIFAUXCMD
+        .
+    }\DIFaddend
 \end{quote}
 
 \RC{
@@ -192,11 +247,16 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Can and should do.
+    Thanks for this suggestion to clarify our notation.
+    The paragraph now reads as follows.
 }
 
 \begin{quote}
-    Copy and paste in the new text
+    The expected annual damage is thus
+    \begin{equation}\label{eq:ead}
+        \textrm{EAD}(t) = \mathbb{E}[D \qty(h-\overline{y}(t))] = \int_{y'} p(y') D \qty(h - \qty(\overline{y}(t) + y')) \dd{y'},
+    \end{equation}
+    where $D(h-y)$ is a deterministic function specifying damage as a function of flood depth (relative to the house) \DIFaddbegin \DIFadd{and $p(y')$ is the probability density of storm surge}\DIFaddend .
 \end{quote}
 
 \RC{
@@ -205,11 +265,17 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Good suggestion.
+    Thanks for this suggestion.
+    We have explained our choice and have also taken the opportunity to clarify that these distributions are illustrative choices.
 }
 
 \begin{quote}
-    Copy and paste in the new text
+    We use a Gamma distribution for all three priors, parameterized following \cref{eq:gamma-dist}.
+    \DIFaddbegin \DIFadd{The distributions were chosen to be illustrative, rather than to reflect any particular scientific consensus.
+        The Gamma distribution is a flexible distribution that can be used to model skewed, lower-bounded distributions, making it an appropriate choice for modeling subjective uncertainty about \mbox{%DIFAUXCMD
+            \gls{slr}}\hskip0pt%DIFAUXCMD
+        .
+    }\DIFaddend
 \end{quote}
 
 \RC{
@@ -217,8 +283,8 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Yes, can do.
-    See new figure.
+    Thanks for this suggestion.
+    We have moved the previous labels to the title and added ``implicit weight assigned'' to the $y$ axis labels.
 }
 
 \section{Referee \#2}

@@ -77,7 +77,9 @@ end
 function plot_priors()
     priors = get_priors()
     p = plot(;
-        xlabel="SLR 2022-2100, at Sewells Point, VA [ft]", ylabel="Probability Density", title="(a): Implicit Prior"
+        xlabel="SLR 2022-2100, at Sewells Point, VA [ft]",
+        ylabel="Probability Density",
+        title="(a): Implicit Prior",
     )
     for (prior, color) in zip(priors, [:red, :blue, :green])
         plot!(

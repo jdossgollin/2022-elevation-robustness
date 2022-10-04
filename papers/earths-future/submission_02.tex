@@ -157,16 +157,16 @@
 \begin{keypoints}
   \item Decisions about how to manage climate risks are often made under deep uncertainty.
   \item We introduce a Bayesian framework to transparently synthesize and characterize deep uncertainties with the goal to support decision-making.
-  \item We demonstrate the framework using a simple case study of house elevation for coastal flood risk management.
-  \item Estimates of performance or robustness under deep uncertainty necessarily involve subjective judgement.
+  \item We demonstrate the framework using a simple case study of how high to elevate a  house to manage coastal flood risks.
+  \item Estimates of performance or robustness under deep uncertainty necessarily involve subjective judgments.
 \end{keypoints}
 
 
 \begin{abstract}
   Projections of nonstationary climate risks can vary considerably from one source to another, posing considerable communication and decision-analytical challenges.
   One such challenge is how to present trade-offs under deep uncertainty in a salient and interpretable manner.
-  Some common approaches include analyzing a small subset of projections or invoking treating all projections as equally likely regardless of how they are sampled.
-  These approaches can underestimate risks, hide deep uncertainties, and provide little insight into which assumptions drive decision-relevant outcomes.
+  Some common approaches include analyzing a small subset of projections or treating all considered projections as equally likely.
+  These approaches can underestimate risks, hide deep uncertainties, and are mostly silent on which assumptions drive decision-relevant outcomes.
   Here we introduce and demonstrate a transparent Bayesian framework for synthesizing deep uncertainties to inform climate risk management.
   The first step of this workflow is to generate an ensemble of simulations representing possible futures and analyze them through standard exploratory modeling techniques.
   Next, a small set of probability distributions representing subjective beliefs about the likelihood of possible futures is used to weight the scenarios.
@@ -176,11 +176,11 @@
 
 \section*{Plain Language Summary}
 
-The identification of sound strategies to manage risks driven by climatic changes is challenged by large uncertainties surrounding projections of the coupled natural-human systems that influence projections of climate risk.
+Identifying sound strategies to manage risks driven by climatic changes is a complex task given the large uncertainties surrounding projections of  coupled natural-human systems.
 These uncertainties often arise from choices experts have to make, for example about how to formulate scientific models of future water levels.
 Different experts can disagree about these choices, leading to different projections.
 Analyzing decisions in such a situation of deep uncertainty poses nontrivial challenges.
-For example, picking a single representative projection can lead to under-estimation of risk and poor decisions.
+For example, picking a single representative projection can under-estimate risk and result in poor decisions.
 Similarly, communicating results separately for each projection can overwhelm decision-makers.
 To make matters worse, typical approaches to this problem are mostly silent on what assumptions make a difference for the decisions at hand.
 We develop and demonstrate a framework to address these challenges.
@@ -191,43 +191,44 @@ We demonstrate the approach with a relatively simple example question of how hig
 \section{Introduction}\label{sec:introduction}
 
 Aging infrastructure and changes in regulations, finance, patterns of population and infrastructure use, and climate challenge the ability of critical infrastructures to meet design objectives \cite{doss-gollin_txtreme:2021,doss-gollin_fatalism:2020,chester_reliable:2020,asce_infrastructure_climate:2021,ho_dams:2017}.
-To ensure acceptable performance, current practice in engineering, infrastructure design, and regulation relies heavily on standards that specify design events or conditions that buildings and infrastructure should safely withstand \cite{bruneau_multihazard:2017}.
+To achieve acceptable performance with reasonable planning efforts, current practice in engineering, infrastructure design, and regulation relies heavily on standards that specify design events or conditions that buildings and infrastructure should safely withstand \cite{bruneau_multihazard:2017}.
 For example, \gls{fema}, local governments, and engineering consultants produce local floodplain maps in many communities.
-Buildings in the designated floodplain are subject to specific regulations, such as flood insurance requirements as an eligibility requirement for federally backed mortgages \cite{kousky_voucher:2014} or minimum elevations \cite{asce_24-05:2006,FEMA_p-55:2011}.
+Buildings in the designated floodplain are subject to specific regulations, such as flood insurance requirements as an eligibility requirement for federally backed mortgages \cite{kousky_voucher:2014} or minimum elevations for new construction \cite{asce_24-05:2006,FEMA_p-55:2011}.
+For example, many communities require that new construction be elevated at least \SI{1}{ft} above the nominal 100-year flood level \cite{zarekarizi_suboptimal:2020}.
 Although this paper focuses on flooding, similar approaches inform mitigation strategies for a wide range of other hazards \cite{asce_7-10:2013}.
 
 Standards-based risk management frameworks have many advantages, including scalability, explainability, and simplicity.
 However, the choice of standard is a complex design and policy choice.
 Risk-based design and cost benefit analysis \cite{eijgenraam_flooding:2014,vandantzig_dike:1956,xian_elevation:2017} can provide a quantitative basis for comparing possible standards by emphasizing ``a proportionate response to risk, so that the amount invested in risk reduction is in proportion to the magnitude of the risk and the cost-effectiveness with which that risk may be reduced'' \cite{merz_fluvial:2010}.
-This provides a formal basis for, \eg, protecting hospitals and critical infrastructure to a higher degree than ordinary buildings \cite{asce_7-10:2013}.
-However, these methods are silent on how standards should balance trade-offs, not only between cost and performance but also between other stakeholder values such as sense of place, distributive justice, and safety \cite{keller_management:2021}.
+This provides a formal basis for choices such as protecting hospitals and critical infrastructure to a higher degree than ordinary buildings \cite{asce_7-10:2013}.
+However, these methods are silent on how standards should balance trade-offs, not only between cost and performance but also between other stakeholder values such as sense of place, distributive justice, and safety \cite{keller_management:2021,helgeson_manifesto:2022,quinn_rivalframings:2017,bessette_vimm:2017,vezer_epistemic:2018}.
 
 Moreover, estimates of the performance trade-offs require implicit or explicit assumptions about the likelihood of different possible futures.
 Current practice emphasizes nominally objective methods that can be applied consistently across locations.
 For example, the \gls{usgs} Bulletin 17C specifies procedures for estimating flood frequency \cite{bulletin17c:2019}.
 Similarly, \gls{noaa} Atlas 14 provides estimates of the intensity, duration, and frequency of extreme rainfall \cite{atlas14_texas:2018,noaa_nonstationary:2022}.
-Among several statistical assumptions these analyses make that have been recently called into question is stationarity \cite<the assumption that past and future hazard come from the same \gls{pdf}>{merz_review:2014,milly_stationarity:2008,doss-gollin_robustadaptation:2019}.
-While some methods have been proposed for incorporating nonstationarity into risk analyses \cite<see>[for a review]{Salas:2018ge}, these assume specific forms of a trend which may not adequately represent physical processes or true levels of uncertainty \cite{doss-gollin_robustadaptation:2019,montanari_immortal:2014,serinaldi_undead:2015}.
+One statistical assumptions these analyses make is stationarity (the assumption that past and future hazard come from the same \gls{pdf}), but global climate change and local environmental changes have cast scrutiny on this assumption \cite{merz_review:2014,milly_stationarity:2008,doss-gollin_robustadaptation:2019}.
+While some methods have been proposed for incorporating nonstationarity into risk analyses \cite<see>[for a review]{Salas:2018ge}, these assume specific forms of a trend which may not adequately represent physical processes or sample only a subset of uncertainties \cite{doss-gollin_robustadaptation:2019,montanari_immortal:2014,serinaldi_undead:2015}.
 At least in part because of the challenges associated with developing objective methods to select from diverging projections of future hazard, official guidance continues to rely on the stationarity assumption \cite{bulletin17c:2019,atlas14_texas:2018}.
 
 The limitations of objectivist approaches to projecting risk extend beyond estimating nonstationary climate hazards.
 Human-natural systems are never closed and model results are never unique, and thus validation and verification of models representing these systems is necessarily qualitative and subjective \cite{oreskes_verification:1994}.
 In other words, no model exists that could represent the full truth, and the future is thus deeply uncertain \cite{keller_management:2021,walker_deep:2013,lempert_complex:2002,haasnoot_sealevelrise:2021}.
-Consequently, a growing literature on \gls{dmdu} emphasizes the value of identifying decisions that are robust, in some sense, to model limitations \cite{moody_robustness:2013,herman:2015,mcphail_robustness:2019,borgomeo_robustness:2018}.
+Consequently, a growing literature on \gls{dmdu} emphasizes the value of identifying decisions that are robust, in some sense, to deep uncertainties \cite{moody_robustness:2013,herman:2015,mcphail_robustness:2019,borgomeo_robustness:2018}.
 Within this literature has emerged a debate regarding the value and use of probabilistic information  \cite<see>[and references therein]{taner_probabilistic:2019}.
 On the one hand, scholars have pointed out that predictions are inherently unreliable, and representing deep uncertainties through probability distributions frequently over-estimates predictive skill \cite{groves_scenarios:2007,lempert_robust:2000}.
 On the other, assessments of which decisions are robust depend on subjective choices about how to define robustness and how to sample uncertainties \cite{mcphail_robustness:2019,quinn_exploratory:2020,schneider_scenarios:2002,schneider_dangerous:2001,reis_distribution:2020}.
 
-In this paper we offer a first conceptual step towards bridging this divide by presenting a framework that combines the strengths of both approaches.
+In this paper we offer a conceptual step towards bridging this divide by presenting a framework that is designed to combine the strengths of both approaches.
 In the first step, exploratory or bottom-up modeling is used to build insight and identify potential system vulnerabilities \cite{moallemi_exploratory:2020,bankes:1993,brown_decisionscaling:2012}.
-In the second, we synthesize the results of exploratory modeling to formally estimate performance metrics and trade-offs using probabilistic models for uncertainty.
-Drawing from the literature on building predictive models when ``all models are wrong'' \cite{box_sciencestatistics:1976,gelman_philosophy:2013,Piironen:2017eh}, we interpret these probability distributions not statements of fact, but rather as a self-consistent framework for reasoning about how different assumptions lead to different inferences.
+In the second step, we synthesize the results of exploratory modeling to formally estimate performance metrics and trade-offs using probabilistic models for uncertainty.
+Drawing from the literature on building predictive models when all models are wrong \cite{box_sciencestatistics:1976,gelman_philosophy:2013,Piironen:2017eh}, we interpret these probability distributions not as statements of fact, but rather as a self-consistent framework for reasoning about how different assumptions lead to different inferences.
 An advantage of our approach is that it facilitates computationally efficient analysis of how alternative probabilistic models would affect estimated performance metrics and trade-offs.
 
 We illustrate our approach through a didactic case study of whether to elevate a hypothetical house, and if so how high.
 Prior studies have found that floodproofing and building-scale vulnerability reduction measures, including house elevation, can effectively reduce local flood damages in many contexts \cite{demoel_reducing:2014,deruig_building:2020,kreibich_building:2005,slotter_floodproofing:2020,rozer_coping:2016,mobley_mitigation:2020,aerts_cost:2018}, and both local building codes \cite{asce_7-10:2013,bruneau_multihazard:2017,asce_24-05:2006} and federal policy \cite{FEMA_p-55:2011} require elevation in some cases.
 Guidance for homeowners, notably from \gls{fema}, recommends elevating to the \gls{bfe} (typically the \SI{100}{year} flood) plus a freeboard \cite{fema_retrofitting:2014,asce_24-14:2015,fema_retrofitting:2014} but recent research has demonstrated that neglecting uncertainty in the cost-benefit analysis can lead to poor decisions \cite{zarekarizi_suboptimal:2020}.
-Focusing on deep uncertainty in \gls{slr} over the 70 year design life of a hypothetical house, we seek to answer the research question ``\emph{how can deep uncertainties be transparently synthesized for decision analysis?}''
+Focusing on deep uncertainty in \gls{slr} over the 70 year design life of a hypothetical house, we seek to answer the research question ``\emph{how can decision analysis transparently synthesize deep uncertainties?}''
 To shed light on this question in a single paper, we necessarily are silent on key issues that would be relevant to real-world decision-makers including alternative decision levers, the potential for adaptive decision rules, and rival problem framings.
 
 We proceed as follows.
@@ -287,11 +288,11 @@ Our primary concern is not that subjective assumptions about the likelihood of d
 \subsection{Synthesize}\label{sec:analysis-synthesize}
 
 As discussed in the previous subsection, estimating the expectation of arbitrary functions under uncertainty is a critical component of decision making under uncertainty.
-If the \glspl{sow} are drawn \gls{iid} from the true distribution, then the expected value of some function  $f$, $\mathbb{E}\qty[f(\vb{s})]$, can be readily estimated as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$.
-However, this is often not the case; for example, a fixed set of simulations may be available for analysis or low-probability but high-impact regions of the parameter space may have been sampled.
-In this case, the formula must be adjusted to
+If the \glspl{sow} are drawn \gls{iid} from the target distribution, then the expected value of some function $f(\mathbf{s})$, can be readily estimated following the Monte Carlo estimate $\mathbb{E}\qty[f(\vb{s})] \approx \frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$.
+However, this is often not the case; for example, a fixed set of simulations not drawn from the target distribution may be available for analysis.
+In this case, the formula may be adjusted to a weighted Monte Carlo estimate:
 \begin{equation}
-  \mathbb{E}\qty[f(\vb{s})] \approx \frac{1}{N} \sum_{i=j}^N w_j f(\vb{s}_j),
+  \mathbb{E}\qty[f(\vb{s})] \approx \sum_{i=j}^N w_j f(\vb{s}_j),
 \end{equation}
 where $\sum_{j=1}^J w_j = 1$.
 
@@ -337,7 +338,7 @@ Further, the sensitivity, or lack thereof, of different objectives to the choice
 
 To illustrate the proposed decision analytic framework, we model a one-time decision of whether to elevate a house, and if so by how much (\cref{fig:xlrm}).
 Following the approach outlined in \citeA{zarekarizi_suboptimal:2020}, we focus on a case study of a \emph{hypothetical} house in Norfolk, VA.
-For interpretability, we focus on deep uncertainty in \gls{msl} and approximate other model parameters as shallow uncertainties as shown in \cref{tab:uncertainties}.
+For interpretability, we focus on deep uncertainty in \gls{msl} and treat storm surge and other model parameters as shallow uncertainties as shown in \cref{tab:uncertainties}.
 We use the notation developed in the previous section to describe the case study.
 Specifically,
 \begin{enumerate}
@@ -637,9 +638,11 @@ We present results using each of the models for $p_\mathrm{belief}$ outlined in 
 
 One application of this method is to diagnose the assumptions which which different $p_\mathrm{belief}$ are consistent.
 \Cref{fig:lsl-priors-weights}(B-D) shows the total weight that each prior assigns to \glspl{sow} generated by each \gls{rcp} scenario and physical model.
-For example, the rapid \gls{slr} scenario (green line in \cref{fig:lsl-priors-weights}) places most weight on the DP16 model, and particularly on \gls{rcp} 8.5 which by some accounts is unlikely given current policy \cite{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}.
+Specifically, weights are computed as the sum of weights assigned to each \gls{sow} sampled from that model.
+For example, the rapid \gls{slr} scenario (green line in \cref{fig:lsl-priors-weights}) places most weight on \glspl{sow} produced by the DP16 model, and particularly on \gls{rcp} 8.5 which by some accounts is unlikely given current policy \cite{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}.
 Conversely, the slow \gls{slr} scenario (red line) places most weight on the BRICK models, particularly \gls{rcp} 2.6 \cite<also unlikely given current policy;>{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}) and \gls{rcp} 4.5.
 The uncertain \gls{slr} scenario (blue line) allocates approximately equal weight across models.
+Decision analysts can use this approach as a diagnostic to understand the assumptions implicit to their choice of $p_\mathrm{belief}$.
 
 This method can also be used to calculate expectations, allowing us to revisit the trade-off diagrams of \cref{fig:tradeoffs-by-rcp}.
 \Cref{fig:tradeoffs-by-prior} shows the total lifetime cost (panel A) and lifetime expected damages (panel B) under each model.

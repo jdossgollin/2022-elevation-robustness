@@ -1,7 +1,7 @@
 \documentclass{agujournal2019}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL papers/earths-future/submission_01.tex   Sat Jul  9 18:36:25 2022
-%DIF ADD papers/earths-future/submission_02.tex   Mon Oct  3 12:56:09 2022
+%DIF ADD papers/earths-future/submission_02.tex   Tue Oct  4 11:22:09 2022
 
 %% required packages
 \usepackage{lineno}
@@ -237,16 +237,17 @@
 \begin{keypoints}
   \item Decisions about how to manage climate risks are often made under deep uncertainty.
   \item We introduce a Bayesian framework to transparently synthesize and characterize deep uncertainties with the goal to support decision-making.
-  \item We demonstrate the framework using a simple case study of house elevation for coastal flood risk management.
-  \DIFaddbegin \item \DIFadd{Estimates of performance or robustness under deep uncertainty necessarily involve subjective judgement.
+  \item We demonstrate the framework using a simple case study of \DIFdelbegin \DIFdel{house elevation for coastal flood risk management.
+  }\DIFdelend \DIFaddbegin \DIFadd{how high to elevate a  house to manage coastal flood risks.
+  }\item \DIFadd{Estimates of performance or robustness under deep uncertainty necessarily involve subjective judgments.
 }\DIFaddend \end{keypoints}
 
 
 \begin{abstract}
   Projections of \DIFdelbegin \DIFdel{future }\DIFdelend \DIFaddbegin \DIFadd{nonstationary }\DIFaddend climate risks can vary considerably from one source to another, posing considerable communication and decision-analytical challenges.
   One such challenge is how to present trade-offs under deep uncertainty in a salient and interpretable manner.
-  Some common approaches include analyzing a small subset of projections or invoking \DIFdelbegin \DIFdel{Laplace's principle of insufficient reason to justify a simple average}\DIFdelend \DIFaddbegin \DIFadd{treating all projections as equally likely regardless of how they are sampled}\DIFaddend .
-  These approaches can underestimate risks, hide deep uncertainties, and provide little insight into which assumptions drive decision-relevant outcomes.
+  Some common approaches include analyzing a small subset of projections or \DIFdelbegin \DIFdel{invoking Laplace's principle of insufficient reason to justify a simple average}\DIFdelend \DIFaddbegin \DIFadd{treating all considered projections as equally likely}\DIFaddend .
+  These approaches can underestimate risks, hide deep uncertainties, and \DIFdelbegin \DIFdel{provide little insight into }\DIFdelend \DIFaddbegin \DIFadd{are mostly silent on }\DIFaddend which assumptions drive decision-relevant outcomes.
   Here we introduce and demonstrate a transparent Bayesian framework for synthesizing deep uncertainties to inform climate risk management.
   The first step of this workflow is to generate an ensemble of simulations representing possible futures and analyze them through standard exploratory modeling techniques.
   Next, a small set of probability distributions representing subjective beliefs about the likelihood of possible futures is used to weight the scenarios.
@@ -256,11 +257,11 @@
 
 \section*{Plain Language Summary}
 
-The identification of sound strategies to manage risks driven by climatic changes is challenged by large uncertainties surrounding projections of the coupled natural-human systems that influence projections of climate risk.
+\DIFdelbegin \DIFdel{The identification of }\DIFdelend \DIFaddbegin \DIFadd{Identifying }\DIFaddend sound strategies to manage risks driven by climatic changes is \DIFdelbegin \DIFdel{challenged by }\DIFdelend \DIFaddbegin \DIFadd{a complex task given the }\DIFaddend large uncertainties surrounding projections of  \DIFdelbegin \DIFdel{the }\DIFdelend coupled natural-human systems\DIFdelbegin \DIFdel{that influence projections of climate risk}\DIFdelend .
 These uncertainties often arise from choices experts have to make, for example about how to formulate scientific models of future water levels.
 Different experts can disagree about these choices, leading to different projections.
 Analyzing decisions in such a situation of deep uncertainty poses nontrivial challenges.
-For example, picking a single representative projection can lead to under-estimation of risk and poor decisions.
+For example, picking a single representative projection can \DIFdelbegin \DIFdel{lead to under-estimation of risk and }\DIFdelend \DIFaddbegin \DIFadd{under-estimate risk and result in }\DIFaddend poor decisions.
 Similarly, communicating results separately for each projection can overwhelm decision-makers.
 To make matters worse, typical approaches to this problem are mostly silent on what assumptions make a difference for the decisions at hand.
 We develop and demonstrate a framework to address these challenges.
@@ -277,7 +278,7 @@ Moreover, }\DIFdelend \DIFaddbegin \DIFadd{Aging infrastructure and }\DIFaddend 
 \cite{doss-gollin_txtreme:2021,doss-gollin_fatalism:2020,chester_reliable:2020}}\hskip0pt%DIFAUXCMD
 .
 The need to upgrade and expand infrastructure motivates the question: for which possible futures should infrastructure systems and components be designed?
-The answer to this question depends in part on values: intrinsic trade-offs between safety, performance, cost, and other objectives depend on context and stakeholder preferences \mbox{%DIFAUXCMD
+The answer to this question depends in part on values: intrinsic trade-offs between safety, performance , cost, and other objectives depend on context and stakeholder preferences \mbox{%DIFAUXCMD
 \cite{keller_management:2021} }\hskip0pt%DIFAUXCMD
 and are often regulated by statute or industry guidelines \mbox{%DIFAUXCMD
 \cite{bruneau_multihazard:2017}}\hskip0pt%DIFAUXCMD
@@ -298,7 +299,7 @@ At the same time, performance depends upon future conditions, and so decisions a
 \DIFdel{Current }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
 \cite{doss-gollin_txtreme:2021,doss-gollin_fatalism:2020,chester_reliable:2020,asce_infrastructure_climate:2021,ho_dams:2017}}\hskip0pt%DIFAUXCMD
 .
-To ensure acceptable performance, current }\DIFaddend practice in engineering, infrastructure design, and \DIFdelbegin \DIFdel{local governance }\DIFdelend \DIFaddbegin \DIFadd{regulation }\DIFaddend relies heavily on standards that specify \DIFdelbegin \DIFdel{particular }\DIFdelend design events or conditions that buildings and infrastructure should safely withstand \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+To achieve acceptable performance with reasonable planning efforts, current }\DIFaddend practice in engineering, infrastructure design, and \DIFdelbegin \DIFdel{local governance }\DIFdelend \DIFaddbegin \DIFadd{regulation }\DIFaddend relies heavily on standards that specify \DIFdelbegin \DIFdel{particular }\DIFdelend design events or conditions that buildings and infrastructure should safely withstand \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
 \cite{asce_7-10:2013,bruneau_multihazard:2017}}\hskip0pt%DIFAUXCMD
 .
 These are often, though not always, informed by probabilistic analysis of relevant data.
@@ -308,8 +309,18 @@ These are often, though not always, informed by probabilistic analysis of releva
 }\DIFaddend For example, \gls{fema}, local governments, and engineering consultants produce local floodplain maps in many communities.
 \DIFdelbegin \DIFdel{These trigger specific floodplain }\DIFdelend \DIFaddbegin \DIFadd{Buildings in the designated floodplain are subject to specific }\DIFaddend regulations, such as \DIFdelbegin \DIFdel{a requirement for homes in the 100-year floodplain with }\DIFdelend \DIFaddbegin \DIFadd{flood insurance requirements as an eligibility requirement for }\DIFaddend federally backed mortgages \DIFdelbegin \DIFdel{to be covered by flood insurance \mbox{%DIFAUXCMD
 \cite{kousky_voucher:2014} }\hskip0pt%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite{kousky_voucher:2014} }\hskip0pt%DIFAUXCMD
+or minimum elevations for new construction \mbox{%DIFAUXCMD
+\cite{asce_24-05:2006,FEMA_p-55:2011}}\hskip0pt%DIFAUXCMD
 .
-Additionally, local building codes (based on guidance such as \mbox{%DIFAUXCMD
+For example, many communities require that new construction be elevated at least }\SI{1}{ft} \DIFadd{above the nominal 100-year flood level \mbox{%DIFAUXCMD
+\cite{zarekarizi_suboptimal:2020}}\hskip0pt%DIFAUXCMD
+.
+Although this paper focuses on flooding, similar approaches inform mitigation strategies for a wide range of other hazards \mbox{%DIFAUXCMD
+\cite{asce_7-10:2013}}\hskip0pt%DIFAUXCMD
+}\DIFaddend .
+\DIFdelbegin \DIFdel{Additionally, local building codes (based on guidance such as \mbox{%DIFAUXCMD
 \citeA{asce_24-05:2006} }\hskip0pt%DIFAUXCMD
 or \mbox{%DIFAUXCMD
 \citeA{FEMA_p-55:2011}}\hskip0pt%DIFAUXCMD
@@ -321,14 +332,8 @@ For example, some levees in the Netherlands are designed for a nominal annual fa
 \cite{eijgenraam_flooding:2014}}\hskip0pt%DIFAUXCMD
 , while a seawall proposed as part of a \$29 billion coastal protection project for  Galveston Bay was designed by setting the nominal annual probability of overtopping to 1\% \mbox{%DIFAUXCMD
 \cite[Appendix D.,~p.~2-59]{USACE_coastal:2021}}\hskip0pt%DIFAUXCMD
-}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
-\cite{kousky_voucher:2014} }\hskip0pt%DIFAUXCMD
-or minimum elevations \mbox{%DIFAUXCMD
-\cite{asce_24-05:2006,FEMA_p-55:2011}}\hskip0pt%DIFAUXCMD
 .
-Although this paper focuses on flooding, similar approaches inform mitigation strategies for a wide range of other hazards \mbox{%DIFAUXCMD
-\cite{asce_7-10:2013}}\hskip0pt%DIFAUXCMD
-}\DIFaddend .
+}\DIFdelend 
 
 \DIFdelbegin \DIFdel{There are many advantagesto standards-based design.
 In particular, these heuristics are scalable and explainable, they reduce the complexity of design analysis, and they are fair in at least a procedural sense}\DIFdelend \DIFaddbegin \DIFadd{Standards-based risk management frameworks have many advantages, including scalability, explainability, and simplicity}\DIFaddend .
@@ -340,11 +345,11 @@ This has motivated economically informed approaches, like risk-based }\DIFdelend
 Risk-based }\DIFaddend design and cost benefit analysis \cite{eijgenraam_flooding:2014,vandantzig_dike:1956,xian_elevation:2017} \DIFdelbegin \DIFdel{, that place ``a strong emphasis upon a }\DIFdelend \DIFaddbegin \DIFadd{can provide a quantitative basis for comparing possible standards by emphasizing ``a }\DIFaddend proportionate response to risk, so that the amount invested in risk reduction is in proportion to the magnitude of the risk and the cost-effectiveness with which that risk may be reduced'' \cite{merz_fluvial:2010}.
 \DIFdelbegin \DIFdel{These quantitative cost-benefit analyses also rely on probabilistic descriptions of relevant hazard, and can be particularly sensitive to representation of tail probabilities \mbox{%DIFAUXCMD
 \cite{merz_heavytails:2022,wong_floodrisk:2018,garner_slrise:2018}}\hskip0pt%DIFAUXCMD
-}\DIFdelend \DIFaddbegin \DIFadd{This provides a formal basis for, }\eg\DIFadd{, protecting hospitals and critical infrastructure to a higher degree than ordinary buildings \mbox{%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{This provides a formal basis for choices such as protecting hospitals and critical infrastructure to a higher degree than ordinary buildings \mbox{%DIFAUXCMD
 \cite{asce_7-10:2013}}\hskip0pt%DIFAUXCMD
 .
 However, these methods are silent on how standards should balance trade-offs, not only between cost and performance but also between other stakeholder values such as sense of place, distributive justice, and safety \mbox{%DIFAUXCMD
-\cite{keller_management:2021}}\hskip0pt%DIFAUXCMD
+\cite{keller_management:2021,helgeson_manifesto:2022,quinn_rivalframings:2017,bessette_vimm:2017,vezer_epistemic:2018}}\hskip0pt%DIFAUXCMD
 }\DIFaddend .
 
 \DIFdelbegin \DIFdel{The approaches currently used to estimate the \mbox{%DIFAUXCMD
@@ -354,21 +359,23 @@ Current practice emphasizes }\DIFaddend nominally objective methods that can be 
 For example, \DIFaddbegin \DIFadd{the }\DIFaddend \gls{usgs} Bulletin 17C specifies procedures for estimating flood frequency \cite{bulletin17c:2019}\DIFdelbegin \DIFdel{and }\DIFdelend \DIFaddbegin \DIFadd{.
 Similarly, }\DIFaddend \gls{noaa} Atlas 14 provides estimates of the intensity, duration, and frequency of extreme rainfall \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
 \cite{atlas14_texas:2018}}\hskip0pt%DIFAUXCMD
-}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+.
+Among several }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
 \cite{atlas14_texas:2018,noaa_nonstationary:2022}}\hskip0pt%DIFAUXCMD
-}\DIFaddend .
-Among several statistical assumptions these analyses make that have been recently called into question is stationarity \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+.
+One }\DIFaddend statistical assumptions these analyses make \DIFdelbegin \DIFdel{that have been recently called into question is stationarity \mbox{%DIFAUXCMD
 \cite<the assumption that past and future hazard come from the same \gls{pdf}; see>[for a review]{merz_review:2014}}\hskip0pt%DIFAUXCMD
 .
 For example, clear trends in extreme rainfall are apparent across much of southeastern Texas \mbox{%DIFAUXCMD
 \cite{fagnant_spatiotemporal:2020,nielsen-gammon_txrainfall:2020}}\hskip0pt%DIFAUXCMD
 , and trends in many other hazards for other locations are consistent with observations \mbox{%DIFAUXCMD
 \cite<see>[for a comprehensive summary]{ipcc_impacts:2022}}\hskip0pt%DIFAUXCMD
-.
-}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
-\cite<the assumption that past and future hazard come from the same \gls{pdf}>{merz_review:2014,milly_stationarity:2008,doss-gollin_robustadaptation:2019}}\hskip0pt%DIFAUXCMD
-.
-}\DIFaddend While some methods have been proposed for incorporating \DIFdelbegin \DIFdel{trends into these }\DIFdelend \DIFaddbegin \DIFadd{nonstationarity into risk }\DIFaddend analyses \cite<see>[for a review]{Salas:2018ge}, these assume specific forms of \DIFdelbegin \DIFdel{nonstationarity }\DIFdelend \DIFaddbegin \DIFadd{a trend }\DIFaddend which may not \DIFdelbegin \DIFdel{fully }\DIFdelend \DIFaddbegin \DIFadd{adequately }\DIFaddend represent physical processes or true levels of uncertainty \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{is stationarity (the assumption that past and future hazard come from the same \mbox{%DIFAUXCMD
+\gls{pdf}}\hskip0pt%DIFAUXCMD
+), but global climate change and local environmental changes have cast scrutiny on this assumption \mbox{%DIFAUXCMD
+\cite{merz_review:2014,milly_stationarity:2008,doss-gollin_robustadaptation:2019}}\hskip0pt%DIFAUXCMD
+}\DIFaddend .
+While some methods have been proposed for incorporating \DIFdelbegin \DIFdel{trends into these }\DIFdelend \DIFaddbegin \DIFadd{nonstationarity into risk }\DIFaddend analyses \cite<see>[for a review]{Salas:2018ge}, these assume specific forms of \DIFdelbegin \DIFdel{nonstationarity }\DIFdelend \DIFaddbegin \DIFadd{a trend }\DIFaddend which may not \DIFdelbegin \DIFdel{fully }\DIFdelend \DIFaddbegin \DIFadd{adequately }\DIFaddend represent physical processes or \DIFdelbegin \DIFdel{true levels of uncertainty \mbox{%DIFAUXCMD
 \cite{doss-gollin_robustadaptation:2019,Montanari:2014hl,Serinaldi:2015bq}}\hskip0pt%DIFAUXCMD
 .
 Ultimately, the difficulty of incorporating nonstationarity into existing frameworks has led to continued reliance on stationarity despite recognition of the associated limitations as discussed in p.~2 of \mbox{%DIFAUXCMD
@@ -392,7 +399,7 @@ and p.~A.4-42 of \mbox{%DIFAUXCMD
 In other words, they are deeply uncertain \mbox{%DIFAUXCMD
 \cite{keller_management:2021,walker_deep:2013,lempert_complex:2002,haasnoot_sealevelrise:2021}}\hskip0pt%DIFAUXCMD
 .
-These deeply uncertain nonstationary hazards challenge not only the existing stationary estimates but, more fundamentally, the premise that objective estimates }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+These deeply uncertain nonstationary hazards challenge not only the existing stationary estimates but, more fundamentally, the premise that objective estimates }\DIFdelend \DIFaddbegin \DIFadd{sample only a subset of uncertainties \mbox{%DIFAUXCMD
 \cite{doss-gollin_robustadaptation:2019,montanari_immortal:2014,serinaldi_undead:2015}}\hskip0pt%DIFAUXCMD
 .
 At least in part because of the challenges associated with developing objective methods to select from diverging projections }\DIFaddend of future hazard\DIFdelbegin \DIFdel{exist and can be estimated empirically.
@@ -461,7 +468,7 @@ In other words, no model exists that could represent the full truth, and the fut
 .
 Consequently, a growing literature on \mbox{%DIFAUXCMD
 \gls{dmdu} }\hskip0pt%DIFAUXCMD
-emphasizes the value of identifying decisions }\DIFaddend that are robust\DIFaddbegin \DIFadd{, in some sense, to model limitations \mbox{%DIFAUXCMD
+emphasizes the value of identifying decisions }\DIFaddend that are robust\DIFaddbegin \DIFadd{, in some sense, to deep uncertainties \mbox{%DIFAUXCMD
 \cite{moody_robustness:2013,herman:2015,mcphail_robustness:2019,borgomeo_robustness:2018}}\hskip0pt%DIFAUXCMD
 .
 Within this literature has emerged a debate regarding the value and use of probabilistic information  \mbox{%DIFAUXCMD
@@ -475,7 +482,7 @@ On the other, assessments of which decisions are robust depend on subjective cho
 .
 }
 
-\DIFadd{In this paper we offer a first conceptual step towards bridging this divide by presenting a framework that combines the strengths of both approaches.
+\DIFadd{In this paper we offer a conceptual step towards bridging this divide by presenting a framework that is designed to combine the strengths of both approaches.
 In the first step, exploratory or bottom-up modeling is used }\DIFaddend to \DIFdelbegin \DIFdel{model imperfections.
 There are parallels to this challenge in the Bayesian literature on model selection, particularly in the ``$\mathcal{M}$-open'' case in which there is no ``true'' model to identify and all models are imperfect representations of reality.
 This is a theoretical contrast to the ``$\mathcal{M}$-closed'' case in which the data are assumed to come from a ``true'' model which is a member of the finite set of candidate models available to the analyst \mbox{%DIFAUXCMD
@@ -485,10 +492,10 @@ Commonly used classical methods for model selection implicitly assume $\mathcal{
 By contrast, model selection in the $\mathcal{M}$-open case emphasizes a subjective view of the modeling process, for which probability offers a }\DIFdelend \DIFaddbegin \DIFadd{build insight and identify potential system vulnerabilities \mbox{%DIFAUXCMD
 \cite{moallemi_exploratory:2020,bankes:1993,brown_decisionscaling:2012}}\hskip0pt%DIFAUXCMD
 .
-In the second, we synthesize the results of exploratory modeling to formally estimate performance metrics and trade-offs using probabilistic models for uncertainty.
-Drawing from the literature on building predictive models when ``all models are wrong'' \mbox{%DIFAUXCMD
+In the second step, we synthesize the results of exploratory modeling to formally estimate performance metrics and trade-offs using probabilistic models for uncertainty.
+Drawing from the literature on building predictive models when all models are wrong \mbox{%DIFAUXCMD
 \cite{box_sciencestatistics:1976,gelman_philosophy:2013,Piironen:2017eh}}\hskip0pt%DIFAUXCMD
-, we interpret these probability distributions not statements of fact, but rather as a }\DIFaddend self-consistent \DIFdelbegin \DIFdel{language with which to reason about the unknown rather than a statement of objective truth (see \mbox{%DIFAUXCMD
+, we interpret these probability distributions not as statements of fact, but rather as a }\DIFaddend self-consistent \DIFdelbegin \DIFdel{language with which to reason about the unknown rather than a statement of objective truth (see \mbox{%DIFAUXCMD
 \citeA{gelman_philosophy:2013}}\hskip0pt%DIFAUXCMD
 , \mbox{%DIFAUXCMD
 \citeA{ramsey_probability:2016}}\hskip0pt%DIFAUXCMD
@@ -511,7 +518,7 @@ We consider }\DIFdelend \DIFaddbegin \DIFadd{We illustrate our approach through 
 ) uncertainties}\DIFdelend .
 Prior studies have found that floodproofing and building-scale vulnerability reduction measures, including house elevation, can effectively reduce local flood damages in many contexts \cite{demoel_reducing:2014,deruig_building:2020,kreibich_building:2005,slotter_floodproofing:2020,rozer_coping:2016,mobley_mitigation:2020,aerts_cost:2018}, and both local building codes \cite{asce_7-10:2013,bruneau_multihazard:2017,asce_24-05:2006} and federal policy \cite{FEMA_p-55:2011} require elevation in some cases.
 Guidance for homeowners, notably from \gls{fema}, recommends elevating to the \gls{bfe} (typically the \SI{100}{year} flood) plus a freeboard \cite{fema_retrofitting:2014,asce_24-14:2015,fema_retrofitting:2014} but recent research has demonstrated that neglecting uncertainty in the cost-benefit analysis can lead to poor decisions \cite{zarekarizi_suboptimal:2020}.
-Focusing on deep uncertainty in \gls{slr} over the 70 year design life of a hypothetical house, we seek to answer the research question ``\emph{how can deep uncertainties be transparently synthesized for decision analysis?}''
+Focusing on deep uncertainty in \gls{slr} over the 70 year design life of a hypothetical house, we seek to answer the research question ``\emph{how can \DIFdelbegin \DIFdel{deep uncertainties be transparently synthesized for }\DIFdelend decision analysis \DIFaddbegin \DIFadd{transparently synthesize deep uncertainties}\DIFaddend ?}''
 \DIFaddbegin \DIFadd{To shed light on this question in a single paper, we necessarily are silent on key issues that would be relevant to real-world decision-makers including alternative decision levers, the potential for adaptive decision rules, and rival problem framings.
 }\DIFaddend 
 
@@ -581,11 +588,11 @@ Our primary concern is not that subjective assumptions about the likelihood of d
 \subsection{Synthesize}\label{sec:analysis-synthesize}
 
 As discussed in the previous subsection, estimating the expectation of arbitrary functions under uncertainty is a critical component of decision making under uncertainty.
-If the \glspl{sow} are drawn \gls{iid} from the true distribution, then the expected value of some function  $f$, $\mathbb{E}\qty[f(\vb{s})]$, can be readily estimated as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$.
-However, this is often not the case; for example, a fixed set of simulations may be available for analysis or low-probability but high-impact regions of the parameter space may have been sampled.
-In this case, the formula must be adjusted to
-\begin{equation}
-  \mathbb{E}\qty[f(\vb{s})] \approx \frac{1}{N} \sum_{i=j}^N w_j f(\vb{s}_j),
+If the \glspl{sow} are drawn \gls{iid} from the \DIFdelbegin \DIFdel{true }\DIFdelend \DIFaddbegin \DIFadd{target }\DIFaddend distribution, then the expected value of some function \DIFdelbegin \DIFdel{$f$, $\mathbb{E}\qty[f(\vb{s})]$, }\DIFdelend \DIFaddbegin \DIFadd{$f(\mathbf{s})$, }\DIFaddend can be readily estimated \DIFdelbegin \DIFdel{as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFdelend \DIFaddbegin \DIFadd{following the Monte Carlo estimate $\mathbb{E}\qty[f(\vb{s})] \approx \frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFaddend .
+However, this is often not the case; for example, a fixed set of simulations \DIFaddbegin \DIFadd{not drawn from the target distribution }\DIFaddend may be available for analysis\DIFdelbegin \DIFdel{or low-probability but high-impact regions of the parameter space may have been sampled}\DIFdelend .
+In this case, the formula \DIFdelbegin \DIFdel{must }\DIFdelend \DIFaddbegin \DIFadd{may }\DIFaddend be adjusted to \DIFaddbegin \DIFadd{a weighted Monte Carlo estimate:
+}\DIFaddend \begin{equation}
+  \mathbb{E}\qty[f(\vb{s})] \approx \DIFdelbegin \DIFdel{\frac{1}{N} }\DIFdelend \sum_{i=j}^N w_j f(\vb{s}_j),
 \end{equation}
 where \DIFdelbegin \DIFdel{the $w_j$ are suitably chosen weights such that their sum is equal to 1.
 }\DIFdelend \DIFaddbegin \DIFadd{$\sum_{j=1}^J w_j = 1$.
@@ -639,7 +646,7 @@ Further, the sensitivity, or lack thereof, of different objectives to the choice
 
 To illustrate the proposed decision analytic framework, we model a one-time decision of whether to elevate a house, and if so by how much (\cref{fig:xlrm}).
 Following the approach outlined in \citeA{zarekarizi_suboptimal:2020}, we focus on a case study of a \emph{hypothetical} house in Norfolk, VA.
-For interpretability, we focus on deep uncertainty in \gls{msl} and approximate other model parameters as shallow uncertainties as shown in \cref{tab:uncertainties}.
+For interpretability, we focus on deep uncertainty in \gls{msl} and \DIFdelbegin \DIFdel{approximate }\DIFdelend \DIFaddbegin \DIFadd{treat storm surge and }\DIFaddend other model parameters as shallow uncertainties as shown in \cref{tab:uncertainties}.
 We use the notation developed in the previous section to describe the case study.
 Specifically,
 \begin{enumerate}
@@ -965,9 +972,16 @@ These }\DIFdelend \DIFaddbegin \DIFadd{; these }\DIFaddend three distributions a
 
 One application of this method is to diagnose \DIFdelbegin \DIFdel{which assumptions }\DIFdelend \DIFaddbegin \DIFadd{the assumptions which which }\DIFaddend different $p_\mathrm{belief}$ are consistent\DIFdelbegin \DIFdel{with}\DIFdelend .
 \Cref{fig:lsl-priors-weights}(B-D) shows the total weight that each prior assigns to \glspl{sow} generated by each \gls{rcp} scenario and physical model.
-For example, the rapid \gls{slr} scenario (green line in \cref{fig:lsl-priors-weights}) places most weight on the DP16 model, and particularly on \gls{rcp} 8.5 which by some accounts is unlikely given current policy \cite{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}.
+\DIFaddbegin \DIFadd{Specifically, weights are computed as the sum of weights assigned to each \mbox{%DIFAUXCMD
+\gls{sow} }\hskip0pt%DIFAUXCMD
+sampled from that model.
+}\DIFaddend For example, the rapid \gls{slr} scenario (green line in \cref{fig:lsl-priors-weights}) places most weight on \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\glspl{sow} }\hskip0pt%DIFAUXCMD
+produced by }\DIFaddend the DP16 model, and particularly on \gls{rcp} 8.5 which by some accounts is unlikely given current policy \cite{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}.
 Conversely, the slow \gls{slr} scenario (red line) places most weight on the BRICK models, particularly \gls{rcp} 2.6 \cite<also unlikely given current policy;>{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}) and \gls{rcp} 4.5.
 The uncertain \gls{slr} scenario (blue line) allocates approximately equal weight across models.
+\DIFaddbegin \DIFadd{Decision analysts can use this approach as a diagnostic to understand the assumptions implicit to their choice of $p_\mathrm{belief}$.
+}\DIFaddend 
 
 This method can also be used to calculate expectations, allowing us to revisit the trade-off diagrams of \cref{fig:tradeoffs-by-rcp}.
 \Cref{fig:tradeoffs-by-prior} shows the total lifetime cost (panel A) and lifetime expected damages (panel B) under each model.

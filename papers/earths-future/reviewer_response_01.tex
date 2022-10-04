@@ -78,9 +78,13 @@ Referee 1 particularly encouraged us to clarify the presentation of our methods 
 As noted in responses to the specific comments given below, we have attempted to incorporate these suggestions into the revised manuscript.
 
 Referee 2 encouraged us to (1) better contextualize our methodological approach relative to previous works, (2) clarify and improve the mathematical formulation of our approach, and (3) to better describe the usefulness of our method.
-The specific
+In particular, we noted that our manuscript was somewhat unclear about how ``Subjective Bayesian'' tools and methods figure into the actual methods and results presented.
+To address this and to improve the clarity of the manuscript, we have substantially rewritten the introduction.
+In particular, we have attempted to (1) reduce redundancies, (2) reduce potentially confusing discussion of methods for Bayesian model selection in the $\mathcal{M}$-open case, and (3) better contextualize our key contributions.
+We have also addressed specific comments given by Referee 2 in the responses below and in the text.
 
 In the remainder of this document we address the specific comments made by the two referees.
+We note that the \texttt{trackchanges} \LaTeX package used by the AGU template has some trouble with line breaks and citations and thank the editor and reviewers for their understanding.
 
 \section{Referee \#1}
 
@@ -296,13 +300,21 @@ In the remainder of this document we address the specific comments made by the t
     I applaud this effort -- the tension between scenario-based methods that use optimization and probabilistic methods is an important and understudied one.
     I also see a lot of value in how the authors have framed the problem and described the pros and cons of scenario-based DMDU methods and probabilistic methods for CBA in the context of infrastructure design.
     The simple case study of raising the elevation of a house under flood risk affected by deeply uncertain sea level rise is appropriate for demonstrating the method and is technically sound.
+}
 
+\AR{
+    Thank you for these comments.
+    This is an excellent summary of the goals and broader context of this work.
+}
+
+\RC{
     However, I have three major concerns that prevent me from recommending the manuscript for publication in its current form.
     I defer to the editor on whether, assuming all these concerns are addressed in revision, the contribution warrants publication in Earth's Future.
 }
 
 \AR{
-    Thanks for the insightful comments.
+    Thanks for the detailed and thoughtful comments.
+    We address them below in greater detail
 }
 
 \RC{
@@ -321,21 +333,72 @@ In the remainder of this document we address the specific comments made by the t
 \AR{
     Thanks very much for this helpful comment.
     This comment underscores a need for improved clarity in the introduction to the manuscript; as noted, there are numerous papers that use probabilistic tools, including Bayesian methods, in DMDU contexts.
-    We have clarified that there is a long literature on the relative merits of probabilistic vs non-probabilistic information in DMDU contexts, as noted in \citeA{taner_probabilistic:2019}, but that this debate has often centered on a top-down, technocratic, objectivist philosophy of probability in which there is explicitly or implicitly assumed to be a true probability distribution.
+    In our revised introduction we have clarified that there is a long literature on the relative merits of probabilistic vs non-probabilistic information in DMDU contexts, as noted in \citeA{taner_probabilistic:2019}, but that this debate has often centered on a top-down, technocratic, objectivist philosophy of probability in which there is explicitly or implicitly assumed to be a true probability distribution.
     Our contribution is to outline how a subjective Bayesian philosophical approach can address many of the concerns raised by critics of probabilistic approaches while providing a principled and transparent method for reasoning about uncertainty.
-
-    We can add a paragraph to the introduction describing this intersection, possibly with a few additional papers.
-    \citeA{hui_adaptive:2018} is a nice example of the use of SDP applied to a levee heightening problem.
-    There is Bayesian updating through the dynamic programming, but deep uncertainty is addressed only by considering several scenarios of hydrological conditions.
-    \citeA{taner_probabilistic:2019} is conceptually quite similar to our approach.
-    This paper focuses on joint distributions of uncertain parameters rather than how different subjective beliefs about these parameters affect the decision.
-    This paper also focuses on how probabilistic versus exploratory frameworks lead to different robustness values, whereas here we focus more generally on mapping trade-offs.
-    \citeA{reis_distribution:2020} shows that scenario discovery and exploratory modeling results are sensitive to parameterization and choice of distribution.
-    \citeA{fletcher_learning:2019} and \citeA{fletcher_groundwater:2019} apply SDP (which can be interpreted as having an implicit Bayesian updating step) but shallow uncertainties are considered.
 }
 
 \begin{quote}
-    Add a sentence to the intro and link it here
+    %DIFDELCMD < %%%
+    \DIFdel{We are motivated by parallels between decision making under deep uncertainty and the statistical problem of model selection.
+        \mbox{%DIFAUXCMD
+            \citeA{oreskes_verification:1994} }\hskip0pt%DIFAUXCMD
+        argues that because natural }\DIFdelend \DIFaddbegin \DIFadd{The limitations of objectivist approaches to projecting risk extend beyond estimating nonstationary climate hazards.
+        Human-natural }\DIFaddend systems are never closed and model results are never unique, \DIFaddbegin \DIFadd{and thus }\DIFaddend validation and verification of models representing these systems is necessarily qualitative and subjective \DIFdelbegin \DIFdel{.
+        In the literature on decision making under deep uncertainty, this has led to recognition of the need to develop strategies }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+            \cite{oreskes_verification:1994}}\hskip0pt%DIFAUXCMD
+        .
+        In other words, no model exists that could represent the full truth, and the future is thus deeply uncertain \mbox{%DIFAUXCMD
+            \cite{keller_management:2021,walker_deep:2013,lempert_complex:2002,haasnoot_sealevelrise:2021}}\hskip0pt%DIFAUXCMD
+        .
+        Consequently, a growing literature on \mbox{%DIFAUXCMD
+            \gls{dmdu} }\hskip0pt%DIFAUXCMD
+        emphasizes the value of identifying decisions }\DIFaddend that are robust\DIFaddbegin \DIFadd{, in some sense, to deep uncertainties \mbox{%DIFAUXCMD
+            \cite{moody_robustness:2013,herman:2015,mcphail_robustness:2019,borgomeo_robustness:2018}}\hskip0pt%DIFAUXCMD
+        .
+        Within this literature has emerged a debate regarding the value and use of probabilistic information  \mbox{%DIFAUXCMD
+            \cite<see>[and references therein]{taner_probabilistic:2019}}\hskip0pt%DIFAUXCMD
+        .
+        On the one hand, scholars have pointed out that predictions are inherently unreliable, and representing deep uncertainties through probability distributions frequently over-estimates predictive skill \mbox{%DIFAUXCMD
+            \cite{groves_scenarios:2007,lempert_robust:2000}}\hskip0pt%DIFAUXCMD
+        .
+        On the other, assessments of which decisions are robust depend on subjective choices about how to define robustness and how to sample uncertainties \mbox{%DIFAUXCMD
+            \cite{mcphail_robustness:2019,quinn_exploratory:2020,schneider_scenarios:2002,schneider_dangerous:2001,reis_distribution:2020}}\hskip0pt%DIFAUXCMD
+        .
+    }
+\end{quote}
+
+\AR{
+
+    We specifically clarify this is not a first conceptual step towards using probabilistic/Bayesian methods in DMDU contexts.
+}
+
+\begin{quote}
+    \DIFadd{In this paper we offer a conceptual step towards bridging this divide by presenting a framework that is designed to combine the strengths of both approaches.
+        In the first step, exploratory or bottom-up modeling is used }\DIFaddend
+    \ldots
+\end{quote}
+
+\AR{
+    Several of the references provided use stochastic dynamic programming (SDP) to in DMDU contexts.
+    This work is necessarily probabilistic and involves an updating step with parallels to Bayesian updating.
+    We have referenced this literature in the discussion in two places.
+    As discussed in the second point, however, these methods still make explicit or implicit assumptions about the likelihood of different futures, and so our approach is complementary.
+}
+
+\begin{quote}
+    \DIFaddbegin \DIFadd{Based on this analysis, we would recommend that the owner if this hypothetical home elevate by approximately 4-6}\si{ft}\DIFadd{.
+        Alternatively, the homeowner could choose to defer the deicision of whether, and how high, to elevate; our analysis did not consider this possibility but there is a rich literature on flexible design and engineering options analysis in climate risk analysis \mbox{%DIFAUXCMD
+            \cite<\eg,>{fletcher_learning:2019,fletcher_groundwater:2019,hui_adaptive:2018,garner_slrise:2018,herman_control:2020,deneufville_eoa_theory:2019}}\hskip0pt%DIFAUXCMD
+        .
+    }\DIFaddend
+\end{quote}
+
+\begin{quote}
+    Yet although framing the decision through a sequential lens can increase adaptability and improve outcomes \cite{fletcher:2017,garner_slrise:2018}, \DIFdelbegin \DIFdel{the optimized policy rules are necessarily }\DIFdelend \DIFaddbegin \DIFadd{decisions and outcomes remain highly }\DIFaddend sensitive to the characterization of uncertainty \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+            \cite{herman_control:2020}}\hskip0pt%DIFAUXCMD
+    }\DIFaddend , and thus the problem of synthesizing across deep uncertainties remains \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+            \cite{herman_control:2020}}\hskip0pt%DIFAUXCMD
+    }\DIFdelend \DIFaddbegin \DIFadd{relevant}\DIFaddend .
 \end{quote}
 
 
@@ -345,6 +408,15 @@ In the remainder of this document we address the specific comments made by the t
     Specifically:
     The method is framed both in the introduction (lines 157-182) and methods section (lines 240-250) around Bayesian model selection.
     However, it is not clear if or how the authors are performing Bayesian model selection.
+}
+
+\AR{
+    This is an important insight and a helpful comment.
+    Although our approach is motivated by methods for Bayesian model selection, we are not actually implementing these methods directly.
+    We have increased clarity by significantly condensing the references to Bayesian model selection in the Introduction and clarifying that we are not implementing these methods directly.
+}
+
+\RC{
     In figure 1e and line 247, the authors provide a conditional probability of $u$ given $x_i$ and $M_k$, and state this is the result of IID draws from $M_k$.
     This is similar to the $p(y|M_k)$ term in the classical BMA framework from \citeA{raftery_bma:2005} equation 1.
     Does this imply that there is a Bayesian posterior for model weights developed?
@@ -353,24 +425,18 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    This is a great question and one we need to clarify.
+    Thanks very much for this detailed and thoughtful comment.
     For reference, equation 1 of \citeA{raftery_bma:2005} is
     $$p(y) = \frac{1}{K} \sum_{k=1}^K p(y|M_k) p(M_k | y^T),$$
     ``where $p( y | M_k)$ is the forecast PDF based on model $M_k$ alone, and $p(M_k | y^T)$ is the posterior probability of model $M_k$ being correct given the training data, and reflects how well model $M_k$ fits the training data.''
-
     This comment is closely related to the previous comment in that we draw inspiration from the literature on Bayesian model selection but do not explicitly perform it.
-    Our approach is conceptually similar to BMA as noted (and even close to stacking; see \cite{Yao:2018bu}).
+    Our approach is conceptually similar to BMA as noted (and even closer to stacking; see \cite{Yao:2018bu}).
     There are two key differences.
     First, these methods focus on estimating the weights assigned to each model from data; in our context we have no data.
-    Future work could consider adaptive decision making (by revisiting the decision at multiple time steps, \ie stochastic control) in which case there would be data available in the future that could be used to estimate these weights as in several of the papers referenced in the previous comment.
+    As discussed in response to a previous comment, future work could consider adaptive decision making (by revisiting the decision at multiple time steps, \ie stochastic control) in which case there would be data available in the future that could be used to estimate these weights as in the SDP papers referenced.
     Second, these methods assign weights to each model, whereas we assign weights to each SOW.
-    This is motivated by the fact that the SOWs in our applications, and in many climate adaptation applications, are computationally expensive to generate.
+    This is motivated by the fact that the SOWs in our applications, and in many climate adaptation applications, are computationally expensive to generate, and we want to use every one for both exploratory modeling and decision making.
 }
-
-\begin{quote}
-    Need to think about how we want to address this in the text
-\end{quote}
-
 
 \RC{
     Shortly later in the paragraph under section 2.3, the authors take an expected value of $f(s)$ and state that it ``can be readily estimated as $\frac{1}{N} \sum_{j=1}^N f(\bf{s}_j)$.''
@@ -386,25 +452,26 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    This is another insightful comment, and I think we can frame this a bit better in the literature on non-naive Monte Carlo sampling.
-    As noted, we write in section 2.3 that
-}
-\begin{quote}
-    If the \glspl{sow} are drawn \gls{iid} from the true distribution, then the expected value of some function  $f$, $\mathbb{E}\qty[f(\vb{s})]$, can be readily estimated as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$.
-    However, this is often not the case; for example, a fixed set of simulations may be available for analysis or low-probability but high-impact regions of the parameter space may have been sampled.
-    In this case, the formula must be adjusted to
-    \begin{equation*}
-        \mathbb{E}\qty[f(\vb{s})] \approx \frac{1}{N} \sum_{i=j}^N w_j f(\vb{s}_j),
-    \end{equation*}
-    where the $w_j$ are suitably chosen weights such that their sum is equal to 1.
-\end{quote}
-
-\AR{
-    This does not require assuming that the set of sows, $\vb{s}$, is a discrete uniform RV, only that they are drawn IID from $p(\vb{s})$
+    Thanks for this thoughtful comment.
+    As we note in the text, the Naive Monte Carlo estimate $\frac{1}{N} \sum_{j=1}^N f(\bf{s}_j)$ is appropriate when the SOWs are IID draws from the ``target'' or ``population'' distribution.
+    This is valid even if the underlying distribution is not Uniform; for example, the mean of draws from a lognormal distribution will approach the true mean of the distribution as $n \rightarrow \infty$ following the Central Limit Theorem.
+    However, we are motivated by problems where generating samples is computationally expensive, and thus rather than draw new samples from a target distribution we propose to re-weight existing samples.
+    Our approach is agnostic to the specific form of the sampling distribution.
+    We have clarified the relevant paragraph as follows.
+    We also correct a mistake in the original text; if $\sum_{i=1}^J w_j =1$ then the $\frac{1}{N}$ should not be included.
 }
 
 \begin{quote}
-    Need to revisit -- the comment about population doesn't make sense to me
+    As discussed in the previous subsection, estimating the expectation of arbitrary functions under uncertainty is a critical component of decision making under uncertainty.
+    If the \glspl{sow} are drawn \gls{iid} from the \DIFdelbegin \DIFdel{true }\DIFdelend \DIFaddbegin \DIFadd{target }\DIFaddend distribution, then the expected value of some function \DIFdelbegin \DIFdel{$f$, $\mathbb{E}\qty[f(\vb{s})]$, }\DIFdelend \DIFaddbegin \DIFadd{$f(\mathbf{s})$, }\DIFaddend can be readily estimated \DIFdelbegin \DIFdel{as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFdelend \DIFaddbegin \DIFadd{following the Monte Carlo estimate $\mathbb{E}\qty[f(\vb{s})] = \frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFaddend .
+    However, this is often not the case; for example, a fixed set of simulations \DIFaddbegin \DIFadd{not drawn from the target distribution }\DIFaddend may be available for analysis\DIFdelbegin \DIFdel{or low-probability but high-impact regions of the parameter space may have been sampled}\DIFdelend .
+    In this case, the formula \DIFdelbegin \DIFdel{must }\DIFdelend \DIFaddbegin \DIFadd{may }\DIFaddend be adjusted to \DIFaddbegin \DIFadd{a weighted Monte Carlo estimate:
+    }\DIFaddend \begin{equation}
+        \mathbb{E}\qty[f(\vb{s})] \approx \DIFdelbegin \DIFdel{\frac{1}{N} }\DIFdelend \sum_{i=j}^N w_j f(\vb{s}_j),
+    \end{equation}
+    where \DIFdelbegin \DIFdel{the $w_j$ are suitably chosen weights such that their sum is equal to 1.
+    }\DIFdelend \DIFaddbegin \DIFadd{$\sum_{j=1}^J w_j = 1$.
+    }\DIFaddend
 \end{quote}
 
 \RC{
@@ -413,13 +480,10 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Let's make sure it is clear that they are implied by a certain $p_\text{belief}$ and sampling distribution of SOWs
+    Thanks for this comment.
+    We hope that the revised text shown above clarifies this point by removing reference to ``suitably chosen''.
+    The next paragraph of the text discusses how to estimate the weights.
 }
-
-\begin{quote}
-    Let's change it so that instead of saying ``suitably chosen'' weights we just say $\text{s.t.}~ \sum_j w_j = 1$.
-    There's another set of questions.
-\end{quote}
 
 \RC{
     Second, what is the mathematical basis for equation 2?
@@ -429,7 +493,11 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    This is just a definition, but we can cite something like \citeA{johnson_clara:2013} that uses grid-based methods
+    Thanks for this comment.
+    We hope that the revised text shown above clarifies the mathematical basis for equation 2 as a weighted Monte Carlo estimate.
+    This is a separate problem from the method disciussed in the next paragraph for estimating the weights using grid-based approaches.
+    To add a small amount of clarity to the description of the approach providied, the proposed approach is a way for approximating some target continuous distribution over \glspl{sow} using the discrete sampled SOW.
+    As discussed above, we model the probability distribution over \glspl{sow} rather than over models.
 }
 
 \RC{
@@ -440,25 +508,34 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Another good point -- need to clarify that refer to priors because we don't have any data about the future so we are relying entirely on prior beliefs.
-    But we're not applying Bayes' rule.
+    Thanks for this very helpful comment.
+    We agree that this language was confusing.
+    We now refer to ``subjective probability distributions'' rather than ``priors'' to reduce confusion.
 }
 
 \RC{
-    It is clear the storm surge model in 3.2 uses a Bayesian model to fit a GEV using historical storm surge data. But this is presented as a probabilistic uncertainty, not a deep uncertainty, so it remains unclear how Bayesian methods are used to synthesize deep uncertainties.
+    It is clear the storm surge model in 3.2 uses a Bayesian model to fit a GEV using historical storm surge data.
+    But this is presented as a probabilistic uncertainty, not a deep uncertainty, so it remains unclear how Bayesian methods are used to synthesize deep uncertainties.
 }
 
 \AR{
-    We can discuss this point.
+    Thanks for this comment.
+    We have clarified the text to emphasize that storm surge is treated probabilistically.
+    The only source of uncertainty that we treat as deeply uncertain is sea level rise.
 }
+
+\begin{quote}
+    To illustrate the proposed decision analytic framework, we model a one-time decision of whether to elevate a house, and if so by how much (\cref{fig:xlrm}).
+    Following the approach outlined in \citeA{zarekarizi_suboptimal:2020}, we focus on a case study of a \emph{hypothetical} house in Norfolk, VA.
+    For interpretability, we focus on deep uncertainty in \gls{msl} and \DIFdelbegin \DIFdel{approximate }\DIFdelend \DIFaddbegin \DIFadd{treat storm surge and }\DIFaddend other model parameters as shallow uncertainties as shown in \cref{tab:uncertainties}.
+\end{quote}
 
 \RC{
     It is not clear to me if there is an error in the mathematical presentation or if it simply needs to be clarified. It is possible also that this is a valid probabilistic framework, but not a Bayesian one, in which case the approach would need to be substantially reframed. If I have misunderstood due to lack of clarity in the presentation, I welcome a clarification from the authors.
 }
 
 \AR{
-    I think we can clarify and need to.
-    In part, at least, the term ``Bayesian'' seems to be suggesting a method of estimation, which is not what we are doing.
+    We hope that the comments and clarifications have shed light on this concern.
 }
 
 \RC{
@@ -467,7 +544,16 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    Thanks, we can add a bit to the discussion.
+    Thanks for this comment.
+    Figure 6 is presented as an exploratory analysis.
+    That is, we use it to identify potential system vulnerabilities without consideration of how likely different \glspl{sow} are.
+    It is similar to the figure referenced or to parallel axis plots, but presents the information in a different way.
+    Figure 6 of \citeA{quinn_exploratory:2020} shows the cumulative distribution function (CDF) of water shortage across \glspl{sow}.
+    Estimating the CDF which an implicit or explicit model for different SOWs.
+    In that paper the \glspl{sow} are sampled Uniformly within a neighborhood around point estimates (specifically, the maximum likelihood estimates of the parameters of a Hidden Markov Model).
+
+    As the key contribution of this paper is the synthesis approach, the results that illustrate this approach (figures 8 and 9) are probably the most relevant.
+    We hope that the revised introduction and abstract more clearly convey the utility of the proposed synthesis approach.
 }
 
 \RC{
@@ -476,8 +562,26 @@ In the remainder of this document we address the specific comments made by the t
 }
 
 \AR{
-    This should come across more clearly in the conclusions.
+    Thanks for this suggestion.
+    We have added some discussion to the text of how decision analysts can use this approach.
+    We have also clarified that the weights are computed as the sum of weights assigned to each \gls{sow} drawn from a particular model.
+    We hope this will make clear that we are modeling the probability of \glspl{sow} rather than of different scenarios.
 }
+
+\begin{quote}
+    One application of this method is to diagnose \DIFdelbegin \DIFdel{which assumptions }\DIFdelend \DIFaddbegin \DIFadd{the assumptions which which }\DIFaddend different $p_\mathrm{belief}$ are consistent\DIFdelbegin \DIFdel{with}\DIFdelend .
+    \Cref{fig:lsl-priors-weights}(B-D) shows the total weight that each prior assigns to \glspl{sow} generated by each \gls{rcp} scenario and physical model.
+    \DIFaddbegin \DIFadd{Specifically, weights are computed as the sum of weights assigned to each \mbox{%DIFAUXCMD
+            \gls{sow} }\hskip0pt%DIFAUXCMD
+        sampled from that model.
+    }\DIFaddend For example, the rapid \gls{slr} scenario (green line in \cref{fig:lsl-priors-weights}) places most weight on \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        produced by }\DIFaddend the DP16 model, and particularly on \gls{rcp} 8.5 which by some accounts is unlikely given current policy \cite{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}.
+    Conversely, the slow \gls{slr} scenario (red line) places most weight on the BRICK models, particularly \gls{rcp} 2.6 \cite<also unlikely given current policy;>{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}) and \gls{rcp} 4.5.
+    The uncertain \gls{slr} scenario (blue line) allocates approximately equal weight across models.
+    \DIFaddbegin \DIFadd{Decision analysts can use this approach as a diagnostic to understand the assumptions implicit to their choice of $p_\mathrm{belief}$.
+    }\DIFaddend
+\end{quote}
 
 % ugly hack to hide month in APACite
 \renewcommand{\APACrefYearMonthDay}[3]{\APACrefYear{#1}}

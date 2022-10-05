@@ -84,6 +84,12 @@ In particular, we have attempted to (1) reduce redundancies, (2) reduce potentia
 We have also addressed specific comments given by Referee 2 in the responses below and in the text.
 
 In the remainder of this document we address the specific comments made by the two referees.
+
+Where appropriate we quote from the revised using the following convention:
+\begin{quote}
+    Unchanged text
+    \DIFdelbegin \DIFdel{deleted text}\DIFdelend \DIFaddbegin \DIFadd{new text}\DIFaddend.
+\end{quote}
 We note that the \texttt{trackchanges} \LaTeX package used by the AGU template has some trouble with line breaks and citations and thank the editor and reviewers for their understanding.
 
 \section{Referee \#1}
@@ -425,7 +431,7 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 }
 
 \AR{
-    Thanks very much for this detailed and thoughtful comment.
+    Thanks very much for this detailed and insightful comment.
     For reference, equation 1 of \citeA{raftery_bma:2005} is
     $$p(y) = \frac{1}{K} \sum_{k=1}^K p(y|M_k) p(M_k | y^T),$$
     ``where $p( y | M_k)$ is the forecast PDF based on model $M_k$ alone, and $p(M_k | y^T)$ is the posterior probability of model $M_k$ being correct given the training data, and reflects how well model $M_k$ fits the training data.''
@@ -452,7 +458,7 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 }
 
 \AR{
-    Thanks for this thoughtful comment.
+    Thanks for this very usfeul comment.
     As we note in the text, the Naive Monte Carlo estimate $\frac{1}{N} \sum_{j=1}^N f(\bf{s}_j)$ is appropriate when the SOWs are IID draws from the ``target'' or ``population'' distribution.
     This is valid even if the underlying distribution is not Uniform; for example, the mean of draws from a lognormal distribution will approach the true mean of the distribution as $n \rightarrow \infty$ following the Central Limit Theorem.
     However, we are motivated by problems where generating samples is computationally expensive, and thus rather than draw new samples from a target distribution we propose to re-weight existing samples.
@@ -494,7 +500,7 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     Thanks for this comment.
-    We hope that the revised text shown above clarifies the mathematical basis for equation 2 as a weighted Monte Carlo estimate.
+    We hope that the revised text shown in response to the previous comment clarifies the mathematical basis for equation 2 as a weighted Monte Carlo estimate.
     This is a separate problem from the method disciussed in the next paragraph for estimating the weights using grid-based approaches.
     To add a small amount of clarity to the description of the approach providied, the proposed approach is a way for approximating some target continuous distribution over \glspl{sow} using the discrete sampled SOW.
     As discussed above, we model the probability distribution over \glspl{sow} rather than over models.
@@ -512,6 +518,10 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
     We agree that this language was confusing.
     We now refer to ``subjective probability distributions'' rather than ``priors'' to reduce confusion.
 }
+
+\begin{quote}
+    Need to go through and make sure this is done
+\end{quote}
 
 \RC{
     It is clear the storm surge model in 3.2 uses a Bayesian model to fit a GEV using historical storm surge data.

@@ -45,9 +45,9 @@
     \node [color=thirds] (s3) at (0, 4) {\textbf{I. Explore}};
 
     \node [block, label={[]225:{\footnotesize (d)}}] at (-4, 3) (models) {
-            Multiple models\\
+            Probabilistic scenarios\\
             $\vb{M} = \qty{M_1, \ldots, M_K}$\\
-            for $p(\Omega | M_k)$
+            for $p(s | M_k)$
         };
     \node [block, label={[]225:{\footnotesize (a)}}] (decisions) at (0, 3) {
             Candidate decisions\\
@@ -69,7 +69,7 @@
     \node [derived, label={[]0:{\footnotesize (f)}}] (weights) at (0, -3) {
             Weights\\
             $\vb{w} = \qty{w_1, \ldots, w_J}$\\
-            where $w_j \in (0, 1)$
+            where $\sum_{j=1}^J w_j = 1$
         };
     \path [line] (simulations) -- (weights);
 

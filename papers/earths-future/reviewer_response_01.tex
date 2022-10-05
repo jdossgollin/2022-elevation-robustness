@@ -76,21 +76,22 @@ We thank the editors and both referees for their thoughtful, detailed, and extre
 
 Referee 1 particularly encouraged us to clarify the presentation of our methods and results.
 As noted in responses to the specific comments given below, we have attempted to incorporate these suggestions into the revised manuscript.
-
 Referee 2 encouraged us to (1) better contextualize our methodological approach relative to previous works, (2) clarify and improve the mathematical formulation of our approach, and (3) to better describe the usefulness of our method.
 In particular, we noted that our manuscript was somewhat unclear about how ``Subjective Bayesian'' tools and methods figure into the actual methods and results presented.
-To address this and to improve the clarity of the manuscript, we have substantially rewritten the introduction.
-In particular, we have attempted to (1) reduce redundancies, (2) reduce potentially confusing discussion of methods for Bayesian model selection in the $\mathcal{M}$-open case, and (3) better contextualize our key contributions.
-We have also addressed specific comments given by Referee 2 in the responses below and in the text.
+
+To address these comments and to improve the clarity of the manuscript, we have substantially rewritten the introduction.
+We have also pulled the proposed re-weighting method out of section 2.3 and into its own section to highlight that it is a key contribution of this paper.
+More generally we have made revisions to the manuscript that (1) reduce redundancies, (2) reduce potentially confusing discussion of methods for Bayesian model selection in the $\mathcal{M}$-open case, and (3) better contextualize our key contributions.
+We have also improved grammar and writing style throughout the manuscript.
 
 In the remainder of this document we address the specific comments made by the two referees.
-
-Where appropriate we quote from the revised using the following convention:
+Where appropriate we quote from the revised manuscript using the following convention:
 \begin{quote}
     Unchanged text
     \DIFdelbegin \DIFdel{deleted text}\DIFdelend \DIFaddbegin \DIFadd{new text}\DIFaddend.
 \end{quote}
 We note that the \texttt{trackchanges} \LaTeX package used by the AGU template has some trouble with line breaks and citations and thank the editor and reviewers for their understanding.
+\emph{All line numbers referenced in this document refer to the line numbers of the tracked changes document.}
 
 \section{Referee \#1}
 
@@ -124,13 +125,8 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     Thank you for flagging this as an opportunity to improve clarity.
-    After some discussion we have decided to refer to ``scenarios'' (where it adds clarity, ``probabilistic scenarios'') and ``models'' (or ``physical models'' where it is helpful to draw distinctions from, \eg, system models).
+    After some discussion we have decided to refer to ``scenarios'' (where it adds clarity, ``probabilistic scenarios'') and ``models'' (or ``physical models'' where helpful).
 }
-
-\begin{quote}
-    Need to go back and check this!
-    Will be easier to do on paper.
-\end{quote}
 
 \RC{
     I understand the intention of the paper is to showcase the method, not necessarily the results.
@@ -141,21 +137,28 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     Thanks for this helpful suggestion.
-    We have added some discussion.
+    We have added some discussion around L599:
 }
 
 \begin{quote}
-    For example, \cref{fig:tradeoffs-by-rcp}(a) plots the expected total lifetime cost as a function of $\Delta h$ for the sixteen models considered (we highlight three representative models).
+    \DIFdelbegin \DIFdel{This }\DIFdelend \DIFaddbegin \DIFadd{As discussed in \mbox{%DIFAUXCMD
+            \cref{sec:analysis-condition}}\hskip0pt%DIFAUXCMD
+        , this }\DIFaddend probabilistic interpretation allows us to compute \DIFdelbegin \DIFdel{, for example, expected values }\DIFdelend \DIFaddbegin \DIFadd{expected values of functions}\DIFaddend .
+    For example, \cref{fig:tradeoffs-by-rcp}(a) plots the expected total lifetime cost as a function of $\Delta h$ for the sixteen \DIFdelbegin \DIFdel{models }\DIFdelend \DIFaddbegin \DIFadd{probabilistic scenarios }\DIFaddend considered (we highlight three representative models).
     \DIFdelbegin \DIFdel{Similarly, \mbox{%DIFAUXCMD
             \cref{fig:tradeoffs-by-rcp}}\hskip0pt%DIFAUXCMD
         (b) plots the }\DIFdelend \DIFaddbegin \DIFadd{This panel shows }\DIFaddend lifetime expected damages as a function of $\Delta h$\DIFdelbegin \DIFdel{.
     }\DIFdelend \DIFaddbegin \DIFadd{, shown in \mbox{%DIFAUXCMD
             \cref{fig:tradeoffs-by-rcp}}\hskip0pt%DIFAUXCMD
         (b,  plus the up-front cost of construction.
-        Because there are high fixed costs associated with building (see cost curve in \mbox{%DIFAUXCMD
-            \cref{fig:cost-up-front}}\hskip0pt%DIFAUXCMD
-        ), it generally does not make sense to raise the house by only a small amount, since this incurs these fixed costs without providing substantial damage reduction.
-    }\DIFaddend
+        Because there are high fixed costs associated with building (see cost curve in fig.~S3), it generally does not make sense to raise the house by only a small amount, since this incurs these fixed costs without providing substantial damage reduction.
+        \mbox{%DIFAUXCMD
+            \Cref{fig:tradeoffs-by-rcp} }\hskip0pt%DIFAUXCMD
+        shows that estimates of trade-offs between up-front cost and expected lifetime costs are highly sensitive to the chosen scenario.
+    }\DIFaddend For small $\Delta h$, expected costs are low under optimistic \DIFdelbegin \DIFdel{models }\DIFdelend \DIFaddbegin \DIFadd{scenarios }\DIFaddend (\eg, \gls{rcp} 2.6 with slow ice sheet dynamics; red lines) and high under pessimistic \DIFdelbegin \DIFdel{models }\DIFdelend \DIFaddbegin \DIFadd{scenarios }\DIFaddend (\eg, \gls{rcp}8.5 with the DP16 model; blue lines).
+    \DIFaddbegin \DIFadd{Estimates of the optimal decision are highly sensitive to the choice of scenario.
+    }\DIFaddend For example, under the most pessimistic \DIFdelbegin \DIFdel{model }\DIFdelend \DIFaddbegin \DIFadd{scenario }\DIFaddend (blue line), the cost-minimizing height increase is \SI{6}{ft}, which incurs an up-front cost of 73\% of the house value but reduces lifetime expected damages by over 150\% of house value.
+    Under the most optimistic \DIFdelbegin \DIFdel{model }\DIFdelend \DIFaddbegin \DIFadd{scenario }\DIFaddend (gray line), the cost-minimizing decision is to not elevate, as elevating \SI{6}{ft} incurs the same up-front cost yet reduces lifetime expected damages by less than 50\% of house value.
 \end{quote}
 
 \RC{
@@ -168,16 +171,21 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 \AR{
     Thank you for this helpful suggestion.
     We agree that this merits further discussion and have briefly added some nuance to the section on limitations and research needs.
-    We have removed extraneous references to Approximate Bayesian Computation.
+    We have also removed extraneous references to Approximate Bayesian Computation.
+    See paragraph beginning L678:
 }
 
 \begin{quote}
+    Several limitations to our study merit further discussion.
+    The first category has to do with limitations of the underlying method proposed for re-weighting \glspl{sow}.
+    For example, we develop a subjective \DIFdelbegin \DIFdel{prior belief }\DIFdelend \DIFaddbegin \DIFadd{probabilistic model }\DIFaddend $p_\mathrm{belief}(\Psi)$ over \gls{msl} in the year 2100.
     Although this is a low-dimensional representation of the full time series, it is not a sufficient statistic\DIFdelbegin \DIFdel{; prior studies have shown that using Approximate Bayesian Computation to calibrate models on low dimensional statistics using that are not sufficient statistics can lead to biased posterior estimates \mbox{%DIFAUXCMD
             \cite{csillery_abc:2010,marjoram_abc:2006}}\hskip0pt%DIFAUXCMD
         .
-        Although we are not performing calibration here, and this is thus not a direct concern, }\DIFdelend \DIFaddbegin \DIFadd{, meaning that many possible low-dimensional representations are possible; }\DIFaddend time series with the same \gls{msl} in 2100 may differ in other ways\DIFdelbegin \DIFdel{, and experts may have prior information about the likelihood of these differences not represented in our model}\DIFdelend \DIFaddbegin \DIFadd{.
-        For problems with more sources of uncertainty, such as multisector problems, choosing a low-dimensional representation may prove more challenging.
-        In such settings, more detailed diagnostics and sensitivity analyses may shed light on the appropriateness of different modeling choices}\DIFaddend .
+        Although we are not performing calibration here,  and this is thus not a direct concern, }\DIFdelend \DIFaddbegin \DIFadd{.
+        In other words,  many possible low-dimensional representations are possible and }\DIFaddend time series with the same \gls{msl} in 2100 may differ in other ways\DIFdelbegin \DIFdel{, and experts may have prior information about the likelihood of these differences not represented in our model}\DIFdelend \DIFaddbegin \DIFadd{.
+        For problems with more sources of uncertainty, such as multisector problems, choosing an appropriate low-dimensional representation may prove challenging.
+        In such settings, diagnostics and sensitivity analyses may shed light on the appropriateness of different modeling choices}\DIFaddend .
 \end{quote}
 
 \RC{
@@ -189,13 +197,17 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     Thanks for this helpful suggestion.
-    We have added the following text to section 2.3.
+    We have added the following text to the paragraph beginning L397.
 }
 
 \begin{quote}
-    \DIFaddbegin \DIFadd{Considering multiple probabilistic models for $p_\mathrm{belief}$ can also be useful for understanding the sensitivity of the decision to the choice of $p_\mathrm{belief}$.
-        Further, the sensitivity, or lack thereof, of different objectives to the choice of $p_\mathrm{belief}$ may be useful for identifying future research needs.
-    }
+    The aim of this re-weighting framework is to integrate an ensemble of \glspl{sow} used for exploratory modeling into formal decision analysis, even when the \glspl{sow} deliberately over- or under-sample some regions of the parameter space.
+    As in \cref{sec:analysis-condition}, we must condition on a model: where the analysis of \cref{sec:analysis-condition} conditions upon deep uncertainties, the approach outlined in this subsection synthesizes across them.
+    \DIFdelbegin \DIFdel{We reiterate that stakeholders and experts will not, in general, agree on }\DIFdelend \DIFaddbegin \DIFadd{Considering multiple probabilistic models for }\DIFaddend $p_\mathrm{belief}$ \DIFdelbegin \DIFdel{because there is not, even conceptually, an objectively correct choice \mbox{%DIFAUXCMD
+            \cite{oreskes_verification:1994,walker_deep:2013}}\hskip0pt%DIFAUXCMD
+        .
+        However, we posit that since we cannot be ``right, '' it is valuable to maximize the transparency of our implicit probabilistic assumptions, and suggest that writing down an explicit model for }\DIFdelend \DIFaddbegin \DIFadd{can also be useful for understanding the sensitivity of the decision to the choice of $p_\mathrm{belief}$.
+        Further, the sensitivity, or lack thereof, of different objectives to the choice of }\DIFaddend $p_\mathrm{belief}$ \DIFdelbegin \DIFdel{supports this aim}\DIFdelend \DIFaddbegin \DIFadd{may be useful for identifying future research needs}\DIFaddend .
 \end{quote}
 
 \RC{
@@ -205,16 +217,18 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     We agree with this suggestion since the shape of these curves matters a lot.
-    We have added the following text.
+    We have added the following text around L513:
 }
 
 \begin{quote}
-    \DIFaddbegin \DIFadd{Both  models show damage increasing with flood depth before reaching an upper limit.
-    }\DIFaddend
-\end{quote}
-
-\begin{quote}
-    ``Up-front cost'' is the cost of elevating a house. Following \citeA{zarekarizi_suboptimal:2020}, we use estimates of construction cost from the Coastal Louisiana Risk Assessment \cite{fischbach_clara:2012}. We normalize this cost by house value; this cost curve is shown in \cref{fig:cost-up-front} \DIFaddbegin \DIFadd{and shows a large up-front cost plus a piecewise linear marginal cost}\DIFaddend .
+    Following \citeA{zarekarizi_suboptimal:2020}, we use the \gls{hazus} depth-damage curves provided by \gls{fema}; this depth-damage relationship is shown in \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+            \cref{fig:cost-depth-damage}}\hskip0pt%DIFAUXCMD
+        .}\DIFdelend \DIFaddbegin \DIFadd{fig.~S1.
+    }\DIFaddend For comparison, \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+            \cref{fig:cost-depth-damage} }\hskip0pt%DIFAUXCMD
+    }\DIFdelend \DIFaddbegin \DIFadd{fig.~S1 }\DIFaddend also shows the ``Europa'' depth-damage relationship developed by the Joint Research Center of the European Commission's science and knowledge service \cite{huizinga_depthdamage:2016}.
+    \DIFaddbegin \DIFadd{Both models show damage increasing with flood depth before reaching an upper limit but differ in the value of the upper limit and the rate at which damages approach it.
+    }\DIFaddend Although \citeA{zarekarizi_suboptimal:2020} demonstrate that the choice of fragility function is important for informing house elevation, we use only the HAZUS model for simplicity.
 \end{quote}
 
 \RC{
@@ -240,13 +254,17 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 \AR{
     Thanks for this suggestion.
     We agree that the differences between models are surprising and relevant.
-    We have added the following sentence.
+    We have added the following discussion around L454:
 }
 
 \begin{quote}
-    \DIFaddbegin \DIFadd{The differences between models arise primarily due to different representations of Antarctic Ice Sheet contributions to global \mbox{%DIFAUXCMD
+    \DIFaddbegin \DIFadd{probabilistic scenarios considered.
+        The stark differences between different scenarios of \mbox{%DIFAUXCMD
             \gls{slr} }\hskip0pt%DIFAUXCMD
-        and statistical calibration methodologies; for a more detailed discussion we refer the reader to \mbox{%DIFAUXCMD
+        arise primarily from different representations of Antarctic Ice Sheet contributions to global \mbox{%DIFAUXCMD
+            \gls{slr} }\hskip0pt%DIFAUXCMD
+        and statistical calibration methodologies.
+        For a more detailed discussion we refer the reader to \mbox{%DIFAUXCMD
             \citeA{ruckert_coastal:2019}}\hskip0pt%DIFAUXCMD
         .
     }\DIFaddend
@@ -258,14 +276,14 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     Thanks for this suggestion to clarify our notation.
-    The paragraph now reads as follows.
+    This text around L511 now reads:
 }
 
 \begin{quote}
     The expected annual damage is thus
-    \begin{equation}\label{eq:ead}
+    \begin{equation*}\label{eq:ead}
         \textrm{EAD}(t) = \mathbb{E}[D \qty(h-\overline{y}(t))] = \int_{y'} p(y') D \qty(h - \qty(\overline{y}(t) + y')) \dd{y'},
-    \end{equation}
+    \end{equation*}
     where $D(h-y)$ is a deterministic function specifying damage as a function of flood depth (relative to the house) \DIFaddbegin \DIFadd{and $p(y')$ is the probability density of storm surge}\DIFaddend .
 \end{quote}
 
@@ -277,15 +295,19 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 \AR{
     Thanks for this suggestion.
     We have explained our choice and have also taken the opportunity to clarify that these distributions are illustrative choices.
+    See around L550:
 }
 
 \begin{quote}
-    We use a Gamma distribution for all three priors, parameterized following \cref{eq:gamma-dist}.
-    \DIFaddbegin \DIFadd{The distributions were chosen to be illustrative, rather than to reflect any particular scientific consensus.
+    We use a Gamma distribution for all three priors, parameterized following \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+            \cref{eq:gamma-dist}}\hskip0pt%DIFAUXCMD
+        .}\DIFdelend \DIFaddbegin \DIFadd{eq.~(S4).
+        The distributions were chosen to be illustrative, rather than to reflect any particular scientific consensus.
         The Gamma distribution is a flexible distribution that can be used to model skewed, lower-bounded distributions, making it an appropriate choice for modeling subjective uncertainty about \mbox{%DIFAUXCMD
             \gls{slr}}\hskip0pt%DIFAUXCMD
         .
-    }\DIFaddend
+    }\DIFaddend \Cref{tab:slr-priors} specifies the parameters of these distributions, as well as some quantiles of the distributions.
+    Their \glspl{pdf} are also plotted in \cref{fig:lsl-priors-weights}(A).
 \end{quote}
 
 \RC{
@@ -419,7 +441,8 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 \AR{
     This is an important insight and a helpful comment.
     Although our approach is motivated by methods for Bayesian model selection, we are not actually implementing these methods directly.
-    We have increased clarity by significantly condensing the references to Bayesian model selection in the Introduction and clarifying that we are not implementing these methods directly.
+    Moreover, we are not performing Bayesian inference at all.
+    We have increased clarity by significantly condensing the references to Bayesian model selection in the Introduction, and by clarifications of language made in response to other comments (\eg, removing references to $p_\mathrm{belief}$ as priors; see below).
 }
 
 \RC{
@@ -435,6 +458,7 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
     For reference, equation 1 of \citeA{raftery_bma:2005} is
     $$p(y) = \frac{1}{K} \sum_{k=1}^K p(y|M_k) p(M_k | y^T),$$
     ``where $p( y | M_k)$ is the forecast PDF based on model $M_k$ alone, and $p(M_k | y^T)$ is the posterior probability of model $M_k$ being correct given the training data, and reflects how well model $M_k$ fits the training data.''
+
     This comment is closely related to the previous comment in that we draw inspiration from the literature on Bayesian model selection but do not explicitly perform it.
     Our approach is conceptually similar to BMA as noted (and even closer to stacking; see \cite{Yao:2018bu}).
     There are two key differences.
@@ -465,16 +489,30 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
     Our approach is agnostic to the specific form of the sampling distribution.
     We have clarified the relevant paragraph as follows.
     We also correct a mistake in the original text; if $\sum_{i=1}^J w_j =1$ then the $\frac{1}{N}$ should not be included.
+    See the paragraph around L370:
 }
 
 \begin{quote}
-    As discussed in the previous subsection, estimating the expectation of arbitrary functions under uncertainty is a critical component of decision making under uncertainty.
-    If the \glspl{sow} are drawn \gls{iid} from the \DIFdelbegin \DIFdel{true }\DIFdelend \DIFaddbegin \DIFadd{target }\DIFaddend distribution, then the expected value of some function \DIFdelbegin \DIFdel{$f$, $\mathbb{E}\qty[f(\vb{s})]$, }\DIFdelend \DIFaddbegin \DIFadd{$f(\mathbf{s})$, }\DIFaddend can be readily estimated \DIFdelbegin \DIFdel{as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFdelend \DIFaddbegin \DIFadd{following the Monte Carlo estimate $\mathbb{E}\qty[f(\vb{s})] = \frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFaddend .
-    However, this is often not the case; for example, a fixed set of simulations \DIFaddbegin \DIFadd{not drawn from the target distribution }\DIFaddend may be available for analysis\DIFdelbegin \DIFdel{or low-probability but high-impact regions of the parameter space may have been sampled}\DIFdelend .
+    \DIFadd{A particular need is to estimate the expectation of functions over \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        (}\ie\DIFadd{, box e in \mbox{%DIFAUXCMD
+            \cref{fig:flowchart}}\hskip0pt%DIFAUXCMD
+        ).
+        If the $J$ }\DIFaddend \glspl{sow} are drawn \gls{iid} from \DIFdelbegin \DIFdel{the true distribution, }\DIFdelend \DIFaddbegin \DIFadd{some distribution that credibly represents the true likelihood of different futures }\DIFaddend then the expected value of \DIFdelbegin \DIFdel{some function$f$, $\mathbb{E}\qty[f(\vb{s})]$}\DIFdelend \DIFaddbegin \DIFadd{such a function}\DIFaddend , \DIFaddbegin \DIFadd{$f(\mathbf{s})$, }\DIFaddend can be readily \DIFdelbegin \DIFdel{estimated as $\frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFdelend \DIFaddbegin \DIFadd{approximated using the Monte Carlo estimate $\mathbb{E}\qty[f(\vb{s})] \approx \frac{1}{N} \sum_{j=1}^N f(\vb{s}_j)$}\DIFaddend .
+    However, this is often not the case\DIFdelbegin \DIFdel{; for example, a fixed set of simulations may be available for analysis or low-probability but high-impact regions of the parameter space may have been sampled }\DIFdelend \DIFaddbegin \DIFadd{.
+        For example, in \mbox{%DIFAUXCMD
+            \cref{sec:case-study} }\hskip0pt%DIFAUXCMD
+        we will consider decision analysis where the \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        are sampled from multiple physical models and \mbox{%DIFAUXCMD
+            \gls{rcp} }\hskip0pt%DIFAUXCMD
+        scenarios, considering that not all \mbox{%DIFAUXCMD
+            \gls{rcp} }\hskip0pt%DIFAUXCMD
+        scenarios are equally likely and that not all physical models are equally skillful}\DIFaddend .
     In this case, the formula \DIFdelbegin \DIFdel{must }\DIFdelend \DIFaddbegin \DIFadd{may }\DIFaddend be adjusted to \DIFaddbegin \DIFadd{a weighted Monte Carlo estimate:
-    }\DIFaddend \begin{equation}
+    }\DIFaddend \begin{equation*}
         \mathbb{E}\qty[f(\vb{s})] \approx \DIFdelbegin \DIFdel{\frac{1}{N} }\DIFdelend \sum_{i=j}^N w_j f(\vb{s}_j),
-    \end{equation}
+    \end{equation*}
     where \DIFdelbegin \DIFdel{the $w_j$ are suitably chosen weights such that their sum is equal to 1.
     }\DIFdelend \DIFaddbegin \DIFadd{$\sum_{j=1}^J w_j = 1$.
     }\DIFaddend
@@ -487,9 +525,37 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     Thanks for this comment.
-    We hope that the revised text shown above clarifies this point by removing reference to ``suitably chosen''.
-    The next paragraph of the text discusses how to estimate the weights.
+    We hope that the revised text shown above (paragraph around L370) clarifies this point by removing reference to ``suitably chosen''.
+    The next paragraph of the text discusses how to estimate the weights; we emphasize that the weights (applied to \glspl{sow}) are implied by a particular choice for $p(\psi)$.
+    See L373:
 }
+
+\begin{quote}
+    The challenge then becomes to suitably estimate the $w_j$.
+    \DIFdelbegin \DIFdel{Paralleling }\DIFdelend \DIFaddbegin \DIFadd{Many such methods exist; drawing from }\DIFaddend joint probability methods for statistical analysis of tropical cyclones, we \DIFdelbegin \DIFdel{use }\DIFdelend \DIFaddbegin \DIFadd{employ }\DIFaddend a grid-based approach \cite{johnson_clara:2013,resio_probabilities:2007,toro_jpm-os:2010}.
+    First, we project the \glspl{sow} $\vb{s} \in \Omega$ onto a low-dimensional representation, which we denote $\qty{\psi_1, \psi_2, \ldots, \psi_J} \in \Psi$.
+    Then, we partition the parameter space into a region corresponding to each \gls{sow} and integrating the \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+            \gls{pdf} }\hskip0pt%DIFAUXCMD
+        $p_\mathrm{belief}$ }\DIFdelend \DIFaddbegin \DIFadd{probability $p(\psi)$ }\DIFaddend over each region.
+
+    \DIFaddbegin \DIFadd{Doing so requires a probabilistic model for this low-dimensional representation of the \mbox{%DIFAUXCMD
+            \glspl{sow}}\hskip0pt%DIFAUXCMD
+        ,  $p(\psi)$.
+        We denote this model $p_\mathrm{belief}$ to emphasize that it represents a subjective belief about the \mbox{%DIFAUXCMD
+            \glspl{sow}}\hskip0pt%DIFAUXCMD
+        , rather than an objectively verifiable choice.
+        In general we do not expect that stakeholders and experts will agree on $p_\mathrm{belief}$ because there is not, even conceptually, an objectively correct choice \mbox{%DIFAUXCMD
+            \cite{oreskes_verification:1994,walker_deep:2013}}\hskip0pt%DIFAUXCMD
+        .
+        However, we posit that since we cannot be ``right,'' it is valuable to maximize the transparency of our implicit probabilistic assumptions, and suggest that writing down an explicit model for $p_\mathrm{belief}$ supports this aim.
+        Choices for $p_\mathrm{belief}$ can be drawn from many sources, including expert elicitation or  results of previous analyses.
+        These models can be interpreted as prior beliefs about \mbox{%DIFAUXCMD
+            \gls{slr} }\hskip0pt%DIFAUXCMD
+        that could be incorporated into a Bayesian analysis as additional data is collected in the future, and thus can draw from literature on Bayesian prior selection and prior predictive checks \mbox{%DIFAUXCMD
+            \cite{gelman_workflow:2020}}\hskip0pt%DIFAUXCMD
+        .
+    }
+\end{quote}
 
 \RC{
     Second, what is the mathematical basis for equation 2?
@@ -500,10 +566,10 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \AR{
     Thanks for this comment.
-    We hope that the revised text shown in response to the previous comment clarifies the mathematical basis for equation 2 as a weighted Monte Carlo estimate.
+    We hope that the revised text shown in response to the previous comment (around L370) clarifies the mathematical basis for equation 2 as a weighted Monte Carlo estimate.
     This is a separate problem from the method disciussed in the next paragraph for estimating the weights using grid-based approaches.
-    To add a small amount of clarity to the description of the approach providied, the proposed approach is a way for approximating some target continuous distribution over \glspl{sow} using the discrete sampled SOW.
-    As discussed above, we model the probability distribution over \glspl{sow} rather than over models.
+    To add a small amount of clarity to the description of the approach provided, the proposed approach is a way for approximating some target continuous distribution over \glspl{sow} using the discrete sampled SOW.
+    As discussed above, we model the probability distribution over \glspl{sow} rather than over models, which distinguishes our approach from methods such as BMA.
 }
 
 \RC{
@@ -516,12 +582,8 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 \AR{
     Thanks for this very helpful comment.
     We agree that this language was confusing.
-    We now refer to ``subjective probability distributions'' rather than ``priors'' to reduce confusion.
+    Although we can interpret these distributions as prior beliefes about the future that could be updated should we recieve information in the future, we now refer to ``subjective probability distributions'' rather than ``subjective priors'' to reduce confusion.
 }
-
-\begin{quote}
-    Need to go through and make sure this is done
-\end{quote}
 
 \RC{
     It is clear the storm surge model in 3.2 uses a Bayesian model to fit a GEV using historical storm surge data.
@@ -532,6 +594,7 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
     Thanks for this comment.
     We have clarified the text to emphasize that storm surge is treated probabilistically.
     The only source of uncertainty that we treat as deeply uncertain is sea level rise.
+    See Table 1 and also L412:
 }
 
 \begin{quote}
@@ -564,6 +627,7 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
     As the key contribution of this paper is the synthesis approach, the results that illustrate this approach (figures 8 and 9) are probably the most relevant.
     We hope that the revised introduction and abstract more clearly convey the utility of the proposed synthesis approach.
+    We also hope that pulling the re-weighting method into a separate section highlights that it is a key component of this paper.
 }
 
 \RC{
@@ -580,14 +644,14 @@ We note that the \texttt{trackchanges} \LaTeX package used by the AGU template h
 
 \begin{quote}
     One application of this method is to diagnose \DIFdelbegin \DIFdel{which assumptions }\DIFdelend \DIFaddbegin \DIFadd{the assumptions which which }\DIFaddend different $p_\mathrm{belief}$ are consistent\DIFdelbegin \DIFdel{with}\DIFdelend .
-    \Cref{fig:lsl-priors-weights}(B-D) shows the total weight that each prior assigns to \glspl{sow} generated by each \gls{rcp} scenario and physical model.
+    \Cref{fig:lsl-priors-weights}(B-D) shows the total weight that each \DIFdelbegin \DIFdel{prior }\DIFdelend \DIFaddbegin \DIFadd{choice of $p_\mathrm{belief}$ }\DIFaddend assigns to \glspl{sow} generated by each \gls{rcp} scenario and physical model.
     \DIFaddbegin \DIFadd{Specifically, weights are computed as the sum of weights assigned to each \mbox{%DIFAUXCMD
             \gls{sow} }\hskip0pt%DIFAUXCMD
         sampled from that model.
     }\DIFaddend For example, the rapid \gls{slr} scenario (green line in \cref{fig:lsl-priors-weights}) places most weight on \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
             \glspl{sow} }\hskip0pt%DIFAUXCMD
         produced by }\DIFaddend the DP16 model, and particularly on \gls{rcp} 8.5 which by some accounts is unlikely given current policy \cite{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}.
-    Conversely, the slow \gls{slr} scenario (red line) places most weight on the BRICK models, particularly \gls{rcp} 2.6 \cite<also unlikely given current policy;>{hausfather_scenarios:2020,srikrishnan_probabilistic:2022}) and \gls{rcp} 4.5.
+    Conversely, the slow \gls{slr} scenario (red line) places most weight on the BRICK models, particularly \gls{rcp} 2.6 \cite<also unlikely given current policy;>{hausfather_scenarios:2020,srikrishnan_probabilistic:2022} \DIFdelbegin \DIFdel{) }\DIFdelend and \gls{rcp} 4.5.
     The uncertain \gls{slr} scenario (blue line) allocates approximately equal weight across models.
     \DIFaddbegin \DIFadd{Decision analysts can use this approach as a diagnostic to understand the assumptions implicit to their choice of $p_\mathrm{belief}$.
     }\DIFaddend

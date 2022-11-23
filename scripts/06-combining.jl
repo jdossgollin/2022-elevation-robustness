@@ -79,7 +79,7 @@ function plot_priors()
     p = plot(;
         xlabel="SLR 2022-2100, at Sewells Point, VA [ft]",
         ylabel="Probability Density",
-        title="(a): Implicit Prior",
+        title="(a): Subjective Probability Distribution",
     )
     for (prior, color) in zip(priors, [:red, :blue, :green])
         plot!(
@@ -109,7 +109,7 @@ function plot_weight(s::Vector{<:HouseElevation.LSLSim})
         w_avg = combine(groupby(df, [:model, :rcp]), prior.name => sum => :weight)
         @assert sum(w_avg[!, :weight]) ≈ 1
 
-        letter = collect('a':'z')[i]
+        letter = collect('a':'z')[i+1]
         p = @df w_avg groupedbar(
             :model,
             :weight,

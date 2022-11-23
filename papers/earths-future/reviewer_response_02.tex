@@ -1,0 +1,330 @@
+\documentclass{ar2rc}
+
+\usepackage{siunitx}
+\usepackage{apacite}
+\usepackage{physics}
+
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{color}
+\newcommand{\jdg}[1]{\todo[color=red!30]{#1}}
+\newcommand{\all}[1]{\todo[color=blue!30]{#1}}
+
+% better lists
+\usepackage{enumitem}
+\setlist{nosep}
+
+% some commands
+\usepackage{xspace}
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+\newcommand{\usd}[1]{\SI{#1}[\$]{}}
+
+% ACRONYMS
+\usepackage[acronym, nopostdot, nonumberlist, shortcuts, numberedsection, nogroupskip,]{glossaries}
+\newacronym{bfe}{BFE}{base flood elevation}
+\newacronym{cmip}{CMIP}{the Coupled Model Intercomparison Project}
+\newacronym{dmdu}{DMDU}{decision making under deep uncertainty}
+\newacronym{fema}{FEMA}{the Federal Emergency Management Agency}
+\newacronym{gev}{GEV}{generalized extreme value}
+\newacronym{hazus}{HAZUS}{Hazard U.S.}
+\newacronym{iid}{IID}{independent and identically distributed}
+\newacronym{ipcc}{IPCC}{International Panel on Climate Change}
+\newacronym{msl}{MSL}{mean relative sea level}
+\newacronym{noaa}{NOAA}{the National Oceanic and Atmospheric Administration}
+\newacronym{pdf}{PDF}{probability density function}
+\newacronym{rcp}{RCP}{representative concentration pathway}
+\newacronym{rdm}{RDM}{robust decision making}
+\newacronym{slr}{SLR}{sea level rise}
+\newacronym{ssp}{SSP}{shared socio-economic pathway}
+\newacronym[]{usace}{USACE}{United States Army Corps of Engineers}
+\newacronym[]{usgs}{USGS}{United States Geological Survey}
+\newacronym[\glslongpluralkey={states of the world}]{sow}{SOW}{state of the world}
+
+% cross-refs
+\usepackage{xr-hyper}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+\newcommand*{\myexternaldocument}[1]{%
+    \externaldocument{#1}%
+    \addFileDependency{#1.tex}%
+    \addFileDependency{#1.aux}%
+}
+\myexternaldocument{submission_03}
+\myexternaldocument{supplemental}
+
+\hypersetup{hidelinks}
+\usepackage{cleveref}
+
+\title{A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management}
+\author{James Doss-Gollin and Klaus Keller}
+\journal{Earth's Future}
+
+\begin{document}
+
+\maketitle
+
+We thank the editor and reviewer \# 2 for the thoughtful review and for the helpful suggestions that have helped us to substantially clarify and improve the manuscript.
+
+\emph{All line numbers referenced in this document refer to the line numbers of the tracked changes document.}
+
+\section*{Referee \#2}
+
+\RC{
+    This is my second review of the manuscript ``A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management'' by Doss-Gollin and Keller.
+    I thank the authors for a very thorough response to my previous comments.
+    The manuscript has been greatly improved, and my previous concerns about the contribution and methods have been adequately addressed.
+}
+
+\AR{
+    Thank you for your comments.
+    We are glad that our comments addressed your concerns about the contribution and methods.
+}
+
+\RC{
+    While the revised manuscript is much clearer, I still had trouble understanding the main steps and goals of the framework.
+    It took me several close reads.
+    I make some recommendations for improving this below so that the authors' important contribution will be clear to readers.
+    Otherwise, I am happy to recommend the paper be accepted for publication.
+}
+
+\AR{
+    We are very grateful for the thoughtful and helpful suggestions that have helped us to clarify the manuscript.
+    We respond to each below.
+}
+
+\RC{
+    As I understand it, the core of the method is that the SOW used in exploratory modeling can also be integrated into a single probabilistic description for classical decision analysis.
+    This is done using a subjective probability distribution of future uncertainties, which is used to infer the implied weights over the SOW, making implicit assumptions about likelihoods of different SOW transparent to decision-makers.
+    A main barrier the authors addressed this is that SOW are often generated from (or conditioned on) specific scenarios e.g. RCP 8.5 vs RCP 4.5, leading to the multiple pdf problem.
+    Here, the authors integrate these multiple scenarios and associated SOW into a single distribution and corresponding weights.
+}
+
+\AR{
+    This is a very articulate summary of our core goals and work.
+}
+
+\RC{
+    If that summary is correct, I recommend that the authors summarize the aims and high-level approach of this contribution before diving into the methods details.
+    At present, the framework is described in the paragraph in the intro on lines 110-122 and the paragraph opening the conceptual framework section (lines 151-155).
+    However, I was not able to infer the main aims, steps, and contributions from these paragraphs.
+    Revision of these paragraphs to tee up the big picture of the framework at the outset of the methods presentation would be very helpful to the reader.
+}
+
+\AR{
+    We thank the reviewer for the helpful suggestion.
+    We have rewritten the beginning of section 2 with these comments in mind, borrowing some language from the reviewer's summary provided above.
+    See L152:
+}
+
+\begin{quote}
+    In this section we introduce a conceptual framework and notation for decision analysis under deep uncertainty.
+    \DIFdelbegin \DIFdel{We then apply this framework to understand exploratory modeling (\mbox{%DIFAUXCMD
+            \cref{sec:analysis-explore}}\hskip0pt%DIFAUXCMD
+        )  and scenario-conditional probabilistic analysis (\mbox{%DIFAUXCMD
+            \cref{sec:analysis-condition}}\hskip0pt%DIFAUXCMD
+        ).
+        In \mbox{%DIFAUXCMD
+            \cref{sec:analysis-synthesize} }\hskip0pt%DIFAUXCMD
+        we discuss why synthesizing across multiple scenarios is necessary.
+        In \mbox{%DIFAUXCMD
+            \cref{sec:reweighting} }\hskip0pt%DIFAUXCMD
+        we provide a formal method for synthesizing across scenarios.
+    }\DIFdelend \DIFaddbegin \DIFadd{Many bottom-up exploratory modeling frameworks used in climate risk management and related fields use a system model ($f$ in \mbox{%DIFAUXCMD
+            \cref{fig:flowchart}}\hskip0pt%DIFAUXCMD
+        )  to characterize the system's response to a wide range of plausible futures, often called \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        ($\vb{s}$ in \mbox{%DIFAUXCMD
+            \cref{fig:flowchart}}\hskip0pt%DIFAUXCMD
+        ).
+        This analysis is often used to explore vulnerabilities and build knowledge about the system \mbox{%DIFAUXCMD
+            \cite{bankes:1993}}\hskip0pt%DIFAUXCMD
+        , and in general exploratory modeling frameworks aim to avoid making explicit judgments about the relative likelihood of different futures.
+    }\DIFaddend
+
+    \DIFdelbegin \DIFdel{It is common in climate risk management to work with an ensemble of trajectories of climate, economic, and other key variables, which we refer to as \mbox{%DIFAUXCMD
+            \glspl{sow}}\hskip0pt%DIFAUXCMD
+        .
+        Often these \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        are computationally expensive to generate, and thus it is important to use them efficiently.
+        Following \mbox{%DIFAUXCMD
+            \cref{fig:flowchart}}\hskip0pt%DIFAUXCMD
+        , we consider using $J$ \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        , $\vb{s} = \qty{s_1, s_2, \ldots, s_J}$, to evaluate $I$ candidate decisions, $\vb{x} = \qty{x_1, x_2, \ldots, x_I}$.
+        For each \mbox{%DIFAUXCMD
+            \gls{sow} }\hskip0pt%DIFAUXCMD
+        $s_j \in \vb{s}$ and decision $x_i \in \vb{x}$ we use a system model $f$ (comprised of multiple components) to calculate a set of metrics describing the performance of decision $x_i$ on \mbox{%DIFAUXCMD
+            \gls{sow} }\hskip0pt%DIFAUXCMD
+        $s_j$, which we denote $u_{ij} = f(x_i, s_j)$.
+        While we assume for simplicity that }\DIFdelend \DIFaddbegin \DIFadd{However, as discussed in \mbox{%DIFAUXCMD
+            \cref{sec:introduction}}\hskip0pt%DIFAUXCMD
+        , estimates of trade-offs between desired performance metrics (}\eg\DIFadd{, cost and reliability) depend on probabilistic models of uncertainty.
+        In this paper we present a method for integrating the \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        used in exploratory modeling into a formal decision analytic framework using a subjective probability distribution over the space of possible futures, which is used to infer implicit weights over the \mbox{%DIFAUXCMD
+            \glspl{sow}}\hskip0pt%DIFAUXCMD
+        .
+        This approach is particularly suited for problems where the \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        are generated from or conditioned on specific scenarios (}\eg\DIFadd{, \mbox{%DIFAUXCMD
+            \gls{rcp} }\hskip0pt%DIFAUXCMD
+        scenarios) or where there are multiple models of the underlying processes (}\eg\DIFadd{, multiple models of }\DIFaddend the \DIFdelbegin \DIFdel{decision space is known and finite, this approach could be coupled to a policy search model that proposes candidate decisions}\DIFdelend \DIFaddbegin \DIFadd{response of local sea levels to global temperature), which can lead to the ``multiple \mbox{%DIFAUXCMD
+            \gls{pdf} }\hskip0pt%DIFAUXCMD
+        problem'' (discussed in \mbox{%DIFAUXCMD
+            \cref{sec:analysis-condition}}\hskip0pt%DIFAUXCMD
+        ).
+        A motivating advantage is that it makes assumptions about the likelihoods of different \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        transparent to decision-makers}\DIFaddend .
+\end{quote}
+
+\RC{
+    One thing that may help is clarification around terminology:
+}
+
+\RC{
+    First, the authors use the phrase ``synthesize deep uncertainties'' throughout.
+    I find this vague and unhelpful.
+    I think what you mean by this is integrating scenario-based deep uncertainties into a single probabilistic representation.
+    I suggest you either clearly define what you mean by this phrase when you introduce it and/or use more specific descriptive language.
+}
+
+\AR{
+    We appreciate this clarifying suggestion.
+    To address this comment we have more clearly defined what is meant by ``synthesizing'' deep uncertainties (see paragraph beginning L110):
+}
+
+\begin{quote}
+    In this paper we offer a conceptual step towards bridging this divide by presenting a framework that is designed to combine the strengths of both approaches.
+    In the first step, exploratory or bottom-up modeling is used to build insight and identify potential system vulnerabilities \cite{moallemi_exploratory:2020,bankes:1993,brown_decisionscaling:2012}.
+    In the second step, we \DIFdelbegin \DIFdel{synthesize the results of exploratory modeling to }\DIFdelend \DIFaddbegin \DIFadd{integrate exploratory ensembles of deep uncertainties into a single probabilistic representation (we refer to this as ``synthesizing'' deep uncertainties) to }\DIFaddend formally estimate performance metrics and trade-offs using \DIFdelbegin \DIFdel{probabilistic models for uncertainty}\DIFdelend \DIFaddbegin \DIFadd{subjective probability distributions}\DIFaddend .
+    Drawing from the literature on building predictive models when all models are wrong \cite{box_sciencestatistics:1976,gelman_philosophy:2013,Piironen:2017eh}, we interpret these probability distributions not as statements of fact, but rather as a self-consistent framework for reasoning about how different assumptions lead to different inferences.
+    An advantage of our approach is that it facilitates computationally efficient analysis of how alternative probabilistic models would affect estimated performance metrics and trade-offs.
+\end{quote}
+
+\RC{
+    Second, while the specific application helped me understand how you differentiate between SOW and ``scenarios'', this was confusing in Section 2.
+    Your definition of SOW on lines 156-158 should be clarified.
+    I suggest you define what you mean by ``scenario'' here and how SOW and scenarios are related.
+    In lines 186-188, you introduce ``a particular scenario $M_k$'' without defining scenario.
+    It wasn't obvious to me at first read that the emissions pathway is the scenario.
+}
+
+\AR{
+    Thanks for this helpful comment.
+    We hope that the text provided above provides some clarification.
+    We provide a further clarification of the difference between a \gls{sow} and scenario in \cref{sec:analysis-condition}.
+    See L202:
+}
+
+\begin{quote}
+    One way to interpret an ensemble of \glspl{sow} is as {iid} draws from some probabilistic data generating process.
+    This commonly arises when a single deep uncertainty (\eg, an emissions pathway) is used as an input for a stochastic model.
+    \DIFaddbegin \DIFadd{To clarify language, we draw a distinction between a \mbox{%DIFAUXCMD
+            \gls{sow}}\hskip0pt%DIFAUXCMD
+        , which is a single realization of a possible future, and a }\emph{\DIFadd{scenario}}\DIFadd{, which is a model that can be used to generate \mbox{%DIFAUXCMD
+            \glspl{sow}}\hskip0pt%DIFAUXCMD
+        .
+        These terms are defined relative to the problem at hand; for example, a global emissions trajectory may be a \mbox{%DIFAUXCMD
+            \gls{sow} }\hskip0pt%DIFAUXCMD
+        from an integrated assessment model, but when it is used as a deterministic input to an ice sheet model we would describe it as a scenario.
+    }
+
+    \DIFaddend We illustrate this \DIFdelbegin \DIFdel{concept }\DIFdelend \DIFaddbegin \DIFadd{distinction }\DIFaddend in boxes (d) and (e) of \cref{fig:flowchart}, denoting the particular scenario $M_k$.
+    \DIFdelbegin \DIFdel{By treating the \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        as \mbox{%DIFAUXCMD
+            \gls{iid} }\hskip0pt%DIFAUXCMD
+        draws }\DIFdelend \DIFaddbegin \DIFadd{We assume that each scenario is probabilistic, that is that \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        are drawn \mbox{%DIFAUXCMD
+            \gls{iid} }\hskip0pt%DIFAUXCMD
+    }\DIFaddend from $M_k$, the set of outcomes $u_{i, j}$ can be interpreted as \gls{iid} draws from the conditional distribution over outcomes, $p(u | x_i, M_k)$.
+    This ``scenario-conditional'' probabilistic interpretation of \glspl{sow} allows for fully probabilistic quantification of uncertainty and optimization, conditional on a particular scenario.
+    For example,\ldots
+\end{quote}
+
+\RC{
+    Relatedly, I understand the scenario-conditional interpretation in the example with RCP pathways in lines 191-198, but I don't follow this interpretation in 199-219.
+    I agree sampling SOW from fixed ranges implies a uniform probability distribution over the SOW, but what is the ``scenario'' here?
+}
+
+\AR{
+    Thanks for pointing out our unclear reasoning.
+    We have made the following changes to clarify how the theoretical lens of ``scenario-conditional analysis'' can be used to explore these approaches.
+    See L222:
+}
+
+\begin{quote}
+    We can also \DIFdelbegin \DIFdel{characterize \mbox{%DIFAUXCMD
+            \gls{dmdu} }\hskip0pt%DIFAUXCMD
+        methods that sample a set of parameters from fixed ranges as scenario-conditional analyses}\DIFdelend \DIFaddbegin \DIFadd{apply this theoretical lens to examine the approach, common in \mbox{%DIFAUXCMD
+            \gls{dmdu} }\hskip0pt%DIFAUXCMD
+        applications, of sampling parameters from a set of fixed ranges.
+        The }\emph{\DIFadd{scenario}} \DIFadd{in this case is thus the choice of bounds on the parameters; it is consistent with our above definition of a scenario because it provides a probabilistic model that can be used to sample \mbox{%DIFAUXCMD
+            \glspl{sow}}\hskip0pt%DIFAUXCMD
+    }\DIFaddend .
+    For example, \ldots
+\end{quote}
+
+\RC{
+    Third, the conceptual definition of $p_\mathrm{belief}$ and its relation to the weights was unclear to me when you introduce them lines 242 - 252.
+    You say that estimating the weights require a probability distribution.
+    But it wasn't clear that what you mean is that you choose a probability distribution, reflecting subjective belief about the SOW, and then you infer what weights over the SOW are consistent with that subjective belief.
+    That is very powerful but the lack of conceptual definitions and vague language at the beginning of the section like ``we provide a formal method for synthesizing across multiple scenarios to inform climate risk management'' made it hard to understand this.
+}
+
+\AR{
+    Thanks for pointing out this opportunity to improve the clarity of our text.
+    We have clarified this paragraph to emphasize the choice of subjective probability distribution.
+    See L274:
+}
+
+\begin{quote}
+    \ldots
+    Then, we partition the parameter space into a region corresponding to each \gls{sow} and integrating the probability $p(\psi)$ over each region.
+
+    \DIFdelbegin \DIFdel{Doing so requires a probabilistic model }\DIFdelend \DIFaddbegin \DIFadd{Implementing this approach requires choosing a probability distribution }\DIFaddend for this low-dimensional representation of the \glspl{sow},  $p(\psi)$\DIFaddbegin \DIFadd{, reflecting subjective belief about the \mbox{%DIFAUXCMD
+            \glspl{sow}}\hskip0pt%DIFAUXCMD
+    }\DIFaddend .
+    We denote this \DIFdelbegin \DIFdel{model $p_\mathrm{belief}$ }\DIFdelend \DIFaddbegin \DIFadd{$p_\mathrm{belief}(\psi)$ }\DIFaddend to emphasize that it represents a subjective belief about the \glspl{sow}, rather than an objectively verifiable choice.
+    In general we do not\ldots
+\end{quote}
+
+\AR{
+    In addition, we have reworded the vague language referenced by the reviewer at the start of the subsection (L263):
+}
+
+\begin{quote}
+    In this section we provide a formal method for \DIFdelbegin \DIFdel{synthesizing across multiple scenarios to inform climate risk management}\DIFdelend \DIFaddbegin \DIFadd{integrating exploratory ensembles of deep uncertainties into a single probabilistic representation}\DIFaddend .
+    Our objective is to\ldots
+\end{quote}
+
+\RC{
+    Finally, in your response to my previous comments, you said that you removed references to $p_\mathrm{belief}$ as priors.
+    This is very helpful - that clarifies you are not performing Bayeisan analysis, and certainly a probability distribution can still represent subjective belief even if it is not a prior in a Bayesian framework.
+    However, the text still contains many references to $p_\mathrm{belief}$ as a prior, especially in the results section, \eg figure 8 and surrounding text.
+}
+
+\AR{
+    We thank the reviewer for drawing this to our attention.
+    We have removed all remaining references to $p_\mathrm{belief}$ as a prior.
+    This includes changing the the subplot title for figure 8(a).
+}
+
+% ugly hack to hide month in APACite
+\renewcommand{\APACrefYearMonthDay}[3]{\APACrefYear{#1}}
+\bibliographystyle{apacite}
+\bibliography{library-bibtex}
+
+\end{document}

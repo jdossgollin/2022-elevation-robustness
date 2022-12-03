@@ -178,7 +178,7 @@ We thank the editor and reviewer \# 2 for the thoughtful review and for the help
             \glspl{sow} }\hskip0pt%DIFAUXCMD
         are generated from or conditioned on specific scenarios (}\eg\DIFadd{, \mbox{%DIFAUXCMD
             \gls{rcp} }\hskip0pt%DIFAUXCMD
-        scenarios) or where there are multiple models of the underlying processes (}\eg\DIFadd{, multiple models of }\DIFaddend the \DIFdelbegin \DIFdel{decision space is known and finite, this approach could be coupled to a policy search model that proposes candidate decisions}\DIFdelend \DIFaddbegin \DIFadd{response of local sea levels to global temperature), which can lead to the ``multiple \mbox{%DIFAUXCMD
+        scenarios) or where there are multiple models of the underlying processes (}\eg\DIFadd{, multiple parameterizations of }\DIFaddend the \DIFdelbegin \DIFdel{decision space is known and finite, this approach could be coupled to a policy search model that proposes candidate decisions}\DIFdelend \DIFaddbegin \DIFadd{response of local sea levels to global temperature), which can lead to the ``multiple \mbox{%DIFAUXCMD
             \gls{pdf} }\hskip0pt%DIFAUXCMD
         problem'' (discussed in \mbox{%DIFAUXCMD
             \cref{sec:analysis-condition}}\hskip0pt%DIFAUXCMD
@@ -205,11 +205,9 @@ We thank the editor and reviewer \# 2 for the thoughtful review and for the help
 }
 
 \begin{quote}
-    In this paper we offer a conceptual step towards bridging this divide by presenting a framework that is designed to combine the strengths of both approaches.
-    In the first step, exploratory or bottom-up modeling is used to build insight and identify potential system vulnerabilities \cite{moallemi_exploratory:2020,bankes:1993,brown_decisionscaling:2012}.
+    \ldots
     In the second step, we \DIFdelbegin \DIFdel{synthesize the results of exploratory modeling to }\DIFdelend \DIFaddbegin \DIFadd{integrate exploratory ensembles of deep uncertainties into a single probabilistic representation (we refer to this as ``synthesizing'' deep uncertainties) to }\DIFaddend formally estimate performance metrics and trade-offs using \DIFdelbegin \DIFdel{probabilistic models for uncertainty}\DIFdelend \DIFaddbegin \DIFadd{subjective probability distributions}\DIFaddend .
-    Drawing from the literature on building predictive models when all models are wrong \cite{box_sciencestatistics:1976,gelman_philosophy:2013,Piironen:2017eh}, we interpret these probability distributions not as statements of fact, but rather as a self-consistent framework for reasoning about how different assumptions lead to different inferences.
-    An advantage of our approach is that it facilitates computationally efficient analysis of how alternative probabilistic models would affect estimated performance metrics and trade-offs.
+    Drawing from\ldots
 \end{quote}
 
 \RC{
@@ -223,21 +221,23 @@ We thank the editor and reviewer \# 2 for the thoughtful review and for the help
 \AR{
     Thanks for this helpful comment.
     We hope that the text provided above provides some clarification.
-    We provide a further clarification of the difference between a \gls{sow} and scenario in \cref{sec:analysis-condition}.
-    See L202:
+    We provide a further clarification of the difference between a \gls{sow} and scenario in \cref{sec:analysis-condition} (L204).
+    Moreover, we have gone through the text and clarified by adding specific language such as ``probabilistic scenarios'', ``physical process models'', and ``probabilistic models'' to improve clarity.
 }
 
 \begin{quote}
-    One way to interpret an ensemble of \glspl{sow} is as {iid} draws from some probabilistic data generating process.
-    This commonly arises when a single deep uncertainty (\eg, an emissions pathway) is used as an input for a stochastic model.
-    \DIFaddbegin \DIFadd{To clarify language, we draw a distinction between a \mbox{%DIFAUXCMD
-            \gls{sow}}\hskip0pt%DIFAUXCMD
-        , which is a single realization of a possible future, and a }\emph{\DIFadd{scenario}}\DIFadd{, which is a model that can be used to generate \mbox{%DIFAUXCMD
+    \DIFaddbegin \DIFadd{To clarify language, we draw a distinction between a }\emph{\DIFadd{\mbox{%DIFAUXCMD
+                \gls{sow}}\hskip0pt%DIFAUXCMD
+        }}\DIFadd{, which is a single realization of a possible future, and a }\emph{\DIFadd{probabilistic scenario}}\DIFadd{, which we define loosely as a set of assumptions for which probabilistic projections (}\ie\DIFadd{, \mbox{%DIFAUXCMD
             \glspl{sow}}\hskip0pt%DIFAUXCMD
-        .
-        These terms are defined relative to the problem at hand; for example, a global emissions trajectory may be a \mbox{%DIFAUXCMD
-            \gls{sow} }\hskip0pt%DIFAUXCMD
-        from an integrated assessment model, but when it is used as a deterministic input to an ice sheet model we would describe it as a scenario.
+        ) are available or can be simulated.
+        For example, in the case study described in \mbox{%DIFAUXCMD
+            \cref{sec:case-slr} }\hskip0pt%DIFAUXCMD
+        we use four physical models of the processes relevant to \mbox{%DIFAUXCMD
+            \gls{slr} }\hskip0pt%DIFAUXCMD
+        and four \mbox{%DIFAUXCMD
+            \gls{rcp} }\hskip0pt%DIFAUXCMD
+        scenarios to generate a total of 16 probabilistic scenarios.
     }
 
     \DIFaddend We illustrate this \DIFdelbegin \DIFdel{concept }\DIFdelend \DIFaddbegin \DIFadd{distinction }\DIFaddend in boxes (d) and (e) of \cref{fig:flowchart}, denoting the particular scenario $M_k$.
@@ -250,7 +250,6 @@ We thank the editor and reviewer \# 2 for the thoughtful review and for the help
         are drawn \mbox{%DIFAUXCMD
             \gls{iid} }\hskip0pt%DIFAUXCMD
     }\DIFaddend from $M_k$, the set of outcomes $u_{i, j}$ can be interpreted as \gls{iid} draws from the conditional distribution over outcomes, $p(u | x_i, M_k)$.
-    This ``scenario-conditional'' probabilistic interpretation of \glspl{sow} allows for fully probabilistic quantification of uncertainty and optimization, conditional on a particular scenario.
     For example,\ldots
 \end{quote}
 
@@ -262,19 +261,20 @@ We thank the editor and reviewer \# 2 for the thoughtful review and for the help
 \AR{
     Thanks for pointing out our unclear reasoning.
     We have made the following changes to clarify how the theoretical lens of ``scenario-conditional analysis'' can be used to explore these approaches.
-    See L222:
+    See L223:
 }
 
 \begin{quote}
     We can also \DIFdelbegin \DIFdel{characterize \mbox{%DIFAUXCMD
             \gls{dmdu} }\hskip0pt%DIFAUXCMD
-        methods that sample a set of parameters from fixed ranges as scenario-conditional analyses}\DIFdelend \DIFaddbegin \DIFadd{apply this theoretical lens to examine the approach, common in \mbox{%DIFAUXCMD
+        methods that sample a set of parameters from fixed ranges as scenario-conditional analyses.
+    }\DIFdelend \DIFaddbegin \DIFadd{apply this theoretical lens to examine the approach, common in \mbox{%DIFAUXCMD
             \gls{dmdu} }\hskip0pt%DIFAUXCMD
         applications, of sampling parameters from a set of fixed ranges.
-        The }\emph{\DIFadd{scenario}} \DIFadd{in this case is thus the choice of bounds on the parameters; it is consistent with our above definition of a scenario because it provides a probabilistic model that can be used to sample \mbox{%DIFAUXCMD
-            \glspl{sow}}\hskip0pt%DIFAUXCMD
-    }\DIFaddend .
-    For example, \ldots
+        The }\emph{\DIFadd{scenario}} \DIFadd{in this case is thus the choice of bounds on the parameters; it is consistent with our above definition of a probabilistic scenario because \mbox{%DIFAUXCMD
+            \glspl{sow} }\hskip0pt%DIFAUXCMD
+        can be sampled using probabilistic methods.
+    }\DIFaddend For example, \ldots
 \end{quote}
 
 \RC{
@@ -287,7 +287,7 @@ We thank the editor and reviewer \# 2 for the thoughtful review and for the help
 \AR{
     Thanks for pointing out this opportunity to improve the clarity of our text.
     We have clarified this paragraph to emphasize the choice of subjective probability distribution.
-    See L274:
+    See L275:
 }
 
 \begin{quote}
@@ -302,7 +302,7 @@ We thank the editor and reviewer \# 2 for the thoughtful review and for the help
 \end{quote}
 
 \AR{
-    In addition, we have reworded the vague language referenced by the reviewer at the start of the subsection (L263):
+    In addition, we have reworded the vague language referenced by the reviewer at the start of the subsection (L264):
 }
 
 \begin{quote}

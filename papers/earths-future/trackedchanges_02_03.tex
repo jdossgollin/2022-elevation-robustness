@@ -1,7 +1,7 @@
 \documentclass{agujournal2019}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL papers/earths-future/submission_02.tex   Wed Nov 23 10:08:47 2022
-%DIF ADD papers/earths-future/submission_03.tex   Wed Nov 23 10:44:51 2022
+%DIF ADD papers/earths-future/submission_03.tex   Sat Dec  3 12:09:19 2022
 
 %% required packages
 \usepackage{lineno}
@@ -353,7 +353,7 @@ This approach is particularly suited for problems where the \mbox{%DIFAUXCMD
 \glspl{sow} }\hskip0pt%DIFAUXCMD
 are generated from or conditioned on specific scenarios (}\eg\DIFadd{, \mbox{%DIFAUXCMD
 \gls{rcp} }\hskip0pt%DIFAUXCMD
-scenarios) or where there are multiple models of the underlying processes (}\eg\DIFadd{, multiple models of }\DIFaddend the \DIFdelbegin \DIFdel{decision space is known and finite, this approach could be coupled to a policy search model that proposes candidate decisions}\DIFdelend \DIFaddbegin \DIFadd{response of local sea levels to global temperature), which can lead to the ``multiple \mbox{%DIFAUXCMD
+scenarios) or where there are multiple models of the underlying processes (}\eg\DIFadd{, multiple parameterizations of }\DIFaddend the \DIFdelbegin \DIFdel{decision space is known and finite, this approach could be coupled to a policy search model that proposes candidate decisions}\DIFdelend \DIFaddbegin \DIFadd{response of local sea levels to global temperature), which can lead to the ``multiple \mbox{%DIFAUXCMD
 \gls{pdf} }\hskip0pt%DIFAUXCMD
 problem'' (discussed in \mbox{%DIFAUXCMD
 \cref{sec:analysis-condition}}\hskip0pt%DIFAUXCMD
@@ -389,14 +389,18 @@ For example, answering questions like ``what is the 95th percentile of metric $u
 
 One way to interpret an ensemble of \glspl{sow} is as {iid} draws from some probabilistic data generating process.
 This commonly arises when a single deep uncertainty (\eg, an emissions pathway) is used as an input for a stochastic model.
-\DIFaddbegin \DIFadd{To clarify language, we draw a distinction between a \mbox{%DIFAUXCMD
+\DIFaddbegin \DIFadd{To clarify language, we draw a distinction between a }\emph{\DIFadd{\mbox{%DIFAUXCMD
 \gls{sow}}\hskip0pt%DIFAUXCMD
-, which is a single realization of a possible future, and a }\emph{\DIFadd{scenario}}\DIFadd{, which is a model that can be used to generate \mbox{%DIFAUXCMD
+}}\DIFadd{, which is a single realization of a possible future, and a }\emph{\DIFadd{probabilistic scenario}}\DIFadd{, which we define loosely as a set of assumptions for which probabilistic projections (}\ie\DIFadd{, \mbox{%DIFAUXCMD
 \glspl{sow}}\hskip0pt%DIFAUXCMD
-.
-These terms are defined relative to the problem at hand; for example, a global emissions trajectory may be a \mbox{%DIFAUXCMD
-\gls{sow} }\hskip0pt%DIFAUXCMD
-from an integrated assessment model, but when it is used as a deterministic input to an ice sheet model we would describe it as a scenario.
+) are available or can be simulated.
+For example, in the case study described in \mbox{%DIFAUXCMD
+\cref{sec:case-slr} }\hskip0pt%DIFAUXCMD
+we use four physical models of the processes relevant to \mbox{%DIFAUXCMD
+\gls{slr} }\hskip0pt%DIFAUXCMD
+and four \mbox{%DIFAUXCMD
+\gls{rcp} }\hskip0pt%DIFAUXCMD
+scenarios to generate a total of 16 probabilistic scenarios.
 }
 
 \DIFaddend We illustrate this \DIFdelbegin \DIFdel{concept }\DIFdelend \DIFaddbegin \DIFadd{distinction }\DIFaddend in boxes (d) and (e) of \cref{fig:flowchart}, denoting the particular scenario $M_k$.
@@ -420,9 +424,9 @@ methods that sample a set of parameters from fixed ranges as scenario-conditiona
 }\DIFdelend \DIFaddbegin \DIFadd{apply this theoretical lens to examine the approach, common in \mbox{%DIFAUXCMD
 \gls{dmdu} }\hskip0pt%DIFAUXCMD
 applications, of sampling parameters from a set of fixed ranges.
-The }\emph{\DIFadd{scenario}} \DIFadd{in this case is thus the choice of bounds on the parameters; it is consistent with our above definition of a scenario because it provides a probabilistic model that can be used to sample \mbox{%DIFAUXCMD
-\glspl{sow}}\hskip0pt%DIFAUXCMD
-.
+The }\emph{\DIFadd{scenario}} \DIFadd{in this case is thus the choice of bounds on the parameters; it is consistent with our above definition of a probabilistic scenario because \mbox{%DIFAUXCMD
+\glspl{sow} }\hskip0pt%DIFAUXCMD
+can be sampled using probabilistic methods.
 }\DIFaddend For example, \citeA{sriver_sealevel:2018} sample parameters describing the rate of \gls{slr} across a range of values to inform coastal adaptation.
 Similarly, \citeA{trindade_waterpathways:2020} checks the performance of candidate decisions against an ensemble of synthetic time series of streamflow, water demand, and other parameters by sampling parameters that transform the available data over a plausible range.
 Analyses that use this methodology are implicitly assuming a single probabilistic model in which different variables are drawn from independent Uniform distributions.
@@ -556,7 +560,7 @@ In the remainder of this section we describe data sources and treatment of \gls{
 \subsection{\Glsentrylong{slr}}\label{sec:case-slr}
 
 We analyze simulations of \gls{msl} at Sewells Point, VA from four probabilistic physical models using data published in \citeA{ruckert_coastal:2019}.
-The four models considered are (i) the BRICK model (version 0.2) with slow (``BRICK Slow'') and (ii) fast (``BRICK Fast'') ice sheet dynamics \cite{wong_brick0.2:2017}, (iii) the \citeA{kopp_probabilistic:2014} model (``K14''), and (iv) the \citeA{deconto_antarctica:2016} model (``DP16'').
+The four \DIFaddbegin \DIFadd{physical process }\DIFaddend models considered are (i) the BRICK model (version 0.2) with slow (``BRICK Slow'') and (ii) fast (``BRICK Fast'') ice sheet dynamics \cite{wong_brick0.2:2017}, (iii) the \citeA{kopp_probabilistic:2014} model (``K14''), and (iv) the \citeA{deconto_antarctica:2016} model (``DP16'').
 The \citeA{kopp_probabilistic:2014} and \citeA{deconto_antarctica:2016} models have a ten year time step, which we linearly interpolate onto a one year time step for consistency.
 Estimates of nonstationary \gls{msl} also depend on anthropogenic forcing, which is itself deeply uncertain \cite{ho_scenarios:2019,srikrishnan_probabilistic:2022}.
 To sample this uncertainty, we use simulations from each physical model under four \gls{rcp} scenarios, yielding sixteen time-varying probabilistic scenarios of \gls{msl}.
@@ -577,7 +581,9 @@ The divergence between the the best-case (blue) and worst-case (red) models is s
 \Cref{fig:lsl-evolution}(b) shows the \glspl{pdf} of mean sea level in 2100 (dashed vertical line in panel (a)) under each of the sixteen probabilistic scenarios considered.
 The stark differences between different scenarios of \gls{slr} arise primarily from different representations of Antarctic Ice Sheet contributions to global \gls{slr} and statistical calibration methodologies.
 For a more detailed discussion we refer the reader to \citeA{ruckert_coastal:2019}.
-We return in \cref{sec:results-conditional} to the challenge of decision making given multiple \glspl{pdf}.
+We return in \cref{sec:results-conditional} to the challenge of decision making given multiple \DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+\glspl{pdf}}\hskip0pt%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{scenarios}\DIFaddend .
 
 \subsection{Storm surges}\label{sec:case-surge}
 
@@ -758,7 +764,7 @@ As discussed in \cref{sec:analysis-condition}, this allows a formal estimation o
     For emphasis, we highlight three representative models: the Brick Slow model \protect\cite{wong_brick0.2:2017} under \gls{rcp} 2.6, the K14 \protect\cite{kopp_probabilistic:2014} model under \gls{rcp} 6.0 and the DP16 model \protect\cite{deconto_antarctica:2016,kopp_evolving:2017} under \gls{rcp} 8.5.
     (A): trade-off between up-front cost (which is a monotonic function of height increase) and expected lifetime costs.
     (B): trade-off between up-front cost and lifetime expected damages (eq.~\ref{eq:led}).
-    Light gray lines show estimates for all 16 models (four \gls{rcp} scenarios times four physical parameterizations) considered.
+    Light gray lines show estimates for all 16 models (four \gls{rcp} scenarios \DIFdelbeginFL \DIFdelFL{times }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{$\times$ }\DIFaddendFL four physical \DIFdelbeginFL \DIFdelFL{parameterizations}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{process models}\DIFaddendFL ) considered.
     Colored lines highlight three representative models for emphasis.
     The gray arrows indicate the direction of preference.
   }\label{fig:tradeoffs-by-rcp}
@@ -775,13 +781,13 @@ Estimates of the optimal decision are highly sensitive to the choice of scenario
 For example, under the most pessimistic scenario (blue line), the cost-minimizing height increase is \SI{6}{ft}, which incurs an up-front cost of 73\% of the house value but reduces lifetime expected damages by over 150\% of house value.
 Under the most optimistic scenario (gray line), the cost-minimizing decision is to not elevate, as elevating \SI{6}{ft} incurs the same up-front cost yet reduces lifetime expected damages by less than 50\% of house value.
 
-This approach is, in a sense, another form of exploratory modeling: instead of considering a very large ensemble of \glspl{sow}, we consider a much smaller set of probabilistic models.
+This approach is, in a sense, another form of exploratory modeling: instead of considering a very large ensemble of \glspl{sow}, we consider a much smaller set of probabilistic \DIFdelbegin \DIFdel{models}\DIFdelend \DIFaddbegin \DIFadd{scenarios}\DIFaddend .
 Scenario-conditional analysis can be attractive because it allows modelers to focus on their domain expertise (\eg, the response of ice sheets and global sea levels to a particular climate future).
 However, conditioning simulations on a set of climate futures and physical models presents what we term ``the multiple \gls{pdf} problem'' because it leaves decision makers with many \glspl{pdf} to choose from and hence many trade-off curves to navigate.
 The multiple \gls{pdf} problem has also been discussed in other contexts.
 For example, \citeA{sharma_rcp:2021} model the reliability of stormwater infrastructure under different climate models and downscaling methods, finding diverging estimates of future rainfall hazard, even under a single \gls{rcp} scenario.
 Similarly, \citeA{wong_nola:2017} construct 18 probability distribution functions for future flood risk in New Orleans, considering multiple models for ice sheet dynamics and storm surge and multiple \gls{rcp} scenarios. As a last example, \citeA{haasnoot_sealevelrise:2021} identify global adaptation needs for different \gls{slr} scenarios.
-Although this scenario-conditional analysis is appropriate for understanding differences between models, its key limitation is that it \textbf{places the burden for deciding which model to design for onto the end user.}
+Although this scenario-conditional analysis is appropriate for understanding differences between models, its key limitation is that it \textbf{places the burden for deciding which \DIFdelbegin \DIFdel{model }\DIFdelend \DIFaddbegin \DIFadd{probabilistic scenario }\DIFaddend to design for onto the end user.}
 Since not all house owners or contractors have expertise in assessing the relative likelihood of different climate futures, they may not be well positioned to make this decision.
 
 \subsection{Synthesizing deep uncertainties for decision analysis}\label{sec:results-synthesis}
@@ -794,11 +800,11 @@ We present results using each of the models for $p_\mathrm{belief}$ outlined in 
   \centering
   \includegraphics[width=\textwidth]{lsl-priors-weights}
   \caption{
-    Impact of different subjective probability distributions for local sea level on the implicit weight given to each \gls{rcp} scenario and physical model.
+    Impact of different subjective probability distributions for local sea level on implicit weight given to each \gls{rcp} scenario and physical model.
     We develop three distributions representing plausible probabilistic beliefs ($p_\mathrm{belief}$) over \gls{msl} at Sewells Point, VA in 2100, relative to the present.
     The \glspl{pdf} of these distributions are shown in panel (A).
-    In panels (B-D) we show the relationship between these distributions and the 16 probabilistic models (four \gls{rcp} scenarios and four physical representations) available.
-    Specifically, (B-D) show the average weight given to each model by each choice for $p_\mathrm{belief}$.
+    In panels (B-C) we show the relationship between these distributions and the 16 probabilistic models (four \gls{rcp} scenarios and four physical representations) available.
+    Specifically, (B-C) show the average weight given to each model by each choice for $p_\mathrm{belief}$.
   }\label{fig:lsl-priors-weights}
 \end{figure}
 

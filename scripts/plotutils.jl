@@ -96,3 +96,7 @@ function plot_return_period(
 
     return p
 end
+
+function cummean(x)
+    return cumsum(x) ./ collect(1:length(x))
+end

@@ -109,7 +109,7 @@ function plot_weight(s::Vector{<:HouseElevation.LSLSim})
         w_avg = combine(groupby(df, [:model, :rcp]), prior.name => sum => :weight)
         @assert sum(w_avg[!, :weight]) ≈ 1
 
-        letter = collect('a':'z')[i+1]
+        letter = collect('a':'z')[i + 1]
         p = @df w_avg groupedbar(
             :model,
             :weight,
